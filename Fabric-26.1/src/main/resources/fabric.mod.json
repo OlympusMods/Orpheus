@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "orpheus",
+	"version": "${version}",
+	"name": "Orpheus",
+	"description": "",
+	"authors": [
+		"Akis"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "GPL-3.0-only",
+	"icon": "assets/orpheus/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.github.olympus.orpheus.Orpheus"
+		],
+		"client": [
+			"com.github.olympus.orpheus.client.OrpheusClient"
+		]
+	},
+	"mixins": [
+		"orpheus.mixins.json",
+		{
+			"config": "orpheus.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.1",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

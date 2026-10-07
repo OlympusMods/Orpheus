@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[0,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="orpheus"
+version="1.0.0"
+displayName="Orpheus"
+authors="YourNameHere, OtherNameHere"
+
+description='''Orpheus description.
+Newline characters can be used like this, and rendered on the mods screen properly.'''
+
+[[dependencies.orpheus]]
+    modId="forge"
+    mandatory=true
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.orpheus]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.21.1,1.22,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[mixins]]
+config = "orpheus.mixins.json"

@@ -1,0 +1,13 @@
+{
+  "itemGroup.orpheus": "Orpheus Tab",
+  "block.orpheus.example_block": "Example Block",
+  "item.orpheus.example_item": "Example Item",
+
+  "orpheus.configuration.title": "Orpheus Configs",
+  "orpheus.configuration.section.orpheus.common.toml": "Orpheus Configs",
+  "orpheus.configuration.section.orpheus.common.toml.title": "Orpheus Configs",
+  "orpheus.configuration.items": "Item List",
+  "orpheus.configuration.logDirtBlock": "Log Dirt Block",
+  "orpheus.configuration.magicNumberIntroduction": "Magic Number Text",
+  "orpheus.configuration.magicNumber": "Magic Number"
+}
