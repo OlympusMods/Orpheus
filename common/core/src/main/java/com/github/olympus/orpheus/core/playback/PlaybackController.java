@@ -114,6 +114,15 @@ public final class PlaybackController {
         start(target.get());
     }
 
+    public void playNow(Track track) {
+        if (current != null) {
+            backend.stop();
+            current = null;
+        }
+        paused = false;
+        start(track);
+    }
+
     public boolean blacklistCurrent() {
         if (current == null) {
             return false;
