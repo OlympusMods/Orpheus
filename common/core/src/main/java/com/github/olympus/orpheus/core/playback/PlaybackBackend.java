@@ -12,4 +12,6 @@ public interface PlaybackBackend {
     void pause();
 
     void resume();
+
+    void hold();
 }

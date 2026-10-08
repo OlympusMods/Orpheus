@@ -53,6 +53,7 @@ public final class PlaybackController {
             return false;
         }
         if (paused) {
+            backend.hold();
             lastContext = context;
             return true;
         }
