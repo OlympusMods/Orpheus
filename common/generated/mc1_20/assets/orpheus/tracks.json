@@ -1,0 +1,433 @@
+{
+  "tracks": [
+    {
+      "id": "music/game/a_familiar_room",
+      "event": "music.game.a_familiar_room",
+      "title": "A Familiar Room",
+      "contexts": [
+        "CREATIVE",
+        "MAIN_MENU",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/an_ordinary_day",
+      "event": "music.game.an_ordinary_day",
+      "title": "An Ordinary Day",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/ancestry",
+      "event": "music.game.ancestry",
+      "title": "Ancestry",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/bromeliad",
+      "event": "music.game.bromeliad",
+      "title": "Bromeliad",
+      "contexts": [
+        "MAIN_MENU",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/calm1",
+      "event": "music.game.calm1",
+      "title": "Calm 1",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/calm2",
+      "event": "music.game.calm2",
+      "title": "Calm 2",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/calm3",
+      "event": "music.game.calm3",
+      "title": "Calm 3",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/comforting_memories",
+      "event": "music.game.comforting_memories",
+      "title": "Comforting Memories",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative1",
+      "event": "music.game.creative.creative1",
+      "title": "Creative 1",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative2",
+      "event": "music.game.creative.creative2",
+      "title": "Creative 2",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative3",
+      "event": "music.game.creative.creative3",
+      "title": "Creative 3",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative4",
+      "event": "music.game.creative.creative4",
+      "title": "Creative 4",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative5",
+      "event": "music.game.creative.creative5",
+      "title": "Creative 5",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/creative/creative6",
+      "event": "music.game.creative.creative6",
+      "title": "Creative 6",
+      "contexts": [
+        "CREATIVE"
+      ]
+    },
+    {
+      "id": "music/game/crescent_dunes",
+      "event": "music.game.crescent_dunes",
+      "title": "Crescent Dunes",
+      "contexts": [
+        "MAIN_MENU",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/echo_in_the_wind",
+      "event": "music.game.echo_in_the_wind",
+      "title": "Echo In The Wind",
+      "contexts": [
+        "MAIN_MENU",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/end/boss",
+      "event": "music.game.end.boss",
+      "title": "Boss",
+      "contexts": [
+        "BOSS"
+      ]
+    },
+    {
+      "id": "music/game/end/credits",
+      "event": "music.game.end.credits",
+      "title": "Credits",
+      "contexts": [
+        "CREDITS"
+      ]
+    },
+    {
+      "id": "music/game/end/end",
+      "event": "music.game.end.end",
+      "title": "End",
+      "contexts": [
+        "END"
+      ]
+    },
+    {
+      "id": "music/game/floating_dream",
+      "event": "music.game.floating_dream",
+      "title": "Floating Dream",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/hal1",
+      "event": "music.game.hal1",
+      "title": "Hal 1",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/hal2",
+      "event": "music.game.hal2",
+      "title": "Hal 2",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/hal3",
+      "event": "music.game.hal3",
+      "title": "Hal 3",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/hal4",
+      "event": "music.game.hal4",
+      "title": "Hal 4",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/infinite_amethyst",
+      "event": "music.game.infinite_amethyst",
+      "title": "Infinite Amethyst",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/left_to_bloom",
+      "event": "music.game.left_to_bloom",
+      "title": "Left To Bloom",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/nether/crimson_forest/chrysopoeia",
+      "event": "music.game.nether.crimson_forest.chrysopoeia",
+      "title": "Chrysopoeia",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/nether1",
+      "event": "music.game.nether.nether1",
+      "title": "Nether 1",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/nether2",
+      "event": "music.game.nether.nether2",
+      "title": "Nether 2",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/nether3",
+      "event": "music.game.nether.nether3",
+      "title": "Nether 3",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/nether4",
+      "event": "music.game.nether.nether4",
+      "title": "Nether 4",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/nether_wastes/rubedo",
+      "event": "music.game.nether.nether_wastes.rubedo",
+      "title": "Rubedo",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nether/soulsand_valley/so_below",
+      "event": "music.game.nether.soulsand_valley.so_below",
+      "title": "So Below",
+      "contexts": [
+        "NETHER"
+      ]
+    },
+    {
+      "id": "music/game/nuance1",
+      "event": "music.game.nuance1",
+      "title": "Nuance 1",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/nuance2",
+      "event": "music.game.nuance2",
+      "title": "Nuance 2",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/one_more_day",
+      "event": "music.game.one_more_day",
+      "title": "One More Day",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/piano1",
+      "event": "music.game.piano1",
+      "title": "Piano 1",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/piano2",
+      "event": "music.game.piano2",
+      "title": "Piano 2",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/piano3",
+      "event": "music.game.piano3",
+      "title": "Piano 3",
+      "contexts": [
+        "CREATIVE",
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/stand_tall",
+      "event": "music.game.stand_tall",
+      "title": "Stand Tall",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/swamp/aerie",
+      "event": "music.game.swamp.aerie",
+      "title": "Aerie",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/swamp/firebugs",
+      "event": "music.game.swamp.firebugs",
+      "title": "Firebugs",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/swamp/labyrinthine",
+      "event": "music.game.swamp.labyrinthine",
+      "title": "Labyrinthine",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/game/water/axolotl",
+      "event": "music.game.water.axolotl",
+      "title": "Axolotl",
+      "contexts": [
+        "UNDERWATER"
+      ]
+    },
+    {
+      "id": "music/game/water/dragon_fish",
+      "event": "music.game.water.dragon_fish",
+      "title": "Dragon Fish",
+      "contexts": [
+        "UNDERWATER"
+      ]
+    },
+    {
+      "id": "music/game/water/shuniji",
+      "event": "music.game.water.shuniji",
+      "title": "Shuniji",
+      "contexts": [
+        "UNDERWATER"
+      ]
+    },
+    {
+      "id": "music/game/wending",
+      "event": "music.game.wending",
+      "title": "Wending",
+      "contexts": [
+        "SURVIVAL"
+      ]
+    },
+    {
+      "id": "music/menu/menu1",
+      "event": "music.menu.menu1",
+      "title": "Menu 1",
+      "contexts": [
+        "MAIN_MENU"
+      ]
+    },
+    {
+      "id": "music/menu/menu2",
+      "event": "music.menu.menu2",
+      "title": "Menu 2",
+      "contexts": [
+        "MAIN_MENU"
+      ]
+    },
+    {
+      "id": "music/menu/menu3",
+      "event": "music.menu.menu3",
+      "title": "Menu 3",
+      "contexts": [
+        "MAIN_MENU"
+      ]
+    },
+    {
+      "id": "music/menu/menu4",
+      "event": "music.menu.menu4",
+      "title": "Menu 4",
+      "contexts": [
+        "MAIN_MENU"
+      ]
+    }
+  ]
+}
