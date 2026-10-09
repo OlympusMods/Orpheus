@@ -6,10 +6,10 @@ license="All Rights Reserved"
 modId="orpheus"
 version="1.0.0"
 displayName="Orpheus"
-authors="YourNameHere, OtherNameHere"
+authors="Akis"
+logoFile="icon.png"
 
-description='''Orpheus description.
-Newline characters can be used like this, and rendered on the mods screen properly.'''
+description='''Precise control over vanilla Minecraft music: per-situation track lists, frequency, weights, playback keys and presets.'''
 
 [[dependencies.orpheus]]
     modId="forge"
@@ -21,7 +21,7 @@ Newline characters can be used like this, and rendered on the mods screen proper
 [[dependencies.orpheus]]
     modId="minecraft"
     mandatory=true
-    versionRange="[26.1,26.2,)"
+    versionRange="[26.1,26.2)"
     ordering="NONE"
     side="BOTH"
 

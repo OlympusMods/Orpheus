@@ -128,3 +128,14 @@ mixin {
 dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
+
+sourceSets.main.java {
+    srcDir '../common/core/src/main/java'
+    srcDir '../common/client/src/main/java'
+    srcDir '../common/mc1_20/src/main/java'
+}
+
+sourceSets.main.resources {
+    srcDir '../common/resources'
+    srcDir '../common/generated/mc1_20'
+}

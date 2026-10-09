@@ -52,3 +52,14 @@ dependencies {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+sourceSets.main.java {
+    srcDir '../common/core/src/main/java'
+    srcDir '../common/client/src/main/java'
+    srcDir '../common/mc26/src/main/java'
+}
+
+sourceSets.main.resources {
+    srcDir '../common/resources'
+    srcDir '../common/generated/mc26'
+}
