@@ -1,0 +1,80 @@
+package com.github.olympus.orpheus.client;
+
+import com.github.olympus.orpheus.core.OrpheusRuntime;
+import com.github.olympus.orpheus.core.model.TrackCatalog;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public final class OrpheusClient {
+    public static final String MOD_ID = "orpheus";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    private static final String CATALOG = "/assets/orpheus/tracks.json";
+
+    private static Path configDirectory = Path.of("config");
+    private static OrpheusRuntime runtime;
+    private static KeyBindings keys;
+
+    private OrpheusClient() {
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(MOD_ID, path);
+    }
+
+    public static void configure(Path directory) {
+        configDirectory = directory;
+    }
+
+    public static synchronized OrpheusRuntime runtime() {
+        if (runtime == null) {
+            runtime = createRuntime(Minecraft.getInstance());
+            OrpheusRuntime.install(runtime);
+        }
+        return runtime;
+    }
+
+    public static synchronized KeyBindings keys() {
+        if (keys == null) {
+            keys = KeyFactory.create();
+        }
+        return keys;
+    }
+
+    public static synchronized void installKeys(KeyBindings bindings) {
+        keys = bindings;
+    }
+
+    public static void show(Screen screen) {
+        Minecraft.getInstance().setScreen(screen);
+    }
+
+    private static OrpheusRuntime createRuntime(Minecraft minecraft) {
+        ResourceManager resources = minecraft.getResourceManager();
+        TrackCatalog catalog;
+        try (InputStream stream = OrpheusClient.class.getResourceAsStream(CATALOG)) {
+            if (stream == null) {
+                throw new IllegalStateException("Missing " + CATALOG);
+            }
+            catalog = TrackCatalog.read(stream)
+                    .filter(track -> resources
+                            .getResource(new ResourceLocation("minecraft", "sounds/" + track.id() + ".ogg"))
+                            .isPresent());
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not read " + CATALOG, exception);
+        }
+        LOGGER.info("Orpheus found {} vanilla music tracks", catalog.size());
+        return new OrpheusRuntime(
+                configDirectory.resolve(MOD_ID),
+                catalog,
+                new MinecraftBackend(minecraft),
+                message -> LOGGER.error(message));
+    }
+}
