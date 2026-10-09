@@ -7,12 +7,29 @@ repositories {
 }
 
 loom {
-	splitEnvironmentSourceSets()
-
 	mods {
 		"orpheus" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = [
+				'src/main/java',
+				'../common/core/src/main/java',
+				'../common/client/src/main/java',
+				'../common/mc1_21/src/main/java'
+			]
+		}
+		resources {
+			srcDirs = [
+				'src/main/resources',
+				'../common/resources',
+				'../common/generated/mc1_21'
+			]
 		}
 	}
 }

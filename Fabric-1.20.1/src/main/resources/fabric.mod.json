@@ -3,7 +3,7 @@
 	"id": "orpheus",
 	"version": "${version}",
 	"name": "Orpheus",
-	"description": "",
+	"description": "Precise control over vanilla Minecraft music: per-situation track lists, frequency, weights, playback keys and presets.",
 	"authors": [
 		"Akis"
 	],
@@ -12,22 +12,15 @@
 		"sources": ""
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/orpheus/icon.png",
-	"environment": "*",
+	"icon": "icon.png",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"com.github.olympus.orpheus.Orpheus"
-		],
 		"client": [
-			"com.github.olympus.orpheus.client.OrpheusClient"
+			"com.github.olympus.orpheus.OrpheusFabric"
 		]
 	},
 	"mixins": [
-		"orpheus.mixins.json",
-		{
-			"config": "orpheus.client.mixins.json",
-			"environment": "client"
-		}
+		"orpheus.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
