@@ -20,6 +20,8 @@ minecraft {
             workingDir = layout.projectDirectory.dir('run')
 
             systemProperty 'forge.enabledGameTestNamespaces', 'orpheus'
+
+            args '--mixin.config', 'orpheus.mixins.json'
         }
 
         register('client')
@@ -47,6 +49,12 @@ repositories {
 
 dependencies {
     implementation minecraft.dependency('net.minecraftforge:forge:1.21.1-52.1.16')
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes 'MixinConfigs': 'orpheus.mixins.json'
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
