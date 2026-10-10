@@ -38,7 +38,7 @@
     {
       "id": "music/game/calm1",
       "event": "music.game.calm1",
-      "title": "Calm 1",
+      "title": "Minecraft",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -47,7 +47,7 @@
     {
       "id": "music/game/calm2",
       "event": "music.game.calm2",
-      "title": "Calm 2",
+      "title": "Clark",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -56,7 +56,7 @@
     {
       "id": "music/game/calm3",
       "event": "music.game.calm3",
-      "title": "Calm 3",
+      "title": "Sweden",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -74,7 +74,7 @@
     {
       "id": "music/game/creative/creative1",
       "event": "music.game.creative.creative1",
-      "title": "Creative 1",
+      "title": "Biome Fest",
       "contexts": [
         "CREATIVE"
       ]
@@ -82,7 +82,7 @@
     {
       "id": "music/game/creative/creative2",
       "event": "music.game.creative.creative2",
-      "title": "Creative 2",
+      "title": "Blind Spots",
       "contexts": [
         "CREATIVE"
       ]
@@ -90,7 +90,7 @@
     {
       "id": "music/game/creative/creative3",
       "event": "music.game.creative.creative3",
-      "title": "Creative 3",
+      "title": "Haunt Muskie",
       "contexts": [
         "CREATIVE"
       ]
@@ -98,7 +98,7 @@
     {
       "id": "music/game/creative/creative4",
       "event": "music.game.creative.creative4",
-      "title": "Creative 4",
+      "title": "Aria Math",
       "contexts": [
         "CREATIVE"
       ]
@@ -106,7 +106,7 @@
     {
       "id": "music/game/creative/creative5",
       "event": "music.game.creative.creative5",
-      "title": "Creative 5",
+      "title": "Dreiton",
       "contexts": [
         "CREATIVE"
       ]
@@ -114,7 +114,7 @@
     {
       "id": "music/game/creative/creative6",
       "event": "music.game.creative.creative6",
-      "title": "Creative 6",
+      "title": "Taswell",
       "contexts": [
         "CREATIVE"
       ]
@@ -173,7 +173,7 @@
     {
       "id": "music/game/hal1",
       "event": "music.game.hal1",
-      "title": "Hal 1",
+      "title": "Subwoofer Lullaby",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -182,7 +182,7 @@
     {
       "id": "music/game/hal2",
       "event": "music.game.hal2",
-      "title": "Hal 2",
+      "title": "Living Mice",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -191,7 +191,7 @@
     {
       "id": "music/game/hal3",
       "event": "music.game.hal3",
-      "title": "Hal 3",
+      "title": "Haggstrom",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -200,7 +200,7 @@
     {
       "id": "music/game/hal4",
       "event": "music.game.hal4",
-      "title": "Hal 4",
+      "title": "Danny",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -234,7 +234,7 @@
     {
       "id": "music/game/nether/nether1",
       "event": "music.game.nether.nether1",
-      "title": "Nether 1",
+      "title": "Concrete Halls",
       "contexts": [
         "NETHER"
       ]
@@ -242,7 +242,7 @@
     {
       "id": "music/game/nether/nether2",
       "event": "music.game.nether.nether2",
-      "title": "Nether 2",
+      "title": "Dead Voxel",
       "contexts": [
         "NETHER"
       ]
@@ -250,7 +250,7 @@
     {
       "id": "music/game/nether/nether3",
       "event": "music.game.nether.nether3",
-      "title": "Nether 3",
+      "title": "Warmth",
       "contexts": [
         "NETHER"
       ]
@@ -258,7 +258,7 @@
     {
       "id": "music/game/nether/nether4",
       "event": "music.game.nether.nether4",
-      "title": "Nether 4",
+      "title": "Ballad of the Cats",
       "contexts": [
         "NETHER"
       ]
@@ -282,7 +282,7 @@
     {
       "id": "music/game/nuance1",
       "event": "music.game.nuance1",
-      "title": "Nuance 1",
+      "title": "Key",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -291,7 +291,7 @@
     {
       "id": "music/game/nuance2",
       "event": "music.game.nuance2",
-      "title": "Nuance 2",
+      "title": "Oxygène",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -309,7 +309,7 @@
     {
       "id": "music/game/piano1",
       "event": "music.game.piano1",
-      "title": "Piano 1",
+      "title": "Dry Hands",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -318,7 +318,7 @@
     {
       "id": "music/game/piano2",
       "event": "music.game.piano2",
-      "title": "Piano 2",
+      "title": "Wet Hands",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -327,7 +327,7 @@
     {
       "id": "music/game/piano3",
       "event": "music.game.piano3",
-      "title": "Piano 3",
+      "title": "Mice on Venus",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
@@ -400,7 +400,7 @@
     {
       "id": "music/menu/menu1",
       "event": "music.menu.menu1",
-      "title": "Menu 1",
+      "title": "Mutation",
       "contexts": [
         "MAIN_MENU"
       ]
@@ -408,7 +408,7 @@
     {
       "id": "music/menu/menu2",
       "event": "music.menu.menu2",
-      "title": "Menu 2",
+      "title": "Moog City 2",
       "contexts": [
         "MAIN_MENU"
       ]
@@ -416,7 +416,7 @@
     {
       "id": "music/menu/menu3",
       "event": "music.menu.menu3",
-      "title": "Menu 3",
+      "title": "Beginning 2",
       "contexts": [
         "MAIN_MENU"
       ]
@@ -424,7 +424,7 @@
     {
       "id": "music/menu/menu4",
       "event": "music.menu.menu4",
-      "title": "Menu 4",
+      "title": "Floating Trees",
       "contexts": [
         "MAIN_MENU"
       ]

@@ -428,7 +428,7 @@
     {
       "id": "music/game/oxygene",
       "event": "music.game.oxygene",
-      "title": "Oxygene",
+      "title": "Oxygène",
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
