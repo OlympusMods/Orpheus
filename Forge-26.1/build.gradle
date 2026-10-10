@@ -19,6 +19,8 @@ minecraft {
 
             systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
             systemProperty 'forge.enabledGameTestNamespaces', 'orpheus'
+
+            args '--mixin.config', 'orpheus.mixins.json'
         }
 
         register('client')
@@ -47,6 +49,12 @@ repositories {
 dependencies {
     implementation minecraft.dependency('net.minecraftforge:forge:26.1-62.0.9')
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes 'MixinConfigs': 'orpheus.mixins.json'
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
