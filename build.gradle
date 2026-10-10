@@ -13,7 +13,7 @@ subprojects { sub ->
     def parts = sub.name.split('-', 2)
     def loader = parts[0]
     def minecraft = parts[1]
-    def major = gradle.ext.javaVersions[minecraft]
+    def major = loader == 'Fabric' ? 25 : gradle.ext.javaVersions[minecraft]
     def home = jdkHome(major)
 
     def delegate = { String taskName, String childTask, String text ->
@@ -45,6 +45,7 @@ subprojects { sub ->
     }
 
     delegate('build', 'build', "Builds ${loader} for Minecraft ${minecraft} with Java ${major}")
+    delegate('compile', 'compileJava', "Compiles ${loader} for Minecraft ${minecraft} with Java ${major}")
     delegate('clean', 'clean', "Cleans ${loader} for Minecraft ${minecraft}")
     delegate('runClient', 'runClient', "Runs the ${loader} ${minecraft} client")
 
@@ -78,6 +79,12 @@ tasks.register('buildAll') {
     group = 'orpheus'
     description = 'Builds every loader and Minecraft version into build/dist'
     dependsOn buildPaths { true }
+}
+
+tasks.register('compileAll') {
+    group = 'orpheus'
+    description = 'Compiles every loader and Minecraft version (use with --continue)'
+    dependsOn subprojects.collect { "${it.path}:compile".toString() }
 }
 
 tasks.register('clean') {

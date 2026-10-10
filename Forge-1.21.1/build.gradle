@@ -3,7 +3,6 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'net.minecraftforge.gradle' version '[7.0.3,8)'
-    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = findProperty('mod_version') ?: '1.0.0'
@@ -17,10 +16,6 @@ minecraft {
     mappings channel: 'official', version: '1.21.1'
 
     runs {
-        configureEach {
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-        }
         configureEach {
             workingDir = layout.projectDirectory.dir('run')
 
@@ -56,15 +51,6 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-mixin {
-    add sourceSets.main, 'orpheus.refmap.json'
-    config 'orpheus.mixins.json'
-}
-
-dependencies {
-    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 }
 
 sourceSets.main.java {
