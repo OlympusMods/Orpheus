@@ -39,7 +39,7 @@ public final class OrpheusHooks {
         if (music == null) {
             return Optional.empty();
         }
-        ResourceLocation key = BuiltInRegistries.SOUND_EVENT.getKey(music.getEvent());
+        ResourceLocation key = BuiltInRegistries.SOUND_EVENT.getKey(music.getEvent().value());
         if (key == null) {
             return Optional.empty();
         }
