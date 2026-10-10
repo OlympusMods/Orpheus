@@ -11,9 +11,11 @@ modId="${mod_id}"
 version="${mod_version}"
 
 displayName="${mod_name}"
+authors="Akis"
+logoFile="icon.png"
 
 description='''
-Orpheus description.
+Precise control over vanilla Minecraft music: per-situation track lists, frequency, weights, playback keys and presets.
 '''
 
 [[dependencies.${mod_id}]]

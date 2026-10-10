@@ -1,14 +1,29 @@
 package com.github.olympus.orpheus;
 
+import com.github.olympus.orpheus.client.KeyFactory;
+import com.github.olympus.orpheus.client.OrpheusClient;
+import net.minecraft.client.KeyMapping;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-@Mod(Orpheus.MOD_ID)
+@Mod(value = Orpheus.MOD_ID, dist = Dist.CLIENT)
 public class Orpheus {
     public static final String MOD_ID = "orpheus";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
-    public Orpheus() {
+    public Orpheus(IEventBus modBus) {
+        modBus.addListener(Orpheus::onRegisterKeys);
+    }
+
+    private static void onRegisterKeys(RegisterKeyMappingsEvent event) {
+        OrpheusClient.configure(FMLPaths.CONFIGDIR.get());
+        KeyMapping.Category category = new KeyMapping.Category(OrpheusClient.id("main"));
+        event.registerCategory(category);
+        OrpheusClient.installKeys(KeyFactory.create(category));
+        for (KeyMapping key : OrpheusClient.keys().all()) {
+            event.register(key);
+        }
     }
 }
