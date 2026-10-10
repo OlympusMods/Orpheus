@@ -1,0 +1,24 @@
+rootProject.name = 'Orpheus'
+
+def targets = [
+    'Fabric'  : ['1.20.1', '1.21.1', '26.1'],
+    'Forge'   : ['1.20.1', '1.21.1', '26.1'],
+    'NeoForge': ['1.21.1', '26.1']
+]
+
+def javaVersions = [
+    '1.20.1': 17,
+    '1.21.1': 21,
+    '26.1'  : 25
+]
+
+gradle.ext.targets = targets
+gradle.ext.javaVersions = javaVersions
+
+targets.each { loader, versions ->
+    versions.each { version ->
+        def name = "${loader}-${version}"
+        include name
+        project(":${name}").buildFileName = 'orpheus-delegate.gradle'
+    }
+}

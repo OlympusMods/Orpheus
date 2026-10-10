@@ -1,0 +1,109 @@
+def windows = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
+def modVersion = findProperty('mod_version') ?: '1.0.0'
+def useDaemon = Boolean.parseBoolean(String.valueOf(findProperty('useDaemon') ?: 'false'))
+def extraArgs = String.valueOf(findProperty('childArgs') ?: '').trim()
+def dist = layout.buildDirectory.dir('dist')
+
+def jdkHome = { int major ->
+    def value = findProperty("java${major}Home") ?: System.getenv("JAVA${major}_HOME")
+    return value ? value.toString() : null
+}
+
+subprojects { sub ->
+    def parts = sub.name.split('-', 2)
+    def loader = parts[0]
+    def minecraft = parts[1]
+    def major = gradle.ext.javaVersions[minecraft]
+    def home = jdkHome(major)
+
+    def delegate = { String taskName, String childTask, String text ->
+        sub.tasks.register(taskName, Exec) {
+            group = 'orpheus'
+            description = text
+            workingDir = sub.projectDir
+            def command = windows
+                    ? ['cmd', '/c', 'gradlew.bat']
+                    : ['sh', new File(sub.projectDir, 'gradlew').absolutePath]
+            command << childTask
+            command << "-Pmod_version=${modVersion}".toString()
+            command << "-Pversion=${modVersion}".toString()
+            if (!useDaemon) {
+                command << '--no-daemon'
+            }
+            if (gradle.startParameter.offline) {
+                command << '--offline'
+            }
+            if (home) {
+                environment 'JAVA_HOME', home
+                command << "-Dorg.gradle.java.installations.paths=${home}".toString()
+            }
+            if (extraArgs) {
+                command.addAll(extraArgs.split('\\s+') as List)
+            }
+            commandLine command
+        }
+    }
+
+    delegate('build', 'build', "Builds ${loader} for Minecraft ${minecraft} with Java ${major}")
+    delegate('clean', 'clean', "Cleans ${loader} for Minecraft ${minecraft}")
+    delegate('runClient', 'runClient', "Runs the ${loader} ${minecraft} client")
+
+    sub.tasks.register('collectJar', Copy) {
+        group = 'orpheus'
+        description = "Copies the ${loader} ${minecraft} jar into the root dist directory"
+        from(sub.layout.projectDirectory.dir('build/libs')) {
+            include '*.jar'
+            exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar', '*-slim.jar'
+        }
+        into(dist)
+        rename { "orpheus-${loader.toLowerCase(Locale.ROOT)}-${minecraft}-${modVersion}.jar".toString() }
+    }
+
+    sub.tasks.named('build') {
+        finalizedBy 'collectJar'
+    }
+}
+
+def buildPaths = { Closure filter ->
+    subprojects.findAll(filter).collect { "${it.path}:build".toString() }
+}
+
+tasks.register('build') {
+    group = 'orpheus'
+    description = 'Builds every loader and Minecraft version into build/dist'
+    dependsOn buildPaths { true }
+}
+
+tasks.register('buildAll') {
+    group = 'orpheus'
+    description = 'Builds every loader and Minecraft version into build/dist'
+    dependsOn buildPaths { true }
+}
+
+tasks.register('clean') {
+    group = 'orpheus'
+    description = 'Cleans every loader and Minecraft version'
+    dependsOn subprojects.collect { "${it.path}:clean".toString() }
+}
+
+tasks.register('cleanAll') {
+    group = 'orpheus'
+    description = 'Cleans every loader and Minecraft version'
+    dependsOn subprojects.collect { "${it.path}:clean".toString() }
+}
+
+gradle.ext.targets.keySet().each { loader ->
+    tasks.register("build${loader}") {
+        group = 'orpheus'
+        description = "Builds every ${loader} version"
+        dependsOn buildPaths { it.name.startsWith("${loader}-") }
+    }
+}
+
+gradle.ext.javaVersions.keySet().each { minecraft ->
+    tasks.register("build_${minecraft.replace('.', '_')}") {
+        group = 'orpheus'
+        description = "Builds every loader for Minecraft ${minecraft}"
+        dependsOn buildPaths { it.name.endsWith("-${minecraft}") }
+    }
+}
