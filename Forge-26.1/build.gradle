@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[7.0.17,8)'
 }
 
-version = '1.0.0'
+version = findProperty('mod_version') ?: '1.0.0'
 group = 'com.github.olympus.orpheus'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
@@ -62,4 +62,13 @@ sourceSets.main.java {
 sourceSets.main.resources {
     srcDir '../common/resources'
     srcDir '../common/generated/mc26'
+}
+
+def forgeModVersion = project.version.toString()
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.property 'mod_version', forgeModVersion
+    filesMatching('META-INF/mods.toml') {
+        expand(mod_version: forgeModVersion)
+    }
 }

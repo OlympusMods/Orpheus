@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '1.0.0'
+version = findProperty('mod_version') ?: '1.0.0'
 group = 'com.github.olympus.orpheus'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -76,4 +76,13 @@ sourceSets.main.java {
 sourceSets.main.resources {
     srcDir '../common/resources'
     srcDir '../common/generated/mc1_21'
+}
+
+def forgeModVersion = project.version.toString()
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.property 'mod_version', forgeModVersion
+    filesMatching('META-INF/mods.toml') {
+        expand(mod_version: forgeModVersion)
+    }
 }
