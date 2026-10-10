@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[62,)"
-license="All Rights Reserved"
+license="GPL-3.0-only"
 
 [[mods]]
 modId="orpheus"
