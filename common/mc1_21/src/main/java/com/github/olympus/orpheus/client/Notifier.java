@@ -7,9 +7,9 @@ public final class Notifier {
     private Notifier() {
     }
 
-    public static void announce(Minecraft minecraft, String text) {
+    public static void announce(Minecraft minecraft, Component message) {
         if (minecraft.player != null) {
-            minecraft.player.displayClientMessage(Component.literal(text), true);
+            minecraft.player.displayClientMessage(message, true);
         }
     }
 }

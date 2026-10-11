@@ -1,5 +1,6 @@
 package com.github.olympus.orpheus.core.model;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public enum MusicContext {
@@ -24,8 +25,13 @@ public enum MusicContext {
         this.defaultMaxSeconds = defaultMaxSeconds;
     }
 
+    /** English fallback name. The screens use {@link #translationKey()} so the name can be translated. */
     public String label() {
         return label;
+    }
+
+    public String translationKey() {
+        return "orpheus.context." + name().toLowerCase(Locale.ROOT);
     }
 
     public int defaultMinSeconds() {
