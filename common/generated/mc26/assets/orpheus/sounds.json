@@ -13,7 +13,7 @@
       {
         "name": "minecraft:music/game/an_ordinary_day",
         "stream": true,
-        "volume": 0.8
+        "volume": 0.4
       }
     ]
   },
@@ -190,6 +190,14 @@
     "sounds": [
       {
         "name": "minecraft:music/game/end/boss",
+        "stream": true
+      }
+    ]
+  },
+  "music.game.end.credits": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/end/credits",
         "stream": true
       }
     ]

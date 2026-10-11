@@ -21,17 +21,23 @@ import java.util.function.Predicate;
 
 public final class TrackCatalog {
     private final Map<String, Track> tracks;
+    private final Map<String, String> aliases;
 
-    private TrackCatalog(Map<String, Track> tracks) {
+    private TrackCatalog(Map<String, Track> tracks, Map<String, String> aliases) {
         this.tracks = tracks;
+        this.aliases = aliases;
     }
 
     public static TrackCatalog of(Collection<Track> tracks) {
         Map<String, Track> map = new LinkedHashMap<>();
+        Map<String, String> aliases = new LinkedHashMap<>();
         for (Track track : tracks) {
             map.put(track.id(), track);
+            for (String alias : track.aliases()) {
+                aliases.put(alias, track.id());
+            }
         }
-        return new TrackCatalog(Collections.unmodifiableMap(map));
+        return new TrackCatalog(Collections.unmodifiableMap(map), Collections.unmodifiableMap(aliases));
     }
 
     public static TrackCatalog empty() {
@@ -53,12 +59,21 @@ public final class TrackCatalog {
                         continue;
                     }
                 }
+                String id = object.get("id").getAsString();
+                List<String> aliases = new ArrayList<>();
+                if (object.has("aliases")) {
+                    for (JsonElement alias : object.getAsJsonArray("aliases")) {
+                        aliases.add(alias.getAsString());
+                    }
+                }
                 list.add(
                         new Track(
-                                object.get("id").getAsString(),
+                                id,
                                 object.get("event").getAsString(),
                                 object.get("title").getAsString(),
-                                contexts));
+                                object.has("file") ? object.get("file").getAsString() : id,
+                                contexts,
+                                aliases));
             }
             return of(list);
         }
@@ -69,11 +84,16 @@ public final class TrackCatalog {
     }
 
     public Optional<Track> find(String id) {
-        return Optional.ofNullable(tracks.get(id));
+        return Optional.ofNullable(tracks.get(canonicalId(id)));
     }
 
     public boolean contains(String id) {
-        return tracks.containsKey(id);
+        return tracks.containsKey(canonicalId(id));
+    }
+
+    /** Maps an old song id to the id the catalog uses today; unknown ids come back unchanged. */
+    public String canonicalId(String id) {
+        return aliases.getOrDefault(id, id);
     }
 
     public int size() {

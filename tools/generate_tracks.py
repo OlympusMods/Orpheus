@@ -6,10 +6,52 @@ from pathlib import Path
 
 SOURCE = "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/{version}/assets/minecraft/sounds.json"
 
+# Every release whose music we merge into one catalog, oldest to newest.
+HISTORY = [
+    "1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14", "1.15", "1.16.1", "1.16.5", "1.17.1",
+    "1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.4", "1.20.6", "1.21", "1.21.1", "1.21.3",
+    "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
+    "26.1", "26.2", "26.3",
+]
+
+# Every loader family gets the full catalog. The version is the one whose bundled
+# files decide which file name a song is played from natively.
 FAMILIES = {
-    "mc1_20": ["1.20.1"],
-    "mc1_21": ["1.21.1"],
-    "mc26": ["26.1", "26.2", "26.3"],
+    "mc1_20": "1.20.1",
+    "mc1_21": "1.21.1",
+    "mc26": "26.1",
+}
+
+# Mojang renamed many song files in 1.20.3. The old name and the new name are the
+# same song, so the new name is the canonical id and the old one stays as an alias.
+ALIASES = {
+    "music/game/calm1": "music/game/minecraft",
+    "music/game/calm2": "music/game/clark",
+    "music/game/calm3": "music/game/sweden",
+    "music/game/hal1": "music/game/subwoofer_lullaby",
+    "music/game/hal2": "music/game/living_mice",
+    "music/game/hal3": "music/game/haggstrom",
+    "music/game/hal4": "music/game/danny",
+    "music/game/nuance1": "music/game/key",
+    "music/game/nuance2": "music/game/oxygene",
+    "music/game/piano1": "music/game/dry_hands",
+    "music/game/piano2": "music/game/wet_hands",
+    "music/game/piano3": "music/game/mice_on_venus",
+    "music/game/creative/creative1": "music/game/creative/biome_fest",
+    "music/game/creative/creative2": "music/game/creative/blind_spots",
+    "music/game/creative/creative3": "music/game/creative/haunt_muskie",
+    "music/game/creative/creative4": "music/game/creative/aria_math",
+    "music/game/creative/creative5": "music/game/creative/dreiton",
+    "music/game/creative/creative6": "music/game/creative/taswell",
+    "music/game/nether/nether1": "music/game/nether/concrete_halls",
+    "music/game/nether/nether2": "music/game/nether/dead_voxel",
+    "music/game/nether/nether3": "music/game/nether/warmth",
+    "music/game/nether/nether4": "music/game/nether/ballad_of_the_cats",
+    "music/menu/menu1": "music/menu/mutation",
+    "music/menu/menu2": "music/menu/moog_city_2",
+    "music/menu/menu3": "music/menu/beginning_2",
+    "music/menu/menu4": "music/menu/floating_trees",
+    "music/game/end/end": "music/game/end/the_end",
 }
 
 EVENT_CONTEXTS = [
@@ -18,7 +60,7 @@ EVENT_CONTEXTS = [
     (re.compile(r"^music\.game$"), "SURVIVAL"),
     (re.compile(r"^music\.overworld\..+$"), "SURVIVAL"),
     (re.compile(r"^music\.under_water$"), "UNDERWATER"),
-    (re.compile(r"^music\.nether\..+$"), "NETHER"),
+    (re.compile(r"^music\.nether(\..+)?$"), "NETHER"),
     (re.compile(r"^music\.end$"), "END"),
     (re.compile(r"^music\.dragon$"), "BOSS"),
     (re.compile(r"^music\.credits$"), "CREDITS"),
@@ -28,34 +70,11 @@ NESTED = {"music.creative": ["music.game"]}
 
 
 TITLES = {
-    "music/game/calm1": "Minecraft",
-    "music/game/calm2": "Clark",
-    "music/game/calm3": "Sweden",
-    "music/game/hal1": "Subwoofer Lullaby",
-    "music/game/hal2": "Living Mice",
-    "music/game/hal3": "Haggstrom",
-    "music/game/hal4": "Danny",
-    "music/game/nuance1": "Key",
-    "music/game/nuance2": "Oxygène",
-    "music/game/piano1": "Dry Hands",
-    "music/game/piano2": "Wet Hands",
-    "music/game/piano3": "Mice on Venus",
-    "music/game/creative/creative1": "Biome Fest",
-    "music/game/creative/creative2": "Blind Spots",
-    "music/game/creative/creative3": "Haunt Muskie",
-    "music/game/creative/creative4": "Aria Math",
-    "music/game/creative/creative5": "Dreiton",
-    "music/game/creative/creative6": "Taswell",
-    "music/game/nether/nether1": "Concrete Halls",
-    "music/game/nether/nether2": "Dead Voxel",
-    "music/game/nether/nether3": "Warmth",
-    "music/game/nether/nether4": "Ballad of the Cats",
-    "music/menu/menu1": "Mutation",
-    "music/menu/menu2": "Moog City 2",
-    "music/menu/menu3": "Beginning 2",
-    "music/menu/menu4": "Floating Trees",
     "music/game/oxygene": "Oxygène",
+    "music/game/end/the_end": "The End",
 }
+
+SMALL_WORDS = {"a", "an", "and", "in", "of", "on", "the", "to"}
 
 
 def fetch(version):
@@ -82,18 +101,31 @@ def humanize(track_id):
     if track_id in TITLES:
         return TITLES[track_id]
     leaf = track_id.rsplit("/", 1)[-1]
-    leaf = re.sub(r"(\D)(\d)", r"\1 \2", leaf)
-    return " ".join(part.capitalize() for part in leaf.split("_"))
+    words = leaf.split("_")
+    result = []
+    for index, word in enumerate(words):
+        if index > 0 and word in SMALL_WORDS:
+            result.append(word)
+        else:
+            result.append(word.capitalize())
+    return " ".join(result)
+
+
+_sounds_cache = {}
+
+
+def sounds_of(version):
+    if version not in _sounds_cache:
+        _sounds_cache[version] = fetch(version)
+    return _sounds_cache[version]
 
 
 def collect(versions):
+    """Returns {file id: {"attributes": {...}, "contexts": {...}}} merged over all versions."""
     tracks = {}
     for version in versions:
-        sounds = fetch(version)
-        for event, definition in sounds.items():
-            if not event.startswith("music."):
-                continue
-            if event.startswith("music_disc"):
+        for event, definition in sounds_of(version).items():
+            if not event.startswith("music.") or event.startswith("music_disc"):
                 continue
             context = context_of(event)
             if context is None:
@@ -103,8 +135,7 @@ def collect(versions):
                 if event in nested:
                     contexts.add(context_of(owner))
             for entry in sound_entries(definition):
-                track_id = entry["name"]
-                track = tracks.setdefault(track_id, {"attributes": {}, "contexts": set()})
+                track = tracks.setdefault(entry["name"], {"attributes": {}, "contexts": set()})
                 track["contexts"].update(contexts)
                 for key, value in entry.items():
                     if key not in ("name", "weight", "stream", "type"):
@@ -112,38 +143,68 @@ def collect(versions):
     return tracks
 
 
+def merge_aliases(files):
+    """Folds every renamed song into its canonical id and remembers the old names."""
+    songs = {}
+    for file_id, data in files.items():
+        canonical = ALIASES.get(file_id, file_id)
+        song = songs.setdefault(canonical, {"attributes": {}, "contexts": set(), "aliases": set()})
+        song["contexts"].update(data["contexts"])
+        for key, value in data["attributes"].items():
+            song["attributes"].setdefault(key, value)
+        if canonical != file_id:
+            song["aliases"].add(file_id)
+    return songs
+
+
+def native_files(version):
+    names = set()
+    for event, definition in sounds_of(version).items():
+        if event.startswith("music."):
+            for entry in sound_entries(definition):
+                names.add(entry["name"])
+    return names
+
+
 def event_name(track_id):
     return track_id.replace("/", ".")
 
 
-def write_family(root, family, tracks):
+def write_family(root, family, native_version, songs):
     target = root / "common" / "generated" / family / "assets" / "orpheus"
     target.mkdir(parents=True, exist_ok=True)
+    native = native_files(native_version)
     sounds = {}
     catalog = []
-    for track_id in sorted(tracks):
-        track = tracks[track_id]
-        sound = {"name": "minecraft:" + track_id, "stream": True}
-        sound.update(track["attributes"])
+    for track_id in sorted(songs):
+        song = songs[track_id]
+        # Play the file the game really ships; fall back to the newest name, which is
+        # what the downloaded music pack provides.
+        file_id = next((name for name in [track_id] + sorted(song["aliases"]) if name in native), track_id)
+        sound = {"name": "minecraft:" + file_id, "stream": True}
+        sound.update(song["attributes"])
         sounds[event_name(track_id)] = {"sounds": [sound]}
-        catalog.append(
-            {
-                "id": track_id,
-                "event": event_name(track_id),
-                "title": humanize(track_id),
-                "contexts": sorted(track["contexts"]),
-            }
-        )
+        entry = {
+            "id": track_id,
+            "event": event_name(track_id),
+            "title": humanize(track_id),
+            "file": file_id,
+            "contexts": sorted(song["contexts"]),
+        }
+        if song["aliases"]:
+            entry["aliases"] = sorted(song["aliases"])
+        catalog.append(entry)
     (target / "sounds.json").write_text(json.dumps(sounds, indent=2) + "\n", encoding="utf-8")
-    (target / "tracks.json").write_text(json.dumps({"tracks": catalog}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (target / "tracks.json").write_text(
+        json.dumps({"tracks": catalog}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return len(catalog)
 
 
 def main():
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
-    for family, versions in FAMILIES.items():
-        count = write_family(root, family, collect(versions))
-        print(family, count)
+    songs = merge_aliases(collect(HISTORY))
+    for family, native_version in FAMILIES.items():
+        print(family, write_family(root, family, native_version, songs))
 
 
 if __name__ == "__main__":

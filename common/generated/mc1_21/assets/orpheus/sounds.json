@@ -25,6 +25,24 @@
       }
     ]
   },
+  "music.game.below_and_above": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/below_and_above",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
+  "music.game.broken_clocks": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/broken_clocks",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
   "music.game.bromeliad": {
     "sounds": [
       {
@@ -133,6 +151,15 @@
       }
     ]
   },
+  "music.game.ebb": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/ebb",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
   "music.game.echo_in_the_wind": {
     "sounds": [
       {
@@ -167,6 +194,14 @@
       }
     ]
   },
+  "music.game.end.credits": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/end/credits",
+        "stream": true
+      }
+    ]
+  },
   "music.game.end.the_end": {
     "sounds": [
       {
@@ -193,6 +228,15 @@
       }
     ]
   },
+  "music.game.fireflies": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/fireflies",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
   "music.game.floating_dream": {
     "sounds": [
       {
@@ -207,6 +251,15 @@
       {
         "name": "minecraft:music/game/haggstrom",
         "stream": true
+      }
+    ]
+  },
+  "music.game.home": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/home",
+        "stream": true,
+        "volume": 0.4
       }
     ]
   },
@@ -245,11 +298,29 @@
       }
     ]
   },
+  "music.game.lilypad": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/lilypad",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
   "music.game.living_mice": {
     "sounds": [
       {
         "name": "minecraft:music/game/living_mice",
         "stream": true
+      }
+    ]
+  },
+  "music.game.memories": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/memories",
+        "stream": true,
+        "volume": 0.4
       }
     ]
   },
@@ -328,10 +399,28 @@
       }
     ]
   },
+  "music.game.nightly": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/nightly",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
   "music.game.one_more_day": {
     "sounds": [
       {
         "name": "minecraft:music/game/one_more_day",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
+  "music.game.os_piano": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/os_piano",
         "stream": true,
         "volume": 0.4
       }
@@ -358,6 +447,15 @@
     "sounds": [
       {
         "name": "minecraft:music/game/puzzlebox",
+        "stream": true,
+        "volume": 0.4
+      }
+    ]
+  },
+  "music.game.shores": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/shores",
         "stream": true,
         "volume": 0.4
       }

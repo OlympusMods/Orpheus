@@ -14,22 +14,34 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class OrpheusRuntime {
     private static OrpheusRuntime instance;
 
     private final PresetStore store;
     private final TrackCatalog catalog;
+    private final Predicate<Track> availability;
     private final PlaybackController controller;
     private final Consumer<String> errors;
     private Preset active;
 
-    public OrpheusRuntime(Path root, TrackCatalog catalog, PlaybackBackend backend, Consumer<String> errors) {
+    /**
+     * @param catalog      every known song, whether or not its audio file exists in this game
+     * @param availability tells whether a song can actually be played right now
+     */
+    public OrpheusRuntime(
+            Path root,
+            TrackCatalog catalog,
+            Predicate<Track> availability,
+            PlaybackBackend backend,
+            Consumer<String> errors) {
         this.store = new PresetStore(root, catalog);
         this.catalog = catalog;
+        this.availability = availability;
         this.errors = errors;
         this.active = loadInitial();
-        this.controller = new PlaybackController(backend, () -> active, () -> this.catalog, new Random());
+        this.controller = new PlaybackController(backend, () -> active, this::selectable, new Random());
         this.controller.onPersist(this::saveActive);
     }
 
@@ -43,6 +55,15 @@ public final class OrpheusRuntime {
 
     public TrackCatalog catalog() {
         return catalog;
+    }
+
+    public boolean isAvailable(Track track) {
+        return availability.test(track);
+    }
+
+    /** The songs that can be played right now: the catalog minus songs whose audio is missing. */
+    public TrackCatalog selectable() {
+        return catalog.filter(availability);
     }
 
     public Preset active() {

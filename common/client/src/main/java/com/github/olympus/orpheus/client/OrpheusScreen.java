@@ -98,7 +98,7 @@ public final class OrpheusScreen extends Screen {
         });
 
         int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - HEADER_HEIGHT - FOOTER_HEIGHT) / ROW_HEIGHT));
-        List<Track> tracks = TrackListing.sorted(runtime.catalog());
+        List<Track> tracks = TrackListing.sorted(runtime.selectable());
         page = Pager.clamp(page, tracks.size(), rows);
         y = HEADER_HEIGHT;
         for (Track track : Pager.slice(tracks, page, rows)) {

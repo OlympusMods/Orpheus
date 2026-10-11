@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,23 +56,22 @@ public final class OrpheusClient {
     }
 
     private static OrpheusRuntime createRuntime(Minecraft minecraft) {
-        ResourceManager resources = minecraft.getResourceManager();
         TrackCatalog catalog;
         try (InputStream stream = OrpheusClient.class.getResourceAsStream(CATALOG)) {
             if (stream == null) {
                 throw new IllegalStateException("Missing " + CATALOG);
             }
-            catalog = TrackCatalog.read(stream)
-                    .filter(track -> resources
-                            .getResource(ResourceLocation.fromNamespaceAndPath("minecraft", "sounds/" + track.id() + ".ogg"))
-                            .isPresent());
+            catalog = TrackCatalog.read(stream);
         } catch (IOException exception) {
             throw new IllegalStateException("Could not read " + CATALOG, exception);
         }
-        LOGGER.info("Orpheus found {} vanilla music tracks", catalog.size());
+        TrackAvailability availability = new TrackAvailability(minecraft);
+        long playable = catalog.all().stream().filter(availability).count();
+        LOGGER.info("Orpheus knows {} songs, {} of them can be played right now", catalog.size(), playable);
         return new OrpheusRuntime(
                 configDirectory.resolve(MOD_ID),
                 catalog,
+                availability,
                 new MinecraftBackend(minecraft),
                 message -> LOGGER.error(message));
     }

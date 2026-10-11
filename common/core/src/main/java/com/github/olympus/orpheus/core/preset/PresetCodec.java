@@ -50,21 +50,21 @@ public final class PresetCodec {
         }
         if (root.has("blacklist") && root.get("blacklist").isJsonArray()) {
             for (JsonElement element : root.getAsJsonArray("blacklist")) {
-                preset.blacklist(element.getAsString());
+                preset.blacklist(catalog.canonicalId(element.getAsString()));
             }
         }
         if (root.has("contexts") && root.get("contexts").isJsonObject()) {
             JsonObject contexts = root.getAsJsonObject("contexts");
             for (MusicContext context : MusicContext.values()) {
                 if (contexts.has(context.name()) && contexts.get(context.name()).isJsonObject()) {
-                    decodeContext(contexts.getAsJsonObject(context.name()), preset.settings(context));
+                    decodeContext(contexts.getAsJsonObject(context.name()), preset.settings(context), catalog);
                 }
             }
         }
         return preset;
     }
 
-    private static void decodeContext(JsonObject object, ContextSettings settings) {
+    private static void decodeContext(JsonObject object, ContextSettings settings, TrackCatalog catalog) {
         if (object.has("managed")) {
             settings.setManaged(object.get("managed").getAsBoolean());
         }
@@ -82,7 +82,9 @@ public final class PresetCodec {
                 settings.exclude(id);
             }
             for (Map.Entry<String, JsonElement> entry : object.getAsJsonObject("tracks").entrySet()) {
-                settings.setWeight(entry.getKey(), entry.getValue().getAsInt());
+                String id = catalog.canonicalId(entry.getKey());
+                int weight = entry.getValue().getAsInt();
+                settings.setWeight(id, Math.max(weight, settings.weight(id)));
             }
         }
     }
