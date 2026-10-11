@@ -85,5 +85,7 @@
   "orpheus.presets.copy.tooltip": "Creates a new preset from the settings you are using now.",
   "orpheus.presets.blank": "Blank",
   "orpheus.presets.blank.tooltip": "Creates a new preset with the default settings.",
-  "orpheus.presets.back": "Back"
+  "orpheus.presets.back": "Back",
+  "orpheus.options.button": "Music Options...",
+  "orpheus.options.button.tooltip": "Open the Orpheus music settings."
 }
