@@ -21,6 +21,19 @@ public final class Texts {
         return Component.translatableWithFallback("orpheus.track." + track.id().replace('/', '.'), track.title());
     }
 
+    /** 45 becomes "45s", 90 becomes "1m 30s"; the units come from the language file. */
+    public static Component duration(int seconds) {
+        if (seconds < 60) {
+            return Component.translatable("orpheus.time.seconds", seconds);
+        }
+        int minutes = seconds / 60;
+        int rest = seconds % 60;
+        if (rest == 0) {
+            return Component.translatable("orpheus.time.minutes", minutes);
+        }
+        return Component.translatable("orpheus.time.minutes_seconds", minutes, rest);
+    }
+
     public static Component onOff(boolean value) {
         return Component.translatable(value ? "orpheus.state.on" : "orpheus.state.off");
     }

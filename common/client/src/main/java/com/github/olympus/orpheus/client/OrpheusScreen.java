@@ -8,33 +8,50 @@ import com.github.olympus.orpheus.core.preset.Preset;
 import com.github.olympus.orpheus.core.ui.DelayStep;
 import com.github.olympus.orpheus.core.ui.Pager;
 import com.github.olympus.orpheus.core.ui.TrackListing;
+import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public final class OrpheusScreen extends Screen {
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 20;
-    private static final int GAP = 4;
+/**
+ * The main Orpheus screen.
+ *
+ * <pre>
+ *   Now playing: ...                         row 0: what is playing
+ *   [ Settings ] [ Songs ]                   row 1: tabs
+ *   [<]  Situation: Survival  [>]            row 2: which situation is being edited
+ *   ...tab content...                        Settings tab or Songs tab
+ *   [ Done ]
+ * </pre>
+ *
+ * Everything on this screen belongs to one "situation" (survival, nether, main menu, ...)
+ * except the on/off switch and the preset, which apply to the whole mod.
+ */
+public final class OrpheusScreen extends OrpheusBaseScreen {
+    private static final int TOP = 6;
+    private static final int CONTENT_TOP = TOP + 3 * STEP + GAP;
+    private static final int FOOTER_HEIGHT = 2 * STEP + GAP;
     private static final int ROW_HEIGHT = 22;
-    private static final int HEADER_HEIGHT = 134;
-    private static final int FOOTER_HEIGHT = 56;
     private static final int MIN_ROWS = 3;
-    private static final int MAX_ROWS = 8;
+    private static final int MAX_ROWS = 12;
+    private static final int REFRESH_TICKS = 10;
 
-    private final Screen parent;
-    private MusicContext context = MusicContext.SURVIVAL;
-    private int page;
-
-    public OrpheusScreen(Screen parent) {
-        super(Component.literal("Orpheus"));
-        this.parent = parent;
+    private enum Tab {
+        SETTINGS,
+        SONGS
     }
 
-    @Override
-    protected void init() {
-        build();
+    private final Screen parent;
+    private Tab tab = Tab.SETTINGS;
+    private MusicContext context = MusicContext.SURVIVAL;
+    private int page;
+    private Button nowPlaying;
+    private int ticks;
+
+    public OrpheusScreen(Screen parent) {
+        super(text("orpheus.screen.title"));
+        this.parent = parent;
     }
 
     @Override
@@ -43,136 +60,203 @@ public final class OrpheusScreen extends Screen {
         OrpheusClient.show(parent);
     }
 
-    private void build() {
+    /** Keeps the "now playing" line up to date while the screen is open. */
+    public void tick() {
+        if (nowPlaying != null && ++ticks % REFRESH_TICKS == 0) {
+            nowPlaying.setMessage(nowPlayingText(OrpheusClient.runtime()));
+        }
+    }
+
+    @Override
+    protected void rebuild() {
         clearWidgets();
         OrpheusRuntime runtime = OrpheusClient.runtime();
-        Preset preset = runtime.active();
-        ContextSettings settings = preset.settings(context);
-        int left = (width - WIDTH) / 2;
+        int left = left();
+
+        nowPlaying = label(left, TOP, WIDTH, nowPlayingText(runtime), null);
+        addTabs(left, TOP + STEP);
+        addSituationRow(left, TOP + 2 * STEP);
+
+        if (tab == Tab.SETTINGS) {
+            addSettingsTab(runtime, left, CONTENT_TOP);
+        } else {
+            addSongsTab(runtime, left, CONTENT_TOP);
+        }
+        button(left, height - STEP - GAP, WIDTH, text("orpheus.screen.done"), null, this::onClose);
+    }
+
+    private Component nowPlayingText(OrpheusRuntime runtime) {
+        return runtime.nowPlaying()
+                .map(track -> text("orpheus.screen.now_playing", Texts.track(track)))
+                .orElseGet(() -> text("orpheus.screen.nothing_playing"));
+    }
+
+    private void addTabs(int left, int y) {
         int half = (WIDTH - GAP) / 2;
-        int y = 8;
+        Button settings = button(left, y, half, text("orpheus.screen.tab.settings"),
+                text("orpheus.screen.tab.settings.tooltip"), () -> switchTab(Tab.SETTINGS));
+        settings.active = tab != Tab.SETTINGS;
+        Button songs = button(left + half + GAP, y, half, text("orpheus.screen.tab.songs"),
+                text("orpheus.screen.tab.songs.tooltip"), () -> switchTab(Tab.SONGS));
+        songs.active = tab != Tab.SONGS;
+    }
 
-        label(left, y, WIDTH, "Orpheus - " + preset.name());
-        y += HEIGHT + GAP;
+    private void switchTab(Tab target) {
+        tab = target;
+        page = 0;
+        rebuild();
+    }
 
-        button(left, y, half, "Orpheus: " + onOff(preset.enabled()), () -> {
-            preset.setEnabled(!preset.enabled());
-            build();
-        });
-        button(left + half + GAP, y, half, "Presets", () -> {
-            runtime.saveActive();
-            OrpheusClient.show(new PresetScreen(this));
-        });
-        y += HEIGHT + GAP;
-
-        button(left, y, HEIGHT, "<", () -> {
+    private void addSituationRow(int left, int y) {
+        button(left, y, HEIGHT, Component.literal("<"), text("orpheus.screen.situation.previous"), () -> {
             context = context.previous();
             page = 0;
-            build();
+            rebuild();
         });
-        button(left + HEIGHT + GAP, y, WIDTH - 2 * (HEIGHT + GAP), context.label() + ": " + (settings.managed() ? "Orpheus" : "Vanilla"), () -> {
-            settings.setManaged(!settings.managed());
-            build();
-        });
-        button(left + WIDTH - HEIGHT, y, HEIGHT, ">", () -> {
+        label(left + HEIGHT + GAP, y, WIDTH - 2 * (HEIGHT + GAP),
+                text("orpheus.screen.situation", Texts.context(context)), text("orpheus.screen.situation.tooltip"));
+        button(left + WIDTH - HEIGHT, y, HEIGHT, Component.literal(">"), text("orpheus.screen.situation.next"), () -> {
             context = context.next();
             page = 0;
-            build();
+            rebuild();
         });
-        y += HEIGHT + GAP;
+    }
 
-        stepper(left, y, half, "Min " + DelayStep.format(settings.minDelaySeconds()),
+    // ---------------------------------------------------------------- settings tab
+
+    private void addSettingsTab(OrpheusRuntime runtime, int left, int top) {
+        Preset preset = runtime.active();
+        ContextSettings settings = preset.settings(context);
+        int half = (WIDTH - GAP) / 2;
+        int y = top;
+
+        button(left, y, half, text("orpheus.screen.enabled", Texts.onOff(preset.enabled())),
+                text("orpheus.screen.enabled.tooltip"), () -> {
+                    preset.setEnabled(!preset.enabled());
+                    rebuild();
+                });
+        button(left + half + GAP, y, half, text("orpheus.screen.preset", preset.name()),
+                text("orpheus.screen.preset.tooltip"), () -> {
+                    runtime.saveActive();
+                    OrpheusClient.show(new PresetScreen(this));
+                });
+        y += STEP;
+
+        String sourceKey = settings.managed() ? "orpheus.screen.source.orpheus" : "orpheus.screen.source.minecraft";
+        button(left, y, WIDTH, text(sourceKey, Texts.context(context)), text("orpheus.screen.source.tooltip"), () -> {
+            settings.setManaged(!settings.managed());
+            rebuild();
+        });
+        y += STEP;
+
+        stepper(left, y, WIDTH, text("orpheus.screen.delay.min", Texts.duration(settings.minDelaySeconds())),
+                text("orpheus.screen.delay.min.tooltip"),
                 () -> settings.setMinDelaySeconds(DelayStep.step(settings.minDelaySeconds(), false)),
                 () -> settings.setMinDelaySeconds(DelayStep.step(settings.minDelaySeconds(), true)));
-        stepper(left + half + GAP, y, half, "Max " + DelayStep.format(settings.maxDelaySeconds()),
+        y += STEP;
+
+        stepper(left, y, WIDTH, text("orpheus.screen.delay.max", Texts.duration(settings.maxDelaySeconds())),
+                text("orpheus.screen.delay.max.tooltip"),
                 () -> settings.setMaxDelaySeconds(DelayStep.step(settings.maxDelaySeconds(), false)),
                 () -> settings.setMaxDelaySeconds(DelayStep.step(settings.maxDelaySeconds(), true)));
-        y += HEIGHT + GAP;
+        y += STEP;
 
-        stepper(left, y, half, "No repeat: " + settings.repeatAvoidance(),
+        stepper(left, y, WIDTH, text("orpheus.screen.repeat", settings.repeatAvoidance()),
+                text("orpheus.screen.repeat.tooltip"),
                 () -> settings.setRepeatAvoidance(settings.repeatAvoidance() - 1),
                 () -> settings.setRepeatAvoidance(settings.repeatAvoidance() + 1));
-        button(left + half + GAP, y, half, "Reset list", () -> {
-            settings.resetTracks(context, runtime.catalog());
-            build();
-        });
+        y += STEP;
 
-        int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - HEADER_HEIGHT - FOOTER_HEIGHT) / ROW_HEIGHT));
-        List<Track> tracks = TrackListing.sorted(runtime.selectable());
+        button(left, y, WIDTH, text("orpheus.screen.reset", Texts.context(context)),
+                text("orpheus.screen.reset.tooltip"), () -> {
+                    settings.resetTracks(context, runtime.catalog());
+                    rebuild();
+                });
+    }
+
+    // ------------------------------------------------------------------- songs tab
+
+    private void addSongsTab(OrpheusRuntime runtime, int left, int top) {
+        Preset preset = runtime.active();
+        ContextSettings settings = preset.settings(context);
+
+        if (!settings.managed()) {
+            label(left, top, WIDTH, text("orpheus.screen.songs.minecraft", Texts.context(context)), null);
+            button(left, top + STEP, WIDTH, text("orpheus.screen.songs.use_orpheus"), null, () -> {
+                settings.setManaged(true);
+                rebuild();
+            });
+            return;
+        }
+
+        List<Track> tracks = TrackListing.sorted(runtime.catalog());
+        // Songs that can be played come first, missing ones go to the end.
+        tracks.sort(Comparator.comparing(track -> !runtime.isAvailable(track)));
+
+        int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - top - FOOTER_HEIGHT) / ROW_HEIGHT));
         page = Pager.clamp(page, tracks.size(), rows);
-        y = HEADER_HEIGHT;
+        int y = top;
         for (Track track : Pager.slice(tracks, page, rows)) {
-            trackRow(runtime, preset, settings, track, left, y);
+            addSongRow(runtime, preset, settings, track, left, y);
             y += ROW_HEIGHT;
         }
 
-        int footer = height - FOOTER_HEIGHT + GAP;
         int pageCount = Pager.pageCount(tracks.size(), rows);
-        button(left, footer, HEIGHT, "<", () -> {
+        int footer = height - FOOTER_HEIGHT;
+        button(left, footer, HEIGHT, Component.literal("<"), null, () -> {
             page = Math.max(0, page - 1);
-            build();
+            rebuild();
         });
-        label(left + HEIGHT + GAP, footer, WIDTH - 2 * (HEIGHT + GAP), "Page " + (page + 1) + " / " + pageCount);
-        button(left + WIDTH - HEIGHT, footer, HEIGHT, ">", () -> {
+        label(left + HEIGHT + GAP, footer, WIDTH - 2 * (HEIGHT + GAP),
+                text("orpheus.screen.page", page + 1, pageCount), null);
+        button(left + WIDTH - HEIGHT, footer, HEIGHT, Component.literal(">"), null, () -> {
             page = Math.min(pageCount - 1, page + 1);
-            build();
+            rebuild();
         });
-        button(left, footer + HEIGHT + GAP, WIDTH, "Done", this::onClose);
     }
 
-    private void trackRow(
+    /** One song: [x] title | chance | block | play. */
+    private void addSongRow(
             OrpheusRuntime runtime, Preset preset, ContextSettings settings, Track track, int left, int y) {
+        boolean available = runtime.isAvailable(track);
         boolean included = settings.includes(track.id());
-        boolean banned = preset.isBlacklisted(track.id());
+        boolean blocked = preset.isBlacklisted(track.id());
         int x = left;
-        int titleWidth = 148;
-        String title = (included ? "[x] " : "[ ] ") + track.title();
-        button(x, y, titleWidth, banned ? title + " (off)" : title, () -> {
+
+        int titleWidth = 168;
+        String mark = !available ? "[!] " : included ? "[x] " : "[ ] ";
+        Component title = Component.literal(mark).append(Texts.track(track));
+        Component titleTip = available
+                ? text("orpheus.screen.song.toggle.tooltip", Texts.context(context))
+                : text("orpheus.screen.song.missing.tooltip");
+        Button titleButton = button(x, y, titleWidth, title, titleTip, () -> {
             settings.toggle(track.id());
-            build();
+            rebuild();
         });
+        titleButton.active = available;
         x += titleWidth + GAP;
-        Button weight = button(x, y, 46, "W " + settings.weight(track.id()), () -> {
-            int next = settings.weight(track.id()) + 1;
-            settings.setWeight(track.id(), next > ContextSettings.MAX_WEIGHT ? ContextSettings.MIN_WEIGHT : next);
-            build();
-        });
-        weight.active = included;
-        x += 46 + GAP;
-        button(x, y, 48, banned ? "Allow" : "Ban", () -> {
-            preset.toggleBlacklist(track.id());
-            build();
-        });
-        x += 48 + GAP;
-        button(x, y, WIDTH - (x - left), "Play", () -> runtime.controller().playNow(track));
-    }
 
-    private void stepper(int x, int y, int width, String text, Runnable decrease, Runnable increase) {
-        button(x, y, HEIGHT, "-", () -> {
-            decrease.run();
-            build();
-        });
-        label(x + HEIGHT + GAP, y, width - 2 * (HEIGHT + GAP), text);
-        button(x + width - HEIGHT, y, HEIGHT, "+", () -> {
-            increase.run();
-            build();
-        });
-    }
+        int chanceWidth = 48;
+        Button chance = button(x, y, chanceWidth, text("orpheus.screen.chance", settings.weight(track.id())),
+                text("orpheus.screen.chance.tooltip"), () -> {
+                    int next = settings.weight(track.id()) + 1;
+                    settings.setWeight(
+                            track.id(), next > ContextSettings.MAX_WEIGHT ? ContextSettings.MIN_WEIGHT : next);
+                    rebuild();
+                });
+        chance.active = included;
+        x += chanceWidth + GAP;
 
-    private Button button(int x, int y, int width, String text, Runnable action) {
-        Button button = Button.builder(Component.literal(text), pressed -> action.run())
-                .bounds(x, y, width, HEIGHT)
-                .build();
-        addRenderableWidget(button);
-        return button;
-    }
+        int blockWidth = 52;
+        button(x, y, blockWidth, text(blocked ? "orpheus.screen.unblock" : "orpheus.screen.block"),
+                text(blocked ? "orpheus.screen.unblock.tooltip" : "orpheus.screen.block.tooltip"), () -> {
+                    preset.toggleBlacklist(track.id());
+                    rebuild();
+                });
+        x += blockWidth + GAP;
 
-    private void label(int x, int y, int width, String text) {
-        Button label = button(x, y, width, text, () -> { });
-        label.active = false;
-    }
-
-    private static String onOff(boolean value) {
-        return value ? "ON" : "OFF";
+        Button play = button(x, y, WIDTH - (x - left), text("orpheus.screen.play"),
+                text("orpheus.screen.play.tooltip"), () -> runtime.controller().playNow(track));
+        play.active = available;
     }
 }

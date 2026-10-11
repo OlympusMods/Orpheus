@@ -9,30 +9,25 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public final class PresetScreen extends Screen {
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 20;
-    private static final int GAP = 4;
+/** Lists the saved presets and lets the player switch, create or delete them. */
+public final class PresetScreen extends OrpheusBaseScreen {
     private static final int ROW_HEIGHT = 22;
     private static final int HEADER_HEIGHT = 34;
     private static final int FOOTER_HEIGHT = 84;
     private static final int MIN_ROWS = 3;
-    private static final int MAX_ROWS = 8;
+    private static final int MAX_ROWS = 10;
+    private static final int DELETE_WIDTH = 70;
+    private static final int CREATE_WIDTH = 80;
 
     private final Screen parent;
     private EditBox nameBox;
     private String nameText = "";
-    private String status = "Switch, create or delete presets";
+    private Component status = text("orpheus.presets.hint");
     private int page;
 
     public PresetScreen(Screen parent) {
-        super(Component.literal("Orpheus Presets"));
+        super(text("orpheus.presets.title"));
         this.parent = parent;
-    }
-
-    @Override
-    protected void init() {
-        build();
     }
 
     @Override
@@ -40,83 +35,79 @@ public final class PresetScreen extends Screen {
         OrpheusClient.show(parent);
     }
 
-    private void build() {
+    @Override
+    protected void rebuild() {
         clearWidgets();
         OrpheusRuntime runtime = OrpheusClient.runtime();
-        int left = (width - WIDTH) / 2;
-        int y = 8;
-        label(left, y, WIDTH, status);
+        int left = left();
+        label(left, 8, WIDTH, status, null);
 
         List<String> names = runtime.presetNames();
         int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - HEADER_HEIGHT - FOOTER_HEIGHT) / ROW_HEIGHT));
         page = Pager.clamp(page, names.size(), rows);
-        y = HEADER_HEIGHT;
+        int y = HEADER_HEIGHT;
         for (String name : Pager.slice(names, page, rows)) {
-            boolean active = name.equalsIgnoreCase(runtime.active().name());
-            int nameWidth = WIDTH - 70 - GAP;
-            button(left, y, nameWidth, (active ? "* " : "") + name, () -> {
-                if (runtime.switchTo(name)) {
-                    status = "Switched to " + name;
-                } else {
-                    status = "Could not load " + name;
-                }
-                build();
-            });
-            Button delete = button(left + nameWidth + GAP, y, 70, "Delete", () -> {
-                status = runtime.deletePreset(name) ? "Deleted " + name : "Could not delete " + name;
-                build();
-            });
-            delete.active = names.size() > 1;
+            addPresetRow(runtime, name, left, y, names.size() > 1);
             y += ROW_HEIGHT;
         }
 
         int pageCount = Pager.pageCount(names.size(), rows);
         int footer = height - FOOTER_HEIGHT + GAP;
-        button(left, footer, HEIGHT, "<", () -> {
+        button(left, footer, HEIGHT, Component.literal("<"), null, () -> {
             page = Math.max(0, page - 1);
-            build();
+            rebuild();
         });
-        label(left + HEIGHT + GAP, footer, WIDTH - 2 * (HEIGHT + GAP), "Page " + (page + 1) + " / " + pageCount);
-        button(left + WIDTH - HEIGHT, footer, HEIGHT, ">", () -> {
+        label(left + HEIGHT + GAP, footer, WIDTH - 2 * (HEIGHT + GAP),
+                text("orpheus.screen.page", page + 1, pageCount), null);
+        button(left + WIDTH - HEIGHT, footer, HEIGHT, Component.literal(">"), null, () -> {
             page = Math.min(pageCount - 1, page + 1);
-            build();
+            rebuild();
         });
 
-        footer += HEIGHT + GAP;
-        int fieldWidth = WIDTH - 2 * 80 - 2 * GAP;
-        nameBox = new EditBox(font, left, footer, fieldWidth, HEIGHT, Component.literal("Preset name"));
+        footer += STEP;
+        int fieldWidth = WIDTH - 2 * CREATE_WIDTH - 2 * GAP;
+        nameBox = new EditBox(font, left, footer, fieldWidth, HEIGHT, text("orpheus.presets.name"));
         nameBox.setMaxLength(PresetStore.MAX_NAME_LENGTH);
         nameBox.setValue(nameText);
         nameBox.setResponder(value -> nameText = value);
         addRenderableWidget(nameBox);
-        button(left + fieldWidth + GAP, footer, 80, "Copy", () -> create(runtime, true));
-        button(left + fieldWidth + 80 + 2 * GAP, footer, 80, "Blank", () -> create(runtime, false));
+        button(left + fieldWidth + GAP, footer, CREATE_WIDTH, text("orpheus.presets.copy"),
+                text("orpheus.presets.copy.tooltip"), () -> create(runtime, true));
+        button(left + fieldWidth + CREATE_WIDTH + 2 * GAP, footer, CREATE_WIDTH, text("orpheus.presets.blank"),
+                text("orpheus.presets.blank.tooltip"), () -> create(runtime, false));
 
-        footer += HEIGHT + GAP;
-        button(left, footer, WIDTH, "Back", this::onClose);
+        footer += STEP;
+        button(left, footer, WIDTH, text("orpheus.presets.back"), null, this::onClose);
+    }
+
+    private void addPresetRow(OrpheusRuntime runtime, String name, int left, int y, boolean canDelete) {
+        boolean active = name.equalsIgnoreCase(runtime.active().name());
+        int nameWidth = WIDTH - DELETE_WIDTH - GAP;
+        button(left, y, nameWidth, Component.literal((active ? "* " : "") + name),
+                text("orpheus.presets.switch.tooltip"), () -> {
+                    status = runtime.switchTo(name)
+                            ? text("orpheus.presets.switched", name)
+                            : text("orpheus.presets.switch_failed", name);
+                    rebuild();
+                });
+        Button delete = button(left + nameWidth + GAP, y, DELETE_WIDTH, text("orpheus.presets.delete"),
+                text("orpheus.presets.delete.tooltip"), () -> {
+                    status = runtime.deletePreset(name)
+                            ? text("orpheus.presets.deleted", name)
+                            : text("orpheus.presets.delete_failed", name);
+                    rebuild();
+                });
+        delete.active = canDelete;
     }
 
     private void create(OrpheusRuntime runtime, boolean copy) {
         boolean created = copy ? runtime.createFromActive(nameText) : runtime.createDefault(nameText);
         if (created) {
-            status = "Created " + runtime.active().name();
+            status = text("orpheus.presets.created", runtime.active().name());
             nameText = "";
         } else {
-            status = "Invalid or duplicate name";
+            status = text("orpheus.presets.invalid_name");
         }
-        build();
-    }
-
-    private Button button(int x, int y, int width, String text, Runnable action) {
-        Button button = Button.builder(Component.literal(text), pressed -> action.run())
-                .bounds(x, y, width, HEIGHT)
-                .build();
-        addRenderableWidget(button);
-        return button;
-    }
-
-    private void label(int x, int y, int width, String text) {
-        Button label = button(x, y, width, text, () -> { });
-        label.active = false;
+        rebuild();
     }
 }
