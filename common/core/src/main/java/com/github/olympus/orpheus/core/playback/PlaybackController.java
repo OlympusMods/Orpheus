@@ -61,7 +61,7 @@ public final class PlaybackController {
             current = null;
             delayTicks = randomDelay(settings);
         }
-        if (lastContext != null && lastContext != context && current != null && replaceCurrent) {
+        if (current != null && replaceCurrent && switchesSituation(context)) {
             backend.stop();
             current = null;
             delayTicks = random.nextInt(settings.minDelaySeconds() * TICKS_PER_SECOND / 2 + 1);
@@ -162,6 +162,17 @@ public final class PlaybackController {
         paused = false;
         lastContext = null;
         delayTicks = INITIAL_DELAY_TICKS;
+    }
+
+    /**
+     * A song is cut short when the situation changes (for example into the Nether), except
+     * when the main menu is involved. Leaving or entering a world must not interrupt the music.
+     */
+    private boolean switchesSituation(MusicContext context) {
+        return lastContext != null
+                && lastContext != context
+                && lastContext != MusicContext.MAIN_MENU
+                && context != MusicContext.MAIN_MENU;
     }
 
     private void start(Track track) {

@@ -7,7 +7,8 @@
   "client": [
     "MusicManagerMixin",
     "SoundEngineAccess",
-    "SoundManagerAccess"
+    "SoundManagerAccess",
+    "SoundManagerStopMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -8,7 +8,8 @@
     "MusicManagerMixin",
     "SoundEngineAccess",
     "SoundEnginePauseMixin",
-    "SoundManagerAccess"
+    "SoundManagerAccess",
+    "SoundManagerStopMixin"
   ],
   "injectors": {
     "defaultRequire": 1
