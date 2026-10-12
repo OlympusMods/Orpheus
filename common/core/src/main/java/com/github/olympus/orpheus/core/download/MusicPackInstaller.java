@@ -61,7 +61,11 @@ public final class MusicPackInstaller {
     }
 
     public Report install(Collection<Track> tracks, ProgressListener listener) throws IOException {
-        JsonObject objects = fetchAssetObjects();
+        JsonObject manifest = fetchJson(VERSION_MANIFEST);
+        JsonObject release = fetchAssetObjects(manifest, "release");
+        // Songs that only exist in the newest snapshot are looked up there, once, if needed.
+        JsonObject snapshot = null;
+        boolean snapshotTried = false;
         int total = tracks.size();
         int downloaded = 0;
         int present = 0;
@@ -69,7 +73,15 @@ public final class MusicPackInstaller {
         int failed = 0;
         int done = 0;
         for (Track track : tracks) {
-            JsonElement entry = objects.get(SOUND_KEY_PREFIX + track.id() + ".ogg");
+            String key = SOUND_KEY_PREFIX + track.id() + ".ogg";
+            JsonElement entry = release.get(key);
+            if (entry == null && !snapshotTried) {
+                snapshotTried = true;
+                snapshot = fetchSnapshotObjects(manifest);
+            }
+            if (entry == null && snapshot != null) {
+                entry = snapshot.get(key);
+            }
             if (entry == null || !entry.isJsonObject()) {
                 notFound++;
                 log.accept("Song not listed by Mojang: " + track.id());
@@ -116,9 +128,23 @@ public final class MusicPackInstaller {
         return true;
     }
 
-    private JsonObject fetchAssetObjects() throws IOException {
-        JsonObject manifest = fetchJson(VERSION_MANIFEST);
-        String latest = manifest.getAsJsonObject("latest").get("release").getAsString();
+    /** The newest snapshot's songs, or null when there is none or it cannot be read. */
+    private JsonObject fetchSnapshotObjects(JsonObject manifest) {
+        JsonObject latest = manifest.getAsJsonObject("latest");
+        if (!latest.has("snapshot") || latest.get("snapshot").getAsString().equals(latest.get("release").getAsString())) {
+            return null;
+        }
+        try {
+            return fetchAssetObjects(manifest, "snapshot");
+        } catch (IOException exception) {
+            log.accept("Could not read the latest snapshot: " + exception.getMessage());
+            return null;
+        }
+    }
+
+    /** The asset index entries of the newest version of the given channel ("release" or "snapshot"). */
+    private JsonObject fetchAssetObjects(JsonObject manifest, String channel) throws IOException {
+        String latest = manifest.getAsJsonObject("latest").get(channel).getAsString();
         String versionUrl = null;
         for (JsonElement version : manifest.getAsJsonArray("versions")) {
             JsonObject object = version.getAsJsonObject();
@@ -128,7 +154,7 @@ public final class MusicPackInstaller {
             }
         }
         if (versionUrl == null) {
-            throw new IOException("Release " + latest + " is missing from the version manifest");
+            throw new IOException("Version " + latest + " is missing from the version manifest");
         }
         JsonObject version = fetchJson(versionUrl);
         String indexUrl = version.getAsJsonObject("assetIndex").get("url").getAsString();
