@@ -194,14 +194,6 @@
       }
     ]
   },
-  "music.game.end.credits": {
-    "sounds": [
-      {
-        "name": "minecraft:music/game/end/credits",
-        "stream": true
-      }
-    ]
-  },
   "music.game.end.the_end": {
     "sounds": [
       {

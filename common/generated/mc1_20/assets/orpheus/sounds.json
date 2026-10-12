@@ -181,7 +181,7 @@
   "music.game.end.alpha": {
     "sounds": [
       {
-        "name": "minecraft:music/game/end/alpha",
+        "name": "minecraft:music/game/end/credits",
         "stream": true
       }
     ]
@@ -190,14 +190,6 @@
     "sounds": [
       {
         "name": "minecraft:music/game/end/boss",
-        "stream": true
-      }
-    ]
-  },
-  "music.game.end.credits": {
-    "sounds": [
-      {
-        "name": "minecraft:music/game/end/credits",
         "stream": true
       }
     ]

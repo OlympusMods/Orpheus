@@ -240,6 +240,9 @@
       "file": "music/game/end/alpha",
       "contexts": [
         "CREDITS"
+      ],
+      "aliases": [
+        "music/game/end/credits"
       ]
     },
     {
@@ -249,15 +252,6 @@
       "file": "music/game/end/boss",
       "contexts": [
         "BOSS"
-      ]
-    },
-    {
-      "id": "music/game/end/credits",
-      "event": "music.game.end.credits",
-      "title": "Credits",
-      "file": "music/game/end/credits",
-      "contexts": [
-        "CREDITS"
       ]
     },
     {

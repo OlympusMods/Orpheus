@@ -52,6 +52,8 @@ ALIASES = {
     "music/menu/menu3": "music/menu/beginning_2",
     "music/menu/menu4": "music/menu/floating_trees",
     "music/game/end/end": "music/game/end/the_end",
+    # The credits song is called "Alpha"; its file was renamed in 1.20.3 as well.
+    "music/game/end/credits": "music/game/end/alpha",
 }
 
 EVENT_CONTEXTS = [
