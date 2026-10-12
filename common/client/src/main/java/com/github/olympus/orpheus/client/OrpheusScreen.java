@@ -261,6 +261,9 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
      * (and, after it was used, a line saying how it went) and returns where the song list starts.
      */
     private int addDownloadControls(OrpheusRuntime runtime, int left, int top) {
+        if (type == TrackKind.LEFTOVER) {
+            return addLeftoverControls(runtime, left, top);
+        }
         int missing = MusicDownload.missing(runtime).size();
         MusicDownload.Phase phase = MusicDownload.phase();
         if (missing == 0 && phase == MusicDownload.Phase.IDLE) {
@@ -282,6 +285,22 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
         return y;
     }
 
+    /** Leftover songs cannot be downloaded; the button creates the folder the player fills. */
+    private int addLeftoverControls(OrpheusRuntime runtime, int left, int top) {
+        int y = top;
+        button(left, y, WIDTH, text("orpheus.leftover.button"), text("orpheus.leftover.button.tooltip"), () -> {
+            MusicDownload.prepareLeftovers(runtime);
+            rebuild();
+        });
+        y += STEP;
+        Component status = MusicDownload.leftoverStatus();
+        if (status != null) {
+            label(left, y, WIDTH, status, null);
+            y += STEP;
+        }
+        return y;
+    }
+
     /** One song: [x] title | chance | block | play. */
     private void addSongRow(
             OrpheusRuntime runtime, Preset preset, ContextSettings settings, Track track, int left, int y) {
@@ -295,7 +314,7 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
         Component title = Component.literal(mark).append(Texts.track(track));
         Component titleTip = available
                 ? text("orpheus.screen.song.toggle.tooltip", Texts.context(context))
-                : text("orpheus.screen.song.missing.tooltip");
+                : missingTooltip(track);
         Button titleButton = button(x, y, titleWidth, title, titleTip, () -> {
             settings.toggle(track.id());
             rebuild();
@@ -325,5 +344,13 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
         Button play = button(x, y, WIDTH - (x - left), text("orpheus.screen.play"),
                 text("orpheus.screen.play.tooltip"), () -> runtime.controller().playNow(track));
         play.active = available;
+    }
+
+    private static Component missingTooltip(Track track) {
+        if (track.kind() == TrackKind.LEFTOVER) {
+            String path = track.filePath();
+            return text("orpheus.screen.song.leftover.tooltip", path.substring(path.lastIndexOf('/') + 1) + ".ogg");
+        }
+        return text("orpheus.screen.song.missing.tooltip");
     }
 }

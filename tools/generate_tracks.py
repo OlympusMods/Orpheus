@@ -71,6 +71,25 @@ EVENT_CONTEXTS = [
 NESTED = {"music.creative": ["music.game"]}
 
 
+# Songs from C418's Minecraft Volume Alpha and Volume Beta that were never added to the game.
+# Their audio is not in Mojang's files, so the player supplies it; only the names are listed here.
+# Edit this list to add or remove entries, then run the script again.
+LEFTOVERS = {
+    "beginning": "Beginning",
+    "chris": "Chris",
+    "death": "Death",
+    "dog": "Dog",
+    "door": "Door",
+    "droopy_likes_ricochet": "Droopy Likes Ricochet",
+    "droopy_likes_your_face": "Droopy Likes Your Face",
+    "equinoxe": "Équinoxe",
+    "excursions": "Excursions",
+    "flake": "Flake",
+    "ki": "Ki",
+    "kyoto": "Kyoto",
+    "moog_city": "Moog City",
+}
+
 TITLES = {
     "records/creator_music_box": "Creator (Music Box)",
     "music/game/oxygene": "Oxygène",
@@ -177,6 +196,20 @@ def event_name(track_id):
     return track_id.replace("/", ".")
 
 
+def leftover_songs():
+    songs = {}
+    for slug, title in LEFTOVERS.items():
+        songs["leftover/" + slug] = {
+            "attributes": {},
+            "contexts": set(),
+            "aliases": set(),
+            "kind": "LEFTOVER",
+            "file": "orpheus:leftover/" + slug,
+            "title": title,
+        }
+    return songs
+
+
 def write_family(root, family, native_version, songs):
     target = root / "common" / "generated" / family / "assets" / "orpheus"
     target.mkdir(parents=True, exist_ok=True)
@@ -187,14 +220,15 @@ def write_family(root, family, native_version, songs):
         song = songs[track_id]
         # Play the file the game really ships; fall back to the newest name, which is
         # what the downloaded music pack provides.
-        file_id = next((name for name in [track_id] + sorted(song["aliases"]) if name in native), track_id)
-        sound = {"name": "minecraft:" + file_id, "stream": True}
+        file_id = song.get("file") or next(
+            (name for name in [track_id] + sorted(song["aliases"]) if name in native), track_id)
+        sound = {"name": file_id if ":" in file_id else "minecraft:" + file_id, "stream": True}
         sound.update(song["attributes"])
         sounds[event_name(track_id)] = {"sounds": [sound]}
         entry = {
             "id": track_id,
             "event": event_name(track_id),
-            "title": humanize(track_id),
+            "title": song.get("title") or humanize(track_id),
             "file": file_id,
             "kind": song["kind"],
             "contexts": sorted(song["contexts"]),
@@ -211,6 +245,7 @@ def write_family(root, family, native_version, songs):
 def main():
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
     songs = merge_aliases(collect(HISTORY))
+    songs.update(leftover_songs())
     for family, native_version in FAMILIES.items():
         print(family, write_family(root, family, native_version, songs))
 

@@ -1,6 +1,110 @@
 {
   "tracks": [
     {
+      "id": "leftover/beginning",
+      "event": "leftover.beginning",
+      "title": "Beginning",
+      "file": "orpheus:leftover/beginning",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/chris",
+      "event": "leftover.chris",
+      "title": "Chris",
+      "file": "orpheus:leftover/chris",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/death",
+      "event": "leftover.death",
+      "title": "Death",
+      "file": "orpheus:leftover/death",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/dog",
+      "event": "leftover.dog",
+      "title": "Dog",
+      "file": "orpheus:leftover/dog",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/door",
+      "event": "leftover.door",
+      "title": "Door",
+      "file": "orpheus:leftover/door",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/droopy_likes_ricochet",
+      "event": "leftover.droopy_likes_ricochet",
+      "title": "Droopy Likes Ricochet",
+      "file": "orpheus:leftover/droopy_likes_ricochet",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/droopy_likes_your_face",
+      "event": "leftover.droopy_likes_your_face",
+      "title": "Droopy Likes Your Face",
+      "file": "orpheus:leftover/droopy_likes_your_face",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/equinoxe",
+      "event": "leftover.equinoxe",
+      "title": "Équinoxe",
+      "file": "orpheus:leftover/equinoxe",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/excursions",
+      "event": "leftover.excursions",
+      "title": "Excursions",
+      "file": "orpheus:leftover/excursions",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/flake",
+      "event": "leftover.flake",
+      "title": "Flake",
+      "file": "orpheus:leftover/flake",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/ki",
+      "event": "leftover.ki",
+      "title": "Ki",
+      "file": "orpheus:leftover/ki",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/kyoto",
+      "event": "leftover.kyoto",
+      "title": "Kyoto",
+      "file": "orpheus:leftover/kyoto",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
+      "id": "leftover/moog_city",
+      "event": "leftover.moog_city",
+      "title": "Moog City",
+      "file": "orpheus:leftover/moog_city",
+      "kind": "LEFTOVER",
+      "contexts": []
+    },
+    {
       "id": "music/game/a_familiar_room",
       "event": "music.game.a_familiar_room",
       "title": "A Familiar Room",

@@ -100,5 +100,10 @@
   "orpheus.kind.leftover": "Leftover Tracks",
   "orpheus.kind.disc": "Music Discs",
   "orpheus.screen.type": "Type: %s",
-  "orpheus.screen.type.tooltip": "Game Tracks are Minecraft's background music. Leftover Tracks are songs from the Minecraft albums that never made it into the game. Music Discs are the jukebox discs: turn them on in a situation to play them as normal music. Click to switch."
+  "orpheus.screen.type.tooltip": "Game Tracks are Minecraft's background music. Leftover Tracks are songs from the Minecraft albums that never made it into the game. Music Discs are the jukebox discs: turn them on in a situation to play them as normal music. Click to switch.",
+  "orpheus.leftover.button": "Set up the leftovers folder",
+  "orpheus.leftover.button.tooltip": "These songs are not in Minecraft's files, so they cannot be downloaded. This creates a resource pack folder with instructions. Add your own .ogg files there (for example from an album you own), enable the \"Orpheus Leftovers\" pack in Options > Resource Packs and reload.",
+  "orpheus.leftover.ready": "Folder ready: %s (read the README.txt inside).",
+  "orpheus.leftover.failed": "Could not create the folder. Check the game log.",
+  "orpheus.screen.song.leftover.tooltip": "[!] Not in Minecraft. Add your own file named %s to the \"Orpheus Leftovers\" pack. The button at the top of the list sets up the folder."
 }

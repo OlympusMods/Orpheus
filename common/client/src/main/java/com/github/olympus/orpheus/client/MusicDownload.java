@@ -1,9 +1,11 @@
 package com.github.olympus.orpheus.client;
 
 import com.github.olympus.orpheus.core.OrpheusRuntime;
+import com.github.olympus.orpheus.core.download.LeftoverPack;
 import com.github.olympus.orpheus.core.download.MusicPackInstaller;
 import com.github.olympus.orpheus.core.download.UrlHttpSource;
 import com.github.olympus.orpheus.core.model.Track;
+import com.github.olympus.orpheus.core.model.TrackKind;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -24,11 +26,13 @@ public final class MusicDownload {
     }
 
     public static final String PACK_NAME = "Orpheus Music";
+    public static final String LEFTOVER_PACK_NAME = "Orpheus Leftovers";
 
     private static volatile Phase phase = Phase.IDLE;
     private static volatile int done;
     private static volatile int total;
     private static volatile MusicPackInstaller.Report report;
+    private static volatile Component leftoverStatus;
 
     private MusicDownload() {
     }
@@ -72,6 +76,26 @@ public final class MusicDownload {
             OrpheusClient.LOGGER.error("Could not download songs", exception);
             phase = Phase.FAILED;
         }
+    }
+
+    /** Creates the folder where the player puts songs that are not part of the game. */
+    public static void prepareLeftovers(OrpheusRuntime runtime) {
+        List<Track> leftovers = runtime.catalog().all().stream()
+                .filter(track -> track.kind() == TrackKind.LEFTOVER)
+                .toList();
+        Path pack = OrpheusClient.gameDirectory().resolve("resourcepacks").resolve(LEFTOVER_PACK_NAME);
+        try {
+            LeftoverPack.prepare(pack, OrpheusClient.musicPackMetadata(), leftovers);
+            leftoverStatus = Component.translatable("orpheus.leftover.ready", "resourcepacks/" + LEFTOVER_PACK_NAME);
+        } catch (IOException exception) {
+            OrpheusClient.LOGGER.error("Could not create the leftovers folder", exception);
+            leftoverStatus = Component.translatable("orpheus.leftover.failed");
+        }
+    }
+
+    /** One line about the leftovers folder, or null before it was set up. */
+    public static Component leftoverStatus() {
+        return leftoverStatus;
     }
 
     /** Text of the button that starts the download. */
