@@ -95,5 +95,10 @@
   "orpheus.download.done": "Done! Now enable the \"%s\" resource pack.",
   "orpheus.download.already": "Already downloaded. Enable the \"%s\" resource pack.",
   "orpheus.download.partial": "Downloaded %s songs, %s could not be downloaded (see the log).",
-  "orpheus.download.failed": "Download failed. Check your connection and the game log."
+  "orpheus.download.failed": "Download failed. Check your connection and the game log.",
+  "orpheus.kind.game": "Game Tracks",
+  "orpheus.kind.leftover": "Leftover Tracks",
+  "orpheus.kind.disc": "Music Discs",
+  "orpheus.screen.type": "Type: %s",
+  "orpheus.screen.type.tooltip": "Game Tracks are Minecraft's background music. Leftover Tracks are songs from the Minecraft albums that never made it into the game. Music Discs are the jukebox discs: turn them on in a situation to play them as normal music. Click to switch."
 }

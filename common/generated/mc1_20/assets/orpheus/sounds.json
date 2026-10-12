@@ -598,5 +598,181 @@
         "stream": true
       }
     ]
+  },
+  "records.11": {
+    "sounds": [
+      {
+        "name": "minecraft:records/11",
+        "stream": true
+      }
+    ]
+  },
+  "records.13": {
+    "sounds": [
+      {
+        "name": "minecraft:records/13",
+        "stream": true
+      }
+    ]
+  },
+  "records.5": {
+    "sounds": [
+      {
+        "name": "minecraft:records/5",
+        "stream": true
+      }
+    ]
+  },
+  "records.blocks": {
+    "sounds": [
+      {
+        "name": "minecraft:records/blocks",
+        "stream": true
+      }
+    ]
+  },
+  "records.bounce": {
+    "sounds": [
+      {
+        "name": "minecraft:records/bounce",
+        "stream": true
+      }
+    ]
+  },
+  "records.cat": {
+    "sounds": [
+      {
+        "name": "minecraft:records/cat",
+        "stream": true
+      }
+    ]
+  },
+  "records.chirp": {
+    "sounds": [
+      {
+        "name": "minecraft:records/chirp",
+        "stream": true
+      }
+    ]
+  },
+  "records.creator": {
+    "sounds": [
+      {
+        "name": "minecraft:records/creator",
+        "stream": true
+      }
+    ]
+  },
+  "records.creator_music_box": {
+    "sounds": [
+      {
+        "name": "minecraft:records/creator_music_box",
+        "stream": true
+      }
+    ]
+  },
+  "records.far": {
+    "sounds": [
+      {
+        "name": "minecraft:records/far",
+        "stream": true
+      }
+    ]
+  },
+  "records.lava_chicken": {
+    "sounds": [
+      {
+        "name": "minecraft:records/lava_chicken",
+        "stream": true
+      }
+    ]
+  },
+  "records.mall": {
+    "sounds": [
+      {
+        "name": "minecraft:records/mall",
+        "stream": true
+      }
+    ]
+  },
+  "records.mellohi": {
+    "sounds": [
+      {
+        "name": "minecraft:records/mellohi",
+        "stream": true
+      }
+    ]
+  },
+  "records.otherside": {
+    "sounds": [
+      {
+        "name": "minecraft:records/otherside",
+        "stream": true
+      }
+    ]
+  },
+  "records.pigstep": {
+    "sounds": [
+      {
+        "name": "minecraft:records/pigstep",
+        "stream": true
+      }
+    ]
+  },
+  "records.precipice": {
+    "sounds": [
+      {
+        "name": "minecraft:records/precipice",
+        "stream": true
+      }
+    ]
+  },
+  "records.relic": {
+    "sounds": [
+      {
+        "name": "minecraft:records/relic",
+        "stream": true
+      }
+    ]
+  },
+  "records.stal": {
+    "sounds": [
+      {
+        "name": "minecraft:records/stal",
+        "stream": true
+      }
+    ]
+  },
+  "records.strad": {
+    "sounds": [
+      {
+        "name": "minecraft:records/strad",
+        "stream": true
+      }
+    ]
+  },
+  "records.tears": {
+    "sounds": [
+      {
+        "name": "minecraft:records/tears",
+        "stream": true
+      }
+    ]
+  },
+  "records.wait": {
+    "sounds": [
+      {
+        "name": "minecraft:records/wait",
+        "stream": true
+      }
+    ]
+  },
+  "records.ward": {
+    "sounds": [
+      {
+        "name": "minecraft:records/ward",
+        "stream": true
+      }
+    ]
   }
 }

@@ -3,11 +3,13 @@ package com.github.olympus.orpheus.client;
 import com.github.olympus.orpheus.core.OrpheusRuntime;
 import com.github.olympus.orpheus.core.model.MusicContext;
 import com.github.olympus.orpheus.core.model.Track;
+import com.github.olympus.orpheus.core.model.TrackKind;
 import com.github.olympus.orpheus.core.preset.ContextSettings;
 import com.github.olympus.orpheus.core.preset.Preset;
 import com.github.olympus.orpheus.core.ui.DelayStep;
 import com.github.olympus.orpheus.core.ui.Pager;
 import com.github.olympus.orpheus.core.ui.TrackListing;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.gui.components.Button;
@@ -45,6 +47,7 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
     private final Screen parent;
     private Tab tab = Tab.SETTINGS;
     private MusicContext context = MusicContext.SURVIVAL;
+    private TrackKind type = TrackKind.GAME;
     private int page;
     private Button nowPlaying;
     private Button downloadButton;
@@ -205,11 +208,14 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
         }
 
         int listTop = addDownloadControls(runtime, left, top);
-        List<Track> tracks = TrackListing.sorted(runtime.catalog());
+        List<Track> tracks = new ArrayList<>(TrackListing.sorted(runtime.catalog()));
+        tracks.removeIf(track -> track.kind() != type);
         // Songs that can be played come first, missing ones go to the end.
         tracks.sort(Comparator.comparing(track -> !runtime.isAvailable(track)));
 
-        int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - listTop - FOOTER_HEIGHT) / ROW_HEIGHT));
+        // The type selector sits in its own row above the page controls.
+        int rows = Math.max(
+                MIN_ROWS, Math.min(MAX_ROWS, (height - listTop - FOOTER_HEIGHT - STEP) / ROW_HEIGHT));
         page = Pager.clamp(page, tracks.size(), rows);
         int y = listTop;
         for (Track track : Pager.slice(tracks, page, rows)) {
@@ -219,6 +225,12 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
 
         int pageCount = Pager.pageCount(tracks.size(), rows);
         int footer = height - FOOTER_HEIGHT;
+        button(left, footer - STEP, WIDTH, text("orpheus.screen.type", text(type.translationKey())),
+                text("orpheus.screen.type.tooltip"), () -> {
+                    type = nextTypeWithSongs(runtime);
+                    page = 0;
+                    rebuild();
+                });
         button(left, footer, HEIGHT, Component.literal("<"), null, () -> {
             page = Math.max(0, page - 1);
             rebuild();
@@ -229,6 +241,19 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
             page = Math.min(pageCount - 1, page + 1);
             rebuild();
         });
+    }
+
+    /** The next song type in the cycle, skipping types the catalog has no songs for. */
+    private TrackKind nextTypeWithSongs(OrpheusRuntime runtime) {
+        TrackKind candidate = type.next();
+        while (candidate != type) {
+            TrackKind kind = candidate;
+            if (runtime.catalog().all().stream().anyMatch(track -> track.kind() == kind)) {
+                return candidate;
+            }
+            candidate = candidate.next();
+        }
+        return type;
     }
 
     /**

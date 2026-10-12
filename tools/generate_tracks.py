@@ -72,6 +72,7 @@ NESTED = {"music.creative": ["music.game"]}
 
 
 TITLES = {
+    "records/creator_music_box": "Creator (Music Box)",
     "music/game/oxygene": "Oxygène",
     "music/game/end/the_end": "The End",
 }
@@ -123,21 +124,24 @@ def sounds_of(version):
 
 
 def collect(versions):
-    """Returns {file id: {"attributes": {...}, "contexts": {...}}} merged over all versions."""
+    """Returns {file id: {"attributes", "contexts", "kind"}} merged over all versions."""
     tracks = {}
     for version in versions:
         for event, definition in sounds_of(version).items():
-            if not event.startswith("music.") or event.startswith("music_disc"):
+            if event.startswith("music_disc."):
+                kind, contexts = "DISC", set()
+            elif event.startswith("music."):
+                context = context_of(event)
+                if context is None:
+                    continue
+                kind, contexts = "GAME", {context}
+                for owner, nested in NESTED.items():
+                    if event in nested:
+                        contexts.add(context_of(owner))
+            else:
                 continue
-            context = context_of(event)
-            if context is None:
-                continue
-            contexts = {context}
-            for owner, nested in NESTED.items():
-                if event in nested:
-                    contexts.add(context_of(owner))
             for entry in sound_entries(definition):
-                track = tracks.setdefault(entry["name"], {"attributes": {}, "contexts": set()})
+                track = tracks.setdefault(entry["name"], {"attributes": {}, "contexts": set(), "kind": kind})
                 track["contexts"].update(contexts)
                 for key, value in entry.items():
                     if key not in ("name", "weight", "stream", "type"):
@@ -150,7 +154,8 @@ def merge_aliases(files):
     songs = {}
     for file_id, data in files.items():
         canonical = ALIASES.get(file_id, file_id)
-        song = songs.setdefault(canonical, {"attributes": {}, "contexts": set(), "aliases": set()})
+        song = songs.setdefault(
+            canonical, {"attributes": {}, "contexts": set(), "aliases": set(), "kind": data["kind"]})
         song["contexts"].update(data["contexts"])
         for key, value in data["attributes"].items():
             song["attributes"].setdefault(key, value)
@@ -162,7 +167,7 @@ def merge_aliases(files):
 def native_files(version):
     names = set()
     for event, definition in sounds_of(version).items():
-        if event.startswith("music."):
+        if event.startswith("music.") or event.startswith("music_disc."):
             for entry in sound_entries(definition):
                 names.add(entry["name"])
     return names
@@ -191,6 +196,7 @@ def write_family(root, family, native_version, songs):
             "event": event_name(track_id),
             "title": humanize(track_id),
             "file": file_id,
+            "kind": song["kind"],
             "contexts": sorted(song["contexts"]),
         }
         if song["aliases"]:

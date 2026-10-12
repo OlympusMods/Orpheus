@@ -35,11 +35,11 @@ public final class TrackAvailability implements Predicate<Track> {
             cache.clear();
             checkedAt = now;
         }
-        return cache.computeIfAbsent(track.id(), id -> exists(current, track.file()));
+        return cache.computeIfAbsent(track.id(), id -> exists(current, track));
     }
 
-    private static boolean exists(ResourceManager resources, String file) {
-        String path = "sounds/" + file + ".ogg";
-        return resources.getResource(new ResourceLocation("minecraft", path)).isPresent();
+    private static boolean exists(ResourceManager resources, Track track) {
+        String path = "sounds/" + track.filePath() + ".ogg";
+        return resources.getResource(new ResourceLocation(track.fileNamespace(), path)).isPresent();
     }
 }

@@ -37,9 +37,11 @@ public final class MusicDownload {
         return phase;
     }
 
-    /** The songs of the catalog whose audio is not in the game right now. */
+    /** The downloadable songs and discs whose audio is not in the game right now. */
     public static List<Track> missing(OrpheusRuntime runtime) {
-        return runtime.catalog().all().stream().filter(track -> !runtime.isAvailable(track)).toList();
+        return runtime.catalog().all().stream()
+                .filter(track -> track.isDownloadable() && !runtime.isAvailable(track))
+                .toList();
     }
 
     public static synchronized void start(OrpheusRuntime runtime) {
