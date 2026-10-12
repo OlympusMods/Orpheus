@@ -60,7 +60,7 @@
   "orpheus.screen.songs.minecraft": "Minecraft is playing the music in %s.",
   "orpheus.screen.songs.use_orpheus": "Let Orpheus play the music here",
   "orpheus.screen.song.toggle.tooltip": "Click to add this song to, or remove it from, %s.",
-  "orpheus.screen.song.missing.tooltip": "[!] This song's audio is not in your game yet, so it cannot be played.",
+  "orpheus.screen.song.missing.tooltip": "[!] This song's audio is not in your game yet. Use the download button at the top of the list.",
   "orpheus.screen.chance": "Chance %s",
   "orpheus.screen.chance.tooltip": "How likely this song is to be picked compared with the others, from 1 (rare) to 10 (often). Click to raise it.",
   "orpheus.screen.block": "Block",
@@ -87,5 +87,13 @@
   "orpheus.presets.blank.tooltip": "Creates a new preset with the default settings.",
   "orpheus.presets.back": "Back",
   "orpheus.options.button": "Music Options...",
-  "orpheus.options.button.tooltip": "Open the Orpheus music settings."
+  "orpheus.options.button.tooltip": "Open the Orpheus music settings.",
+  "orpheus.download.button": "Get %s missing songs",
+  "orpheus.download.button.tooltip": "Downloads the missing songs from Mojang's own servers into a resource pack folder. Nothing is bundled with this mod. Afterwards, enable the \"Orpheus Music\" pack in Options > Resource Packs.",
+  "orpheus.download.running": "Downloading... %s / %s",
+  "orpheus.download.progress": "Downloading songs, this can take a minute...",
+  "orpheus.download.done": "Done! Now enable the \"%s\" resource pack.",
+  "orpheus.download.already": "Already downloaded. Enable the \"%s\" resource pack.",
+  "orpheus.download.partial": "Downloaded %s songs, %s could not be downloaded (see the log).",
+  "orpheus.download.failed": "Download failed. Check your connection and the game log."
 }

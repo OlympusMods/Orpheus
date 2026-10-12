@@ -51,6 +51,15 @@ public final class OrpheusClient {
         keys = bindings;
     }
 
+    public static Path gameDirectory() {
+        return Minecraft.getInstance().gameDirectory.toPath();
+    }
+
+    /** The pack.mcmeta written next to downloaded songs; the pack format depends on the game version. */
+    public static String musicPackMetadata() {
+        return "{\"pack\":{\"pack_format\":15,\"description\":\"Songs downloaded by Orpheus\"}}";
+    }
+
     public static void show(Screen screen) {
         Minecraft.getInstance().setScreen(screen);
     }

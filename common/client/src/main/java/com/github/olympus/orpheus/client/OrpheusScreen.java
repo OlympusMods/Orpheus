@@ -47,6 +47,9 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
     private MusicContext context = MusicContext.SURVIVAL;
     private int page;
     private Button nowPlaying;
+    private Button downloadButton;
+    private Button downloadStatus;
+    private MusicDownload.Phase seenPhase = MusicDownload.phase();
     private int ticks;
 
     public OrpheusScreen(Screen parent) {
@@ -62,14 +65,26 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
 
     /** Keeps the "now playing" line up to date while the screen is open. */
     public void tick() {
-        if (nowPlaying != null && ++ticks % REFRESH_TICKS == 0) {
-            nowPlaying.setMessage(nowPlayingText(OrpheusClient.runtime()));
+        if (++ticks % REFRESH_TICKS != 0) {
+            return;
+        }
+        OrpheusRuntime runtime = OrpheusClient.runtime();
+        if (nowPlaying != null) {
+            nowPlaying.setMessage(nowPlayingText(runtime));
+        }
+        if (seenPhase != MusicDownload.phase()) {
+            seenPhase = MusicDownload.phase();
+            rebuild();
+        } else if (downloadButton != null) {
+            downloadButton.setMessage(MusicDownload.buttonText(MusicDownload.missing(runtime).size()));
         }
     }
 
     @Override
     protected void rebuild() {
         clearWidgets();
+        downloadButton = null;
+        downloadStatus = null;
         OrpheusRuntime runtime = OrpheusClient.runtime();
         int left = left();
 
@@ -189,13 +204,14 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
             return;
         }
 
+        int listTop = addDownloadControls(runtime, left, top);
         List<Track> tracks = TrackListing.sorted(runtime.catalog());
         // Songs that can be played come first, missing ones go to the end.
         tracks.sort(Comparator.comparing(track -> !runtime.isAvailable(track)));
 
-        int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - top - FOOTER_HEIGHT) / ROW_HEIGHT));
+        int rows = Math.max(MIN_ROWS, Math.min(MAX_ROWS, (height - listTop - FOOTER_HEIGHT) / ROW_HEIGHT));
         page = Pager.clamp(page, tracks.size(), rows);
-        int y = top;
+        int y = listTop;
         for (Track track : Pager.slice(tracks, page, rows)) {
             addSongRow(runtime, preset, settings, track, left, y);
             y += ROW_HEIGHT;
@@ -213,6 +229,32 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
             page = Math.min(pageCount - 1, page + 1);
             rebuild();
         });
+    }
+
+    /**
+     * Songs the game does not ship can be downloaded from Mojang's servers. Adds the button
+     * (and, after it was used, a line saying how it went) and returns where the song list starts.
+     */
+    private int addDownloadControls(OrpheusRuntime runtime, int left, int top) {
+        int missing = MusicDownload.missing(runtime).size();
+        MusicDownload.Phase phase = MusicDownload.phase();
+        if (missing == 0 && phase == MusicDownload.Phase.IDLE) {
+            return top;
+        }
+        int y = top;
+        downloadButton = button(left, y, WIDTH, MusicDownload.buttonText(missing),
+                text("orpheus.download.button.tooltip"), () -> {
+                    MusicDownload.start(runtime);
+                    rebuild();
+                });
+        downloadButton.active = missing > 0 && phase != MusicDownload.Phase.RUNNING;
+        y += STEP;
+        Component status = MusicDownload.status();
+        if (status != null) {
+            downloadStatus = label(left, y, WIDTH, status, null);
+            y += STEP;
+        }
+        return y;
     }
 
     /** One song: [x] title | chance | block | play. */
