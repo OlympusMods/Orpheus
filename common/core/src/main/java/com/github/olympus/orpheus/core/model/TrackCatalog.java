@@ -71,6 +71,7 @@ public final class TrackCatalog {
                                 id,
                                 object.get("event").getAsString(),
                                 object.get("title").getAsString(),
+                                object.has("artist") ? object.get("artist").getAsString() : "",
                                 object.has("file") ? object.get("file").getAsString() : id,
                                 object.has("kind") ? TrackKind.valueOf(object.get("kind").getAsString()) : TrackKind.GAME,
                                 contexts,

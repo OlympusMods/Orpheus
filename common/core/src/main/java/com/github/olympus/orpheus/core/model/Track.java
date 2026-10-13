@@ -9,6 +9,7 @@ import java.util.Set;
  * @param id       canonical id, the newest name Mojang gave the file (e.g. music/game/minecraft)
  * @param event    sound event name registered under the orpheus namespace
  * @param title    display name of the song
+ * @param artist   who made the song, or an empty string when unknown
  * @param file     sound file the game plays this song from, as "path" (inside the minecraft
  *                 namespace) or "namespace:path". It differs from the id on versions that
  *                 still ship the old file name, e.g. music/game/calm1 on 1.20.1
@@ -20,6 +21,7 @@ public record Track(
         String id,
         String event,
         String title,
+        String artist,
         String file,
         TrackKind kind,
         Set<MusicContext> contexts,
@@ -28,6 +30,10 @@ public record Track(
     public Track {
         contexts = Set.copyOf(contexts);
         aliases = List.copyOf(aliases);
+    }
+
+    public boolean hasArtist() {
+        return !artist.isBlank();
     }
 
     public boolean defaultsTo(MusicContext context) {

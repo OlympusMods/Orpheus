@@ -20,7 +20,8 @@
       "kind": "GAME",
       "contexts": [
         "SURVIVAL"
-      ]
+      ],
+      "artist": "Kumi Tanioka"
     },
     {
       "id": "music/game/ancestry",
@@ -77,6 +78,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/calm2"
       ]
@@ -90,7 +92,8 @@
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
-      ]
+      ],
+      "artist": "Kumi Tanioka"
     },
     {
       "id": "music/game/creative/aria_math",
@@ -101,6 +104,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative4"
       ]
@@ -114,6 +118,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative1"
       ]
@@ -127,6 +132,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative2"
       ]
@@ -140,6 +146,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative5"
       ]
@@ -153,6 +160,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative3"
       ]
@@ -166,6 +174,7 @@
       "contexts": [
         "CREATIVE"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/creative/creative6"
       ]
@@ -191,6 +200,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/hal4"
       ]
@@ -216,6 +226,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/piano1"
       ]
@@ -263,6 +274,7 @@
       "contexts": [
         "CREDITS"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/end/credits"
       ]
@@ -275,7 +287,8 @@
       "kind": "GAME",
       "contexts": [
         "BOSS"
-      ]
+      ],
+      "artist": "C418"
     },
     {
       "id": "music/game/end/the_end",
@@ -286,6 +299,7 @@
       "contexts": [
         "END"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/end/end"
       ]
@@ -334,7 +348,8 @@
       "contexts": [
         "CREATIVE",
         "SURVIVAL"
-      ]
+      ],
+      "artist": "Kumi Tanioka"
     },
     {
       "id": "music/game/haggstrom",
@@ -346,6 +361,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/hal3"
       ]
@@ -383,6 +399,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nuance1"
       ]
@@ -433,6 +450,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/hal2"
       ]
@@ -459,6 +477,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/piano3"
       ]
@@ -473,6 +492,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/calm1"
       ]
@@ -486,6 +506,7 @@
       "contexts": [
         "NETHER"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nether/nether4"
       ]
@@ -499,6 +520,7 @@
       "contexts": [
         "NETHER"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nether/nether1"
       ]
@@ -511,7 +533,8 @@
       "kind": "GAME",
       "contexts": [
         "NETHER"
-      ]
+      ],
+      "artist": "Lena Raine"
     },
     {
       "id": "music/game/nether/dead_voxel",
@@ -522,6 +545,7 @@
       "contexts": [
         "NETHER"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nether/nether2"
       ]
@@ -534,7 +558,8 @@
       "kind": "GAME",
       "contexts": [
         "NETHER"
-      ]
+      ],
+      "artist": "Lena Raine"
     },
     {
       "id": "music/game/nether/soulsand_valley/so_below",
@@ -544,7 +569,8 @@
       "kind": "GAME",
       "contexts": [
         "NETHER"
-      ]
+      ],
+      "artist": "Lena Raine"
     },
     {
       "id": "music/game/nether/warmth",
@@ -555,6 +581,7 @@
       "contexts": [
         "NETHER"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nether/nether3"
       ]
@@ -605,6 +632,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/nuance2"
       ]
@@ -665,6 +693,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/hal1"
       ]
@@ -712,6 +741,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/calm3"
       ]
@@ -736,7 +766,8 @@
       "kind": "GAME",
       "contexts": [
         "UNDERWATER"
-      ]
+      ],
+      "artist": "C418"
     },
     {
       "id": "music/game/water/dragon_fish",
@@ -746,7 +777,8 @@
       "kind": "GAME",
       "contexts": [
         "UNDERWATER"
-      ]
+      ],
+      "artist": "C418"
     },
     {
       "id": "music/game/water/shuniji",
@@ -756,7 +788,8 @@
       "kind": "GAME",
       "contexts": [
         "UNDERWATER"
-      ]
+      ],
+      "artist": "C418"
     },
     {
       "id": "music/game/wending",
@@ -779,6 +812,7 @@
         "CREATIVE",
         "SURVIVAL"
       ],
+      "artist": "C418",
       "aliases": [
         "music/game/piano2"
       ]
@@ -804,6 +838,7 @@
       "contexts": [
         "MAIN_MENU"
       ],
+      "artist": "C418",
       "aliases": [
         "music/menu/menu3"
       ]
@@ -817,6 +852,7 @@
       "contexts": [
         "MAIN_MENU"
       ],
+      "artist": "C418",
       "aliases": [
         "music/menu/menu4"
       ]
@@ -830,6 +866,7 @@
       "contexts": [
         "MAIN_MENU"
       ],
+      "artist": "C418",
       "aliases": [
         "music/menu/menu2"
       ]
@@ -843,6 +880,7 @@
       "contexts": [
         "MAIN_MENU"
       ],
+      "artist": "C418",
       "aliases": [
         "music/menu/menu1"
       ]
@@ -853,7 +891,8 @@
       "title": "11",
       "file": "records/11",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/13",
@@ -861,7 +900,8 @@
       "title": "13",
       "file": "records/13",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/5",
@@ -869,7 +909,8 @@
       "title": "5",
       "file": "records/5",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Samuel Åberg"
     },
     {
       "id": "records/blocks",
@@ -877,7 +918,8 @@
       "title": "Blocks",
       "file": "records/blocks",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/bounce",
@@ -893,7 +935,8 @@
       "title": "Cat",
       "file": "records/cat",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/chirp",
@@ -901,7 +944,8 @@
       "title": "Chirp",
       "file": "records/chirp",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/creator",
@@ -909,7 +953,8 @@
       "title": "Creator",
       "file": "records/creator",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Lena Raine"
     },
     {
       "id": "records/creator_music_box",
@@ -917,7 +962,8 @@
       "title": "Creator (Music Box)",
       "file": "records/creator_music_box",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Lena Raine"
     },
     {
       "id": "records/far",
@@ -925,7 +971,8 @@
       "title": "Far",
       "file": "records/far",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/lava_chicken",
@@ -933,7 +980,8 @@
       "title": "Lava Chicken",
       "file": "records/lava_chicken",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Hyper Potions"
     },
     {
       "id": "records/mall",
@@ -941,7 +989,8 @@
       "title": "Mall",
       "file": "records/mall",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/mellohi",
@@ -949,7 +998,8 @@
       "title": "Mellohi",
       "file": "records/mellohi",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/otherside",
@@ -957,7 +1007,8 @@
       "title": "Otherside",
       "file": "records/otherside",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Lena Raine"
     },
     {
       "id": "records/pigstep",
@@ -965,7 +1016,8 @@
       "title": "Pigstep",
       "file": "records/pigstep",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Lena Raine"
     },
     {
       "id": "records/precipice",
@@ -973,7 +1025,8 @@
       "title": "Precipice",
       "file": "records/precipice",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Aaron Cherof"
     },
     {
       "id": "records/relic",
@@ -981,7 +1034,8 @@
       "title": "Relic",
       "file": "records/relic",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Aaron Cherof"
     },
     {
       "id": "records/stal",
@@ -989,7 +1043,8 @@
       "title": "Stal",
       "file": "records/stal",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/strad",
@@ -997,7 +1052,8 @@
       "title": "Strad",
       "file": "records/strad",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/tears",
@@ -1005,7 +1061,8 @@
       "title": "Tears",
       "file": "records/tears",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "Amos Roddy"
     },
     {
       "id": "records/wait",
@@ -1013,7 +1070,8 @@
       "title": "Wait",
       "file": "records/wait",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "records/ward",
@@ -1021,7 +1079,8 @@
       "title": "Ward",
       "file": "records/ward",
       "kind": "DISC",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/beginning",
@@ -1029,7 +1088,8 @@
       "title": "Beginning",
       "file": "orpheus:unused/beginning",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/chris",
@@ -1037,7 +1097,8 @@
       "title": "Chris",
       "file": "orpheus:unused/chris",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/death",
@@ -1045,7 +1106,8 @@
       "title": "Death",
       "file": "orpheus:unused/death",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/dog",
@@ -1053,7 +1115,8 @@
       "title": "Dog",
       "file": "orpheus:unused/dog",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/door",
@@ -1061,7 +1124,8 @@
       "title": "Door",
       "file": "orpheus:unused/door",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/droopy_likes_ricochet",
@@ -1069,7 +1133,8 @@
       "title": "Droopy Likes Ricochet",
       "file": "orpheus:unused/droopy_likes_ricochet",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/droopy_likes_your_face",
@@ -1077,7 +1142,8 @@
       "title": "Droopy Likes Your Face",
       "file": "orpheus:unused/droopy_likes_your_face",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/equinoxe",
@@ -1085,7 +1151,8 @@
       "title": "Équinoxe",
       "file": "orpheus:unused/equinoxe",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/excursions",
@@ -1093,7 +1160,8 @@
       "title": "Excursions",
       "file": "orpheus:unused/excursions",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/flake",
@@ -1101,7 +1169,8 @@
       "title": "Flake",
       "file": "orpheus:unused/flake",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/ki",
@@ -1109,7 +1178,8 @@
       "title": "Ki",
       "file": "orpheus:unused/ki",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/kyoto",
@@ -1117,7 +1187,8 @@
       "title": "Kyoto",
       "file": "orpheus:unused/kyoto",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     },
     {
       "id": "unused/moog_city",
@@ -1125,7 +1196,8 @@
       "title": "Moog City",
       "file": "orpheus:unused/moog_city",
       "kind": "UNUSED",
-      "contexts": []
+      "contexts": [],
+      "artist": "C418"
     }
   ]
 }

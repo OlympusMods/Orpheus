@@ -90,6 +90,38 @@ UNUSED = {
     "moog_city": "Moog City",
 }
 
+# Who made each song, keyed by the part of the id after "music/game/" (or the full id for the
+# others). Songs missing here show no artist in the Now Playing toast. Only fill in what you are
+# sure about, a missing credit is better than a wrong one.
+C418 = [
+    "minecraft", "clark", "sweden", "subwoofer_lullaby", "living_mice", "haggstrom", "danny", "key",
+    "oxygene", "dry_hands", "wet_hands", "mice_on_venus",
+    "creative/biome_fest", "creative/blind_spots", "creative/haunt_muskie", "creative/aria_math",
+    "creative/dreiton", "creative/taswell",
+    "nether/concrete_halls", "nether/dead_voxel", "nether/warmth", "nether/ballad_of_the_cats",
+    "end/the_end", "end/boss", "end/alpha",
+    "water/axolotl", "water/dragon_fish", "water/shuniji",
+]
+ARTISTS = {}
+for _name in C418:
+    ARTISTS["music/game/" + _name] = "C418"
+for _name in ("menu/mutation", "menu/moog_city_2", "menu/beginning_2", "menu/floating_trees"):
+    ARTISTS["music/" + _name] = "C418"
+for _name in ("11", "13", "blocks", "cat", "chirp", "far", "mall", "mellohi", "stal", "strad", "wait", "ward"):
+    ARTISTS["records/" + _name] = "C418"
+for _name in ("chrysopoeia", "rubedo", "so_below"):
+    ARTISTS["music/game/nether/" + {"chrysopoeia": "crimson_forest", "rubedo": "nether_wastes",
+                                    "so_below": "soulsand_valley"}[_name] + "/" + _name] = "Lena Raine"
+for _name in ("pigstep", "otherside", "creator", "creator_music_box"):
+    ARTISTS["records/" + _name] = "Lena Raine"
+ARTISTS["records/5"] = "Samuel Åberg"
+ARTISTS["records/relic"] = "Aaron Cherof"
+ARTISTS["records/precipice"] = "Aaron Cherof"
+ARTISTS["records/tears"] = "Amos Roddy"
+ARTISTS["records/lava_chicken"] = "Hyper Potions"
+for _name in ("an_ordinary_day", "comforting_memories", "floating_dream"):
+    ARTISTS["music/game/" + _name] = "Kumi Tanioka"
+
 TITLES = {
     "records/creator_music_box": "Creator (Music Box)",
     "music/game/oxygene": "Oxygène",
@@ -233,6 +265,9 @@ def write_family(root, family, native_version, songs):
             "kind": song["kind"],
             "contexts": sorted(song["contexts"]),
         }
+        artist = ARTISTS.get(track_id) or ("C418" if song["kind"] == "UNUSED" else "")
+        if artist:
+            entry["artist"] = artist
         if song["aliases"]:
             entry["aliases"] = sorted(song["aliases"])
         catalog.append(entry)
