@@ -1,7 +1,7 @@
 package com.github.olympus.orpheus.client;
 
 import com.github.olympus.orpheus.core.OrpheusRuntime;
-import com.github.olympus.orpheus.core.download.LeftoverPack;
+import com.github.olympus.orpheus.core.download.UnusedPack;
 import com.github.olympus.orpheus.core.download.MusicPackInstaller;
 import com.github.olympus.orpheus.core.download.UrlHttpSource;
 import com.github.olympus.orpheus.core.model.Track;
@@ -26,13 +26,13 @@ public final class MusicDownload {
     }
 
     public static final String PACK_NAME = "Orpheus Music";
-    public static final String LEFTOVER_PACK_NAME = "Orpheus Leftovers";
+    public static final String UNUSED_PACK_NAME = "Orpheus Unused Tracks";
 
     private static volatile Phase phase = Phase.IDLE;
     private static volatile int done;
     private static volatile int total;
     private static volatile MusicPackInstaller.Report report;
-    private static volatile Component leftoverStatus;
+    private static volatile Component unusedStatus;
 
     private MusicDownload() {
     }
@@ -79,23 +79,23 @@ public final class MusicDownload {
     }
 
     /** Creates the folder where the player puts songs that are not part of the game. */
-    public static void prepareLeftovers(OrpheusRuntime runtime) {
-        List<Track> leftovers = runtime.catalog().all().stream()
-                .filter(track -> track.kind() == TrackKind.LEFTOVER)
+    public static void prepareUnused(OrpheusRuntime runtime) {
+        List<Track> unusedTracks = runtime.catalog().all().stream()
+                .filter(track -> track.kind() == TrackKind.UNUSED)
                 .toList();
-        Path pack = OrpheusClient.gameDirectory().resolve("resourcepacks").resolve(LEFTOVER_PACK_NAME);
+        Path pack = OrpheusClient.gameDirectory().resolve("resourcepacks").resolve(UNUSED_PACK_NAME);
         try {
-            LeftoverPack.prepare(pack, OrpheusClient.musicPackMetadata(), leftovers);
-            leftoverStatus = Component.translatable("orpheus.leftover.ready", "resourcepacks/" + LEFTOVER_PACK_NAME);
+            UnusedPack.prepare(pack, OrpheusClient.musicPackMetadata(), unusedTracks);
+            unusedStatus = Component.translatable("orpheus.unused.ready", "resourcepacks/" + UNUSED_PACK_NAME);
         } catch (IOException exception) {
-            OrpheusClient.LOGGER.error("Could not create the leftovers folder", exception);
-            leftoverStatus = Component.translatable("orpheus.leftover.failed");
+            OrpheusClient.LOGGER.error("Could not create the unused tracks folder", exception);
+            unusedStatus = Component.translatable("orpheus.unused.failed");
         }
     }
 
-    /** One line about the leftovers folder, or null before it was set up. */
-    public static Component leftoverStatus() {
-        return leftoverStatus;
+    /** One line about the unused tracks folder, or null before it was set up. */
+    public static Component unusedStatus() {
+        return unusedStatus;
     }
 
     /** Text of the button that starts the download. */

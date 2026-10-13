@@ -48,6 +48,6 @@ public record Track(
 
     /** True for songs Mojang's servers can provide, false for ones the player has to supply. */
     public boolean isDownloadable() {
-        return kind != TrackKind.LEFTOVER && fileNamespace().equals("minecraft");
+        return kind != TrackKind.UNUSED && fileNamespace().equals("minecraft");
     }
 }

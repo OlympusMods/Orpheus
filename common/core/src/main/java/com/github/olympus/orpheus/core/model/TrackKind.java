@@ -7,7 +7,7 @@ public enum TrackKind {
     /** Minecraft's background music. */
     GAME,
     /** Songs from the Minecraft albums that never made it into the game. */
-    LEFTOVER,
+    UNUSED,
     /** Jukebox discs. */
     DISC;
 

@@ -1,108 +1,4 @@
 {
-  "leftover.beginning": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/beginning",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.chris": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/chris",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.death": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/death",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.dog": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/dog",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.door": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/door",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.droopy_likes_ricochet": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/droopy_likes_ricochet",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.droopy_likes_your_face": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/droopy_likes_your_face",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.equinoxe": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/equinoxe",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.excursions": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/excursions",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.flake": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/flake",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.ki": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/ki",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.kyoto": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/kyoto",
-        "stream": true
-      }
-    ]
-  },
-  "leftover.moog_city": {
-    "sounds": [
-      {
-        "name": "orpheus:leftover/moog_city",
-        "stream": true
-      }
-    ]
-  },
   "music.game.a_familiar_room": {
     "sounds": [
       {
@@ -875,6 +771,110 @@
     "sounds": [
       {
         "name": "minecraft:records/ward",
+        "stream": true
+      }
+    ]
+  },
+  "unused.beginning": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/beginning",
+        "stream": true
+      }
+    ]
+  },
+  "unused.chris": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/chris",
+        "stream": true
+      }
+    ]
+  },
+  "unused.death": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/death",
+        "stream": true
+      }
+    ]
+  },
+  "unused.dog": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/dog",
+        "stream": true
+      }
+    ]
+  },
+  "unused.door": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/door",
+        "stream": true
+      }
+    ]
+  },
+  "unused.droopy_likes_ricochet": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/droopy_likes_ricochet",
+        "stream": true
+      }
+    ]
+  },
+  "unused.droopy_likes_your_face": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/droopy_likes_your_face",
+        "stream": true
+      }
+    ]
+  },
+  "unused.equinoxe": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/equinoxe",
+        "stream": true
+      }
+    ]
+  },
+  "unused.excursions": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/excursions",
+        "stream": true
+      }
+    ]
+  },
+  "unused.flake": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/flake",
+        "stream": true
+      }
+    ]
+  },
+  "unused.ki": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/ki",
+        "stream": true
+      }
+    ]
+  },
+  "unused.kyoto": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/kyoto",
+        "stream": true
+      }
+    ]
+  },
+  "unused.moog_city": {
+    "sounds": [
+      {
+        "name": "orpheus:unused/moog_city",
         "stream": true
       }
     ]

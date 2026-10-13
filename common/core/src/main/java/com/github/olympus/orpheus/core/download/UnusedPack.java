@@ -13,10 +13,10 @@ import java.util.Collection;
  * <p>The mod cannot supply these songs: they are not on Mojang's servers. It only creates the
  * folder and a README that says which file name each song expects.
  */
-public final class LeftoverPack {
-    private static final String SONGS_PATH = "assets/orpheus/sounds/leftover";
+public final class UnusedPack {
+    private static final String SONGS_PATH = "assets/orpheus/sounds/unused";
 
-    private LeftoverPack() {
+    private UnusedPack() {
     }
 
     /** Creates the folder, pack.mcmeta and README. Returns the folder the song files go into. */
@@ -32,19 +32,30 @@ public final class LeftoverPack {
     }
 
     static String readme(Collection<Track> tracks) {
+        // File names are padded to the longest one plus two spaces, so the titles line up.
+        int nameWidth = 0;
+        for (Track track : tracks) {
+            nameWidth = Math.max(nameWidth, fileName(track).length());
+        }
         StringBuilder text = new StringBuilder();
-        text.append("Orpheus leftover songs\n");
-        text.append("======================\n\n");
+        text.append("Orpheus unused tracks\n");
+        text.append("=====================\n\n");
         text.append("These songs were never added to Minecraft, so Orpheus cannot download them.\n");
         text.append("If you own them (for example from the album), convert them to .ogg (Vorbis)\n");
         text.append("and put the files into:\n\n    ").append(SONGS_PATH).append("/\n\n");
         text.append("Use exactly these file names:\n\n");
         for (Track track : tracks) {
-            String path = track.filePath();
-            text.append("    ").append(path.substring(path.lastIndexOf('/') + 1)).append(".ogg   ")
-                    .append(track.title()).append('\n');
+            String name = fileName(track);
+            text.append("    ").append(name);
+            text.append(" ".repeat(nameWidth - name.length() + 2));
+            text.append(track.title()).append('\n');
         }
-        text.append("\nThen enable this resource pack in Options > Resource Packs.\n");
+        text.append("\nThen reload from the Unused Tracks page in Orpheus (or enable this resource pack).\n");
         return text.toString();
+    }
+
+    private static String fileName(Track track) {
+        String path = track.filePath();
+        return path.substring(path.lastIndexOf('/') + 1) + ".ogg";
     }
 }

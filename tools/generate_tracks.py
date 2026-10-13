@@ -74,7 +74,7 @@ NESTED = {"music.creative": ["music.game"]}
 # Songs from C418's Minecraft Volume Alpha and Volume Beta that were never added to the game.
 # Their audio is not in Mojang's files, so the player supplies it; only the names are listed here.
 # Edit this list to add or remove entries, then run the script again.
-LEFTOVERS = {
+UNUSED = {
     "beginning": "Beginning",
     "chris": "Chris",
     "death": "Death",
@@ -196,15 +196,15 @@ def event_name(track_id):
     return track_id.replace("/", ".")
 
 
-def leftover_songs():
+def unused_songs():
     songs = {}
-    for slug, title in LEFTOVERS.items():
-        songs["leftover/" + slug] = {
+    for slug, title in UNUSED.items():
+        songs["unused/" + slug] = {
             "attributes": {},
             "contexts": set(),
             "aliases": set(),
-            "kind": "LEFTOVER",
-            "file": "orpheus:leftover/" + slug,
+            "kind": "UNUSED",
+            "file": "orpheus:unused/" + slug,
             "title": title,
         }
     return songs
@@ -245,7 +245,7 @@ def write_family(root, family, native_version, songs):
 def main():
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
     songs = merge_aliases(collect(HISTORY))
-    songs.update(leftover_songs())
+    songs.update(unused_songs())
     for family, native_version in FAMILIES.items():
         print(family, write_family(root, family, native_version, songs))
 

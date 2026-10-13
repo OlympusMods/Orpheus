@@ -261,8 +261,8 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
      * (and, after it was used, a line saying how it went) and returns where the song list starts.
      */
     private int addDownloadControls(OrpheusRuntime runtime, int left, int top) {
-        if (type == TrackKind.LEFTOVER) {
-            return addLeftoverControls(runtime, left, top);
+        if (type == TrackKind.UNUSED) {
+            return addUnusedControls(runtime, left, top);
         }
         int missing = MusicDownload.missing(runtime).size();
         MusicDownload.Phase phase = MusicDownload.phase();
@@ -285,15 +285,15 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
         return y;
     }
 
-    /** Leftover songs cannot be downloaded; the button creates the folder the player fills. */
-    private int addLeftoverControls(OrpheusRuntime runtime, int left, int top) {
+    /** Unused tracks cannot be downloaded; the button creates the folder the player fills. */
+    private int addUnusedControls(OrpheusRuntime runtime, int left, int top) {
         int y = top;
-        button(left, y, WIDTH, text("orpheus.leftover.button"), text("orpheus.leftover.button.tooltip"), () -> {
-            MusicDownload.prepareLeftovers(runtime);
+        button(left, y, WIDTH, text("orpheus.unused.button"), text("orpheus.unused.button.tooltip"), () -> {
+            MusicDownload.prepareUnused(runtime);
             rebuild();
         });
         y += STEP;
-        Component status = MusicDownload.leftoverStatus();
+        Component status = MusicDownload.unusedStatus();
         if (status != null) {
             label(left, y, WIDTH, status, null);
             y += STEP;
@@ -347,9 +347,9 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
     }
 
     private static Component missingTooltip(Track track) {
-        if (track.kind() == TrackKind.LEFTOVER) {
+        if (track.kind() == TrackKind.UNUSED) {
             String path = track.filePath();
-            return text("orpheus.screen.song.leftover.tooltip", path.substring(path.lastIndexOf('/') + 1) + ".ogg");
+            return text("orpheus.screen.song.unused.tooltip", path.substring(path.lastIndexOf('/') + 1) + ".ogg");
         }
         return text("orpheus.screen.song.missing.tooltip");
     }
