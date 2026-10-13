@@ -33,9 +33,13 @@ public final class NowPlayingToast implements Toast {
     };
 
     private final Component title = Component.translatable("orpheus.toast.title");
-    private final String description;
-    private final ItemStack icon;
-    private final int width;
+    private static NowPlayingToast active;
+
+    private String description;
+    private ItemStack icon;
+    private int width;
+    private long shownAt = System.currentTimeMillis();
+    private boolean finished;
 
     private NowPlayingToast(String description, ItemStack icon, int width) {
         this.description = description;
@@ -47,7 +51,27 @@ public final class NowPlayingToast implements Toast {
         String description = Texts.nowPlaying(track).getString();
         // Grow the toast to fit "Song - Artist" instead of cutting the artist off.
         int width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, TEXT_X + minecraft.font.width(description) + TEXT_PADDING));
-        minecraft.getToasts().addToast(new NowPlayingToast(description, iconFor(track), width));
+        ItemStack icon = iconFor(track);
+        NowPlayingToast existing = active;
+        if (existing != null && existing.isLive()) {
+            existing.replaceWith(description, icon, width);
+            return;
+        }
+        NowPlayingToast toast = new NowPlayingToast(description, icon, width);
+        active = toast;
+        minecraft.getToasts().addToast(toast);
+    }
+
+    /** A toast that is still on screen (or about to be) is reused, so skipping quickly never stacks pop-ups. */
+    private boolean isLive() {
+        return !finished && System.currentTimeMillis() - shownAt < DISPLAY_MILLIS + 2000L;
+    }
+
+    private void replaceWith(String description, ItemStack icon, int width) {
+        this.description = description;
+        this.icon = icon;
+        this.width = width;
+        this.shownAt = System.currentTimeMillis();
     }
 
     private static ItemStack iconFor(Track track) {
@@ -88,6 +112,8 @@ public final class NowPlayingToast implements Toast {
         }
         graphics.drawString(font, title, TEXT_X, 7, 0xFFFFFF00, false);
         graphics.drawString(font, font.plainSubstrByWidth(description, width - TEXT_X - TEXT_PADDING), TEXT_X, 18, 0xFFFFFFFF, false);
-        return visibleMillis < DISPLAY_MILLIS ? Visibility.SHOW : Visibility.HIDE;
+        boolean show = System.currentTimeMillis() - shownAt < DISPLAY_MILLIS;
+        finished = !show;
+        return show ? Visibility.SHOW : Visibility.HIDE;
     }
 }

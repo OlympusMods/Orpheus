@@ -33,9 +33,13 @@ public final class NowPlayingToast implements Toast {
     };
 
     private final Component title = Component.translatable("orpheus.toast.title");
-    private final String description;
-    private final ItemStack icon;
-    private final int width;
+    private static NowPlayingToast active;
+
+    private String description;
+    private ItemStack icon;
+    private int width;
+    private long shownAt = System.currentTimeMillis();
+    private boolean finished;
     private Visibility wantedVisibility = Visibility.SHOW;
 
     private NowPlayingToast(String description, ItemStack icon, int width) {
@@ -48,7 +52,27 @@ public final class NowPlayingToast implements Toast {
         String description = Texts.nowPlaying(track).getString();
         // Grow the toast to fit "Song - Artist" instead of cutting the artist off.
         int width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, TEXT_X + minecraft.font.width(description) + TEXT_PADDING));
-        minecraft.getToastManager().addToast(new NowPlayingToast(description, iconFor(track), width));
+        ItemStack icon = iconFor(track);
+        NowPlayingToast existing = active;
+        if (existing != null && existing.isLive()) {
+            existing.replaceWith(description, icon, width);
+            return;
+        }
+        NowPlayingToast toast = new NowPlayingToast(description, icon, width);
+        active = toast;
+        minecraft.getToastManager().addToast(toast);
+    }
+
+    /** A toast that is still on screen (or about to be) is reused, so skipping quickly never stacks pop-ups. */
+    private boolean isLive() {
+        return !finished && System.currentTimeMillis() - shownAt < DISPLAY_MILLIS + 2000L;
+    }
+
+    private void replaceWith(String description, ItemStack icon, int width) {
+        this.description = description;
+        this.icon = icon;
+        this.width = width;
+        this.shownAt = System.currentTimeMillis();
     }
 
     private static ItemStack iconFor(Track track) {
@@ -72,7 +96,8 @@ public final class NowPlayingToast implements Toast {
 
     @Override
     public void update(ToastManager manager, long visibleMillis) {
-        boolean show = visibleMillis < DISPLAY_MILLIS * manager.getNotificationDisplayTimeMultiplier();
+        boolean show = System.currentTimeMillis() - shownAt < DISPLAY_MILLIS * manager.getNotificationDisplayTimeMultiplier();
+        finished = !show;
         wantedVisibility = show ? Visibility.SHOW : Visibility.HIDE;
     }
 
