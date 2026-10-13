@@ -16,6 +16,7 @@ public abstract class SoundManagerStopMixin {
      */
     @Inject(method = "stop()V", at = @At("HEAD"), cancellable = true, require = 0)
     private void orpheus$stopEverythingButMusic(CallbackInfo callback) {
+        OrpheusHooks.noteStop();
         if (!OrpheusHooks.isManaging()) {
             return;
         }

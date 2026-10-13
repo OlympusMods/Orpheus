@@ -17,6 +17,9 @@ public final class MinecraftBackend implements PlaybackBackend {
     private final Minecraft minecraft;
     private SoundInstance instance;
     private boolean paused;
+    private String playingEvent = "";
+    private long startedAt;
+    private boolean endReported;
 
     public MinecraftBackend(Minecraft minecraft) {
         this.minecraft = minecraft;
@@ -24,7 +27,22 @@ public final class MinecraftBackend implements PlaybackBackend {
 
     @Override
     public boolean isPlaying() {
-        return instance != null && minecraft.getSoundManager().isActive(instance);
+        if (instance == null) {
+            return false;
+        }
+        boolean active = minecraft.getSoundManager().isActive(instance);
+        if (!active && !endReported) {
+            endReported = true;
+            double seconds = (System.nanoTime() - startedAt) / 1_000_000_000.0;
+            OrpheusClient.LOGGER.info(
+                    "Orpheus: {} is no longer active after {} s (screen: {}, world loaded: {}). {}",
+                    playingEvent,
+                    String.format("%.1f", seconds),
+                    minecraft.screen == null ? "none" : minecraft.screen.getClass().getSimpleName(),
+                    minecraft.level != null,
+                    OrpheusHooks.describeLastStop());
+        }
+        return active;
     }
 
     @Override
@@ -33,9 +51,18 @@ public final class MinecraftBackend implements PlaybackBackend {
         SoundEvent event = SoundEvent.createVariableRangeEvent(OrpheusClient.id(track.event()));
         instance = SimpleSoundInstance.forMusic(event);
         paused = false;
+        playingEvent = track.event();
+        startedAt = System.nanoTime();
+        endReported = false;
         minecraft.getSoundManager().play(instance);
         if (OrpheusClient.runtime().active().nowPlayingToast()) {
-            NowPlayingToast.show(minecraft, track);
+            try {
+                NowPlayingToast.show(minecraft, track);
+                OrpheusClient.LOGGER.info("Orpheus: showing the Now Playing toast for {}", track.event());
+            } catch (RuntimeException exception) {
+                // A broken toast must never silence the music.
+                OrpheusClient.LOGGER.warn("Orpheus: could not show the Now Playing toast", exception);
+            }
         }
     }
 

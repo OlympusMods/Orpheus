@@ -11,6 +11,8 @@ import net.minecraft.sounds.Music;
 public final class OrpheusHooks {
     private static boolean failed;
     private static boolean managing;
+    private static String lastStop = "";
+    private static long lastStopNanos;
 
     private OrpheusHooks() {
     }
@@ -38,6 +40,25 @@ public final class OrpheusHooks {
             OrpheusClient.LOGGER.error("Orpheus disabled itself after an error", exception);
             return false;
         }
+    }
+
+    /** Remembers who asked the sound system to stop everything, to explain songs that end unexpectedly. */
+    public static void noteStop() {
+        StackTraceElement[] stack = new Throwable().getStackTrace();
+        StringBuilder text = new StringBuilder();
+        for (int index = 1; index < Math.min(stack.length, 10); index++) {
+            text.append("\n    at ").append(stack[index]);
+        }
+        lastStop = text.toString();
+        lastStopNanos = System.nanoTime();
+    }
+
+    public static String describeLastStop() {
+        if (lastStopNanos == 0) {
+            return "SoundManager.stop() was never called.";
+        }
+        double seconds = (System.nanoTime() - lastStopNanos) / 1_000_000_000.0;
+        return String.format("SoundManager.stop() was last called %.1f s ago from:%s", seconds, lastStop);
     }
 
     /** True while Orpheus is the one playing music, so sound-stopping code should spare it. */
