@@ -53,6 +53,7 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
     private Button downloadButton;
     private Button downloadStatus;
     private MusicDownload.Phase seenPhase = MusicDownload.phase();
+    private int seenAvailable = -1;
     private int ticks;
 
     public OrpheusScreen(Screen parent) {
@@ -72,11 +73,17 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
             return;
         }
         OrpheusRuntime runtime = OrpheusClient.runtime();
+        if (seenAvailable < 0) {
+            seenAvailable = (int) runtime.catalog().all().stream().filter(runtime::isAvailable).count();
+        }
         if (nowPlaying != null) {
             nowPlaying.setMessage(nowPlayingText(runtime));
         }
-        if (seenPhase != MusicDownload.phase()) {
+        int available = (int) runtime.catalog().all().stream().filter(runtime::isAvailable).count();
+        if (seenPhase != MusicDownload.phase() || (seenAvailable >= 0 && seenAvailable != available)) {
+            // A download finished or the resources were reloaded: show the new state of the list.
             seenPhase = MusicDownload.phase();
+            seenAvailable = available;
             rebuild();
         } else if (downloadButton != null) {
             downloadButton.setMessage(MusicDownload.buttonText(MusicDownload.missing(runtime).size()));

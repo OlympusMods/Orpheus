@@ -9,6 +9,7 @@ import com.github.olympus.orpheus.core.model.TrackKind;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -70,7 +71,13 @@ public final class MusicDownload {
                 OrpheusClient.musicPackMetadata(),
                 message -> OrpheusClient.LOGGER.warn(message));
         try {
-            report = installer.install(missing, (finished, all) -> done = finished);
+            MusicPackInstaller.Report result = installer.install(missing, (finished, all) -> done = finished);
+            report = result;
+            if (result.downloaded() + result.alreadyPresent() > 0) {
+                // Turning the pack on and reloading must happen on the game thread.
+                Minecraft minecraft = Minecraft.getInstance();
+                minecraft.execute(() -> PackActivator.enableAndReload(minecraft, PACK_NAME));
+            }
             phase = Phase.DONE;
         } catch (IOException | RuntimeException exception) {
             OrpheusClient.LOGGER.error("Could not download songs", exception);
@@ -86,6 +93,7 @@ public final class MusicDownload {
         Path pack = OrpheusClient.gameDirectory().resolve("resourcepacks").resolve(UNUSED_PACK_NAME);
         try {
             UnusedPack.prepare(pack, OrpheusClient.musicPackMetadata(), unusedTracks);
+            PackActivator.enableAndReload(Minecraft.getInstance(), UNUSED_PACK_NAME);
             unusedStatus = Component.translatable("orpheus.unused.ready", "resourcepacks/" + UNUSED_PACK_NAME);
         } catch (IOException exception) {
             OrpheusClient.LOGGER.error("Could not create the unused tracks folder", exception);
