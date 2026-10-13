@@ -15,6 +15,7 @@ public final class PresetCodec {
         JsonObject root = new JsonObject();
         root.addProperty("name", preset.name());
         root.addProperty("enabled", preset.enabled());
+        root.addProperty("nowPlayingToast", preset.nowPlayingToast());
         JsonArray blacklist = new JsonArray();
         for (String id : preset.blacklisted()) {
             blacklist.add(id);
@@ -47,6 +48,9 @@ public final class PresetCodec {
         Preset preset = Preset.defaults(name, catalog);
         if (root.has("enabled") && root.get("enabled").isJsonPrimitive()) {
             preset.setEnabled(root.get("enabled").getAsBoolean());
+        }
+        if (root.has("nowPlayingToast") && root.get("nowPlayingToast").isJsonPrimitive()) {
+            preset.setNowPlayingToast(root.get("nowPlayingToast").getAsBoolean());
         }
         if (root.has("blacklist") && root.get("blacklist").isJsonArray()) {
             for (JsonElement element : root.getAsJsonArray("blacklist")) {

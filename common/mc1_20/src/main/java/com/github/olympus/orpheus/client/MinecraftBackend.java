@@ -34,6 +34,9 @@ public final class MinecraftBackend implements PlaybackBackend {
         instance = SimpleSoundInstance.forMusic(event);
         paused = false;
         minecraft.getSoundManager().play(instance);
+        if (OrpheusClient.runtime().active().nowPlayingToast()) {
+            NowPlayingToast.show(minecraft, track);
+        }
     }
 
     @Override

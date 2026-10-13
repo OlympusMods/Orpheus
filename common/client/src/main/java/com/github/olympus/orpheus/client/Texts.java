@@ -21,6 +21,14 @@ public final class Texts {
         return Component.translatableWithFallback("orpheus.track." + track.id().replace('/', '.'), track.title());
     }
 
+    /** "Song - Artist", or only the song when the artist is not known. */
+    public static Component nowPlaying(Track track) {
+        if (track.hasArtist()) {
+            return Component.translatable("orpheus.toast.description", track(track), track.artist());
+        }
+        return track(track);
+    }
+
     /** 45 becomes "45s", 90 becomes "1m 30s"; the units come from the language file. */
     public static Component duration(int seconds) {
         if (seconds < 60) {

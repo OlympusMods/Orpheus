@@ -11,6 +11,7 @@ import java.util.Set;
 public final class Preset {
     private final String name;
     private boolean enabled = true;
+    private boolean nowPlayingToast = true;
     private final Map<MusicContext, ContextSettings> contexts = new EnumMap<>(MusicContext.class);
     private final Set<String> blacklist = new LinkedHashSet<>();
 
@@ -36,6 +37,15 @@ public final class Preset {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /** Whether a pop-up with the song name appears whenever a new song starts. */
+    public boolean nowPlayingToast() {
+        return nowPlayingToast;
+    }
+
+    public void setNowPlayingToast(boolean nowPlayingToast) {
+        this.nowPlayingToast = nowPlayingToast;
     }
 
     public ContextSettings settings(MusicContext context) {
@@ -73,6 +83,7 @@ public final class Preset {
     public Preset copyAs(String newName) {
         Preset copy = new Preset(newName);
         copy.enabled = enabled;
+        copy.nowPlayingToast = nowPlayingToast;
         for (Map.Entry<MusicContext, ContextSettings> entry : contexts.entrySet()) {
             copy.contexts.put(entry.getKey(), entry.getValue().copy());
         }

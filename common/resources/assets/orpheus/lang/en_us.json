@@ -55,8 +55,8 @@
   "orpheus.screen.delay.max.tooltip": "After a song ends, Orpheus waits at most this long before starting the next one.",
   "orpheus.screen.repeat": "Don't repeat the last %s songs",
   "orpheus.screen.repeat.tooltip": "A song is not picked again until this many other songs have played. Set it to 0 to allow repeats.",
-  "orpheus.screen.reset": "Reset the song list for %s",
-  "orpheus.screen.reset.tooltip": "Restores the default songs for this situation. Your other settings are kept.",
+  "orpheus.screen.reset": "Reset songs",
+  "orpheus.screen.reset.tooltip": "Restores the default song list for the selected situation. Your other settings are kept.",
   "orpheus.screen.songs.minecraft": "Minecraft is playing the music in %s.",
   "orpheus.screen.songs.use_orpheus": "Let Orpheus play the music here",
   "orpheus.screen.song.toggle.tooltip": "Click to add this song to, or remove it from, %s.",
@@ -105,5 +105,10 @@
   "orpheus.unused.button.tooltip": "These songs are not in Minecraft's files, so they cannot be downloaded. This creates a resource pack folder with instructions, turns the pack on and reloads the game's resources. Add your own .ogg files to that folder (for example from an album you own), then press this button again.",
   "orpheus.unused.ready": "Folder ready: %s (read the README.txt inside).",
   "orpheus.unused.failed": "Could not create the folder. Check the game log.",
-  "orpheus.screen.song.unused.tooltip": "[!] Not in Minecraft. Add your own file named %s to the \"Orpheus Unused Tracks\" pack, then press the button at the top of the list."
+  "orpheus.screen.song.unused.tooltip": "[!] Not in Minecraft. Add your own file named %s to the \"Orpheus Unused Tracks\" pack, then press the button at the top of the list.",
+  "orpheus.screen.toast": "Now Playing toast: %s",
+  "orpheus.screen.toast.tooltip": "Shows a small pop-up with the song name and artist whenever a new song starts.",
+  "orpheus.toast.title": "Now Playing",
+  "orpheus.toast.description": "%s - %s",
+  "orpheus.toast.overlay": "Now playing: %s"
 }

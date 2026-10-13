@@ -192,7 +192,12 @@ public final class OrpheusScreen extends OrpheusBaseScreen {
                 () -> settings.setRepeatAvoidance(settings.repeatAvoidance() + 1));
         y += STEP;
 
-        button(left, y, WIDTH, text("orpheus.screen.reset", Texts.context(context)),
+        button(left, y, half, text("orpheus.screen.toast", Texts.onOff(preset.nowPlayingToast())),
+                text("orpheus.screen.toast.tooltip"), () -> {
+                    preset.setNowPlayingToast(!preset.nowPlayingToast());
+                    rebuild();
+                });
+        button(left + half + GAP, y, half, text("orpheus.screen.reset"),
                 text("orpheus.screen.reset.tooltip"), () -> {
                     settings.resetTracks(context, runtime.catalog());
                     rebuild();
