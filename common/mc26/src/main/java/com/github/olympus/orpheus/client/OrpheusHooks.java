@@ -12,6 +12,7 @@ public final class OrpheusHooks {
     private static boolean failed;
     private static boolean managing;
     private static String lastStop = "";
+    private static boolean lastStopSpared;
     private static long lastStopNanos;
 
     private OrpheusHooks() {
@@ -43,14 +44,20 @@ public final class OrpheusHooks {
     }
 
     /** Remembers who asked the sound system to stop everything, to explain songs that end unexpectedly. */
-    public static void noteStop() {
+    public static void noteStop(boolean spared) {
         StackTraceElement[] stack = new Throwable().getStackTrace();
         StringBuilder text = new StringBuilder();
         for (int index = 1; index < Math.min(stack.length, 10); index++) {
             text.append("\n    at ").append(stack[index]);
         }
         lastStop = text.toString();
+        lastStopSpared = spared;
         lastStopNanos = System.nanoTime();
+    }
+
+    /** How long ago the sound system was last asked to stop everything; very large if never. */
+    public static long nanosSinceLastStop() {
+        return lastStopNanos == 0 ? Long.MAX_VALUE : System.nanoTime() - lastStopNanos;
     }
 
     public static String describeLastStop() {
@@ -58,7 +65,9 @@ public final class OrpheusHooks {
             return "SoundManager.stop() was never called.";
         }
         double seconds = (System.nanoTime() - lastStopNanos) / 1_000_000_000.0;
-        return String.format("SoundManager.stop() was last called %.1f s ago from:%s", seconds, lastStop);
+        return String.format(
+                "SoundManager.stop() was last called %.1f s ago (music %s) from:%s",
+                seconds, lastStopSpared ? "spared" : "NOT spared", lastStop);
     }
 
     /** True while Orpheus is the one playing music, so sound-stopping code should spare it. */

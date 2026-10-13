@@ -14,4 +14,12 @@ public interface PlaybackBackend {
     void resume();
 
     void hold();
+
+    /**
+     * True when the song that just stopped did not end by itself but was cut off by the game,
+     * for example while joining a world.
+     */
+    default boolean endedAbruptly() {
+        return false;
+    }
 }

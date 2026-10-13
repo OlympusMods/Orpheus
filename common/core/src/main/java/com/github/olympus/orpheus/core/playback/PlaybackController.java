@@ -27,6 +27,7 @@ public final class PlaybackController {
     private MusicContext lastContext;
     private int delayTicks = INITIAL_DELAY_TICKS;
     private boolean paused;
+    private boolean restartedAfterCut;
     private Runnable persistence = () -> { };
 
     public PlaybackController(
@@ -58,6 +59,14 @@ public final class PlaybackController {
             return true;
         }
         if (current != null && !backend.isPlaying()) {
+            if (backend.endedAbruptly() && !restartedAfterCut) {
+                // The game cut the song off (for example while joining a world). Play it again
+                // instead of leaving the player in silence for the whole pause between songs.
+                restartedAfterCut = true;
+                backend.play(current);
+                lastContext = context;
+                return true;
+            }
             current = null;
             delayTicks = randomDelay(settings);
         }
@@ -178,6 +187,7 @@ public final class PlaybackController {
     private void start(Track track) {
         backend.play(track);
         current = track;
+        restartedAfterCut = false;
         history.add(track.id());
         if (history.size() > HISTORY_LIMIT) {
             history.subList(0, history.size() - HISTORY_LIMIT).clear();

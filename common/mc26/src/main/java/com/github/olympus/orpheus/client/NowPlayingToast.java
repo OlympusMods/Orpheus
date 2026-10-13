@@ -55,14 +55,14 @@ public final class NowPlayingToast implements Toast {
         String name = track.kind() == TrackKind.DISC
                 ? track.filePath().substring("records/".length())
                 : CLASSIC_DISCS[Math.floorMod(track.id().hashCode(), CLASSIC_DISCS.length)];
-        return new ItemStack(BuiltInRegistries.ITEM
-                .getOptional(Identifier.fromNamespaceAndPath("minecraft", "music_disc_" + name))
-                .orElse(Items.MUSIC_DISC_CAT));
-    }
-
-    @Override
-    public int width() {
-        return width;
+        try {
+            return new ItemStack(BuiltInRegistries.ITEM
+                    .getOptional(Identifier.fromNamespaceAndPath("minecraft", "music_disc_" + name))
+                    .orElse(Items.MUSIC_DISC_CAT));
+        } catch (RuntimeException exception) {
+            // Item data is only loaded once a world has been joined; until then the toast has no icon.
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -79,7 +79,9 @@ public final class NowPlayingToast implements Toast {
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, Font font, long visibleMillis) {
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, 0, 0, width, HEIGHT);
-        graphics.fakeItem(icon, 8, 8);
+        if (!icon.isEmpty()) {
+            graphics.fakeItem(icon, 8, 8);
+        }
         graphics.text(font, title, TEXT_X, 7, 0xFFFFFF00, false);
         graphics.text(font, font.plainSubstrByWidth(description, width - TEXT_X - TEXT_PADDING), TEXT_X, 18, 0xFFFFFFFF, false);
     }

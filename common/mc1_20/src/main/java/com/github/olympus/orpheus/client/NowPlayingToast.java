@@ -54,8 +54,13 @@ public final class NowPlayingToast implements Toast {
         String name = track.kind() == TrackKind.DISC
                 ? track.filePath().substring("records/".length())
                 : CLASSIC_DISCS[Math.floorMod(track.id().hashCode(), CLASSIC_DISCS.length)];
-        Item item = BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", "music_disc_" + name));
-        return new ItemStack(item == Items.AIR ? Items.MUSIC_DISC_CAT : item);
+        try {
+            Item item = BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", "music_disc_" + name));
+            return new ItemStack(item == Items.AIR ? Items.MUSIC_DISC_CAT : item);
+        } catch (RuntimeException exception) {
+            // Item data may not be available yet (main menu); the toast then has no icon.
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -78,7 +83,9 @@ public final class NowPlayingToast implements Toast {
     public Visibility render(GuiGraphics graphics, ToastComponent toasts, long visibleMillis) {
         drawBackground(graphics);
         Font font = toasts.getMinecraft().font;
-        graphics.renderFakeItem(icon, 8, 8);
+        if (!icon.isEmpty()) {
+            graphics.renderFakeItem(icon, 8, 8);
+        }
         graphics.drawString(font, title, TEXT_X, 7, 0xFFFFFF00, false);
         graphics.drawString(font, font.plainSubstrByWidth(description, width - TEXT_X - TEXT_PADDING), TEXT_X, 18, 0xFFFFFFFF, false);
         return visibleMillis < DISPLAY_MILLIS ? Visibility.SHOW : Visibility.HIDE;

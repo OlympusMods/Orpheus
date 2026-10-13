@@ -17,12 +17,20 @@ public final class MinecraftBackend implements PlaybackBackend {
     private final Minecraft minecraft;
     private SoundInstance instance;
     private boolean paused;
+    private static final long CUT_OFF_WINDOW_NANOS = 3_000_000_000L;
+
     private String playingEvent = "";
     private long startedAt;
     private boolean endReported;
+    private boolean cutOff;
 
     public MinecraftBackend(Minecraft minecraft) {
         this.minecraft = minecraft;
+    }
+
+    @Override
+    public boolean endedAbruptly() {
+        return cutOff;
     }
 
     @Override
@@ -33,6 +41,8 @@ public final class MinecraftBackend implements PlaybackBackend {
         boolean active = minecraft.getSoundManager().isActive(instance);
         if (!active && !endReported) {
             endReported = true;
+            // A song that ends right after the sound system was told to stop everything was cut off.
+            cutOff = OrpheusHooks.nanosSinceLastStop() < CUT_OFF_WINDOW_NANOS;
             double seconds = (System.nanoTime() - startedAt) / 1_000_000_000.0;
             OrpheusClient.LOGGER.info(
                     "Orpheus: {} is no longer active after {} s (screen: {}, world loaded: {}). {}",
@@ -54,6 +64,7 @@ public final class MinecraftBackend implements PlaybackBackend {
         playingEvent = track.event();
         startedAt = System.nanoTime();
         endReported = false;
+        cutOff = false;
         minecraft.getSoundManager().play(instance);
         if (OrpheusClient.runtime().active().nowPlayingToast()) {
             try {
