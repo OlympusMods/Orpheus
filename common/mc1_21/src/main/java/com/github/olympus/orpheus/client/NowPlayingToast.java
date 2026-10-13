@@ -24,10 +24,11 @@ public final class NowPlayingToast implements Toast {
     private static final ResourceLocation BACKGROUND =
             ResourceLocation.fromNamespaceAndPath("minecraft", "toast/advancement");
     private static final long DISPLAY_MILLIS = 5000L;
-    private static final int WIDTH = 160;
+    private static final int MIN_WIDTH = 160;
+    private static final int MAX_WIDTH = 300;
     private static final int HEIGHT = 32;
     private static final int TEXT_X = 30;
-    private static final int TEXT_WIDTH = WIDTH - TEXT_X - 6;
+    private static final int TEXT_PADDING = 8;
     private static final String[] CLASSIC_DISCS = {
         "13", "cat", "blocks", "chirp", "far", "mall", "mellohi", "stal", "strad", "ward", "11", "wait"
     };
@@ -35,14 +36,19 @@ public final class NowPlayingToast implements Toast {
     private final Component title = Component.translatable("orpheus.toast.title");
     private final String description;
     private final ItemStack icon;
+    private final int width;
 
-    private NowPlayingToast(String description, ItemStack icon) {
+    private NowPlayingToast(String description, ItemStack icon, int width) {
         this.description = description;
         this.icon = icon;
+        this.width = width;
     }
 
     public static void show(Minecraft minecraft, Track track) {
-        minecraft.getToasts().addToast(new NowPlayingToast(Texts.nowPlaying(track).getString(), iconFor(track)));
+        String description = Texts.nowPlaying(track).getString();
+        // Grow the toast to fit "Song - Artist" instead of cutting the artist off.
+        int width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, TEXT_X + minecraft.font.width(description) + TEXT_PADDING));
+        minecraft.getToasts().addToast(new NowPlayingToast(description, iconFor(track), width));
     }
 
     private static ItemStack iconFor(Track track) {
@@ -54,12 +60,17 @@ public final class NowPlayingToast implements Toast {
     }
 
     @Override
+    public int width() {
+        return width;
+    }
+
+    @Override
     public Visibility render(GuiGraphics graphics, ToastComponent toasts, long visibleMillis) {
-        graphics.blitSprite(BACKGROUND, 0, 0, WIDTH, HEIGHT);
+        graphics.blitSprite(BACKGROUND, 0, 0, width, HEIGHT);
         Font font = toasts.getMinecraft().font;
         graphics.renderFakeItem(icon, 8, 8);
         graphics.drawString(font, title, TEXT_X, 7, 0xFFFFFF00, false);
-        graphics.drawString(font, font.plainSubstrByWidth(description, TEXT_WIDTH), TEXT_X, 18, 0xFFFFFFFF, false);
+        graphics.drawString(font, font.plainSubstrByWidth(description, width - TEXT_X - TEXT_PADDING), TEXT_X, 18, 0xFFFFFFFF, false);
         return visibleMillis < DISPLAY_MILLIS ? Visibility.SHOW : Visibility.HIDE;
     }
 }
