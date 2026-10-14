@@ -14,6 +14,7 @@ public final class OrpheusHooks {
     private static String lastStop = "";
     private static boolean lastStopSpared;
     private static long lastStopNanos;
+    private static volatile long lastSoundTickNanos = System.nanoTime();
 
     private OrpheusHooks() {
     }
@@ -46,6 +47,15 @@ public final class OrpheusHooks {
             OrpheusClient.LOGGER.error("Orpheus disabled itself after an error", exception);
             return false;
         }
+    }
+
+    public static void noteSoundTick() {
+        lastSoundTickNanos = System.nanoTime();
+    }
+
+    /** How long the game has gone without ticking the sound engine; large while it is stalled. */
+    public static long nanosSinceSoundTick() {
+        return System.nanoTime() - lastSoundTickNanos;
     }
 
     /** Remembers who asked the sound system to stop everything, to explain songs that end unexpectedly. */

@@ -15,9 +15,10 @@ import net.minecraft.sounds.SoundEvent;
 
 public final class MinecraftBackend implements PlaybackBackend {
     private final Minecraft minecraft;
-    private SoundInstance instance;
+    private volatile SoundInstance instance;
     private boolean paused;
     private static final long CUT_OFF_WINDOW_NANOS = 3_000_000_000L;
+    private static final long STALL_NANOS = 80_000_000L;
 
     private String playingEvent = "";
     private long startedAt;
@@ -26,6 +27,31 @@ public final class MinecraftBackend implements PlaybackBackend {
 
     public MinecraftBackend(Minecraft minecraft) {
         this.minecraft = minecraft;
+        Thread keepAlive = new Thread(this::keepStreamAlive, "Orpheus stream keep-alive");
+        keepAlive.setDaemon(true);
+        keepAlive.start();
+    }
+
+    /**
+     * Streamed music is refilled by the sound engine, but only when the game ticks it. Joining a world
+     * can stall the game for over a second, long enough for the stream to run dry and the song to end.
+     * While the game is late, this asks the sound thread to keep refilling the stream.
+     */
+    private void keepStreamAlive() {
+        while (true) {
+            try {
+                Thread.sleep(25L);
+                if (instance != null && OrpheusHooks.nanosSinceSoundTick() > STALL_NANOS) {
+                    SoundManager manager = minecraft.getSoundManager();
+                    SoundEngineAccess engine = (SoundEngineAccess) ((SoundManagerAccess) manager).orpheus$engine();
+                    engine.orpheus$channelAccess().scheduleTick();
+                }
+            } catch (InterruptedException exception) {
+                return;
+            } catch (RuntimeException exception) {
+                // The keep-alive is best effort and must never take the game down.
+            }
+        }
     }
 
     @Override

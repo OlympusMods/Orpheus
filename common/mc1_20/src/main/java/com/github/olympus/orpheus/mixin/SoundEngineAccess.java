@@ -11,4 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface SoundEngineAccess {
     @Accessor("instanceToChannel")
     Map<SoundInstance, ChannelAccess.ChannelHandle> orpheus$channels();
+
+    @Accessor("channelAccess")
+    ChannelAccess orpheus$channelAccess();
 }
