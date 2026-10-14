@@ -8,6 +8,7 @@
     "MusicManagerMixin",
     "OptionsScreenMixin",
     "SoundEngineAccess",
+    "SoundEngineDebugMixin",
     "SoundEnginePauseMixin",
     "SoundManagerAccess",
     "SoundManagerStopMixin"
