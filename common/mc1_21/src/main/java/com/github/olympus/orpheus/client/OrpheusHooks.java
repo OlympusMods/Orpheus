@@ -27,6 +27,11 @@ public final class OrpheusHooks {
             managing = false;
             return false;
         }
+        if (minecraft.level != null && minecraft.player == null) {
+            // Joining a world: the player does not exist yet, so the situation would wrongly read as
+            // the main menu. Keep whatever Orpheus was doing and decide nothing until it is known.
+            return managing;
+        }
         try {
             OrpheusRuntime runtime = OrpheusClient.runtime();
             OrpheusClient.keys().poll(runtime, minecraft);

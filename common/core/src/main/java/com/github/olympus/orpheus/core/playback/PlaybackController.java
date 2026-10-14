@@ -63,7 +63,7 @@ public final class PlaybackController {
                 // The game cut the song off (for example while joining a world). Play it again
                 // instead of leaving the player in silence for the whole pause between songs.
                 restartedAfterCut = true;
-                backend.play(current);
+                backend.replay(current);
                 lastContext = context;
                 return true;
             }

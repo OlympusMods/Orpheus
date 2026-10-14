@@ -57,6 +57,15 @@ public final class MinecraftBackend implements PlaybackBackend {
 
     @Override
     public void play(Track track) {
+        start(track, true);
+    }
+
+    @Override
+    public void replay(Track track) {
+        start(track, false);
+    }
+
+    private void start(Track track, boolean announce) {
         stop();
         SoundEvent event = SoundEvent.createVariableRangeEvent(OrpheusClient.id(track.event()));
         instance = SimpleSoundInstance.forMusic(event);
@@ -66,7 +75,14 @@ public final class MinecraftBackend implements PlaybackBackend {
         endReported = false;
         cutOff = false;
         minecraft.getSoundManager().play(instance);
-        if (OrpheusClient.runtime().active().nowPlayingToast()) {
+        OrpheusClient.LOGGER.info(
+                "Orpheus: {} {} (screen: {}, level: {}, player: {})",
+                announce ? "playing" : "replaying after a cut",
+                track.event(),
+                minecraft.screen == null ? "none" : minecraft.screen.getClass().getSimpleName(),
+                minecraft.level != null,
+                minecraft.player != null);
+        if (announce && OrpheusClient.runtime().active().nowPlayingToast()) {
             try {
                 NowPlayingToast.show(minecraft, track);
                 OrpheusClient.LOGGER.info("Orpheus: showing the Now Playing toast for {}", track.event());

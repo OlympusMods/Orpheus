@@ -9,6 +9,11 @@ public interface PlaybackBackend {
 
     void stop();
 
+    /** Starts the same song again after it was cut off, without announcing it a second time. */
+    default void replay(Track track) {
+        play(track);
+    }
+
     void pause();
 
     void resume();
