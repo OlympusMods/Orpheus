@@ -37,6 +37,9 @@ subprojects { sub ->
                 environment 'JAVA_HOME', home
                 command << "-Dorg.gradle.java.installations.paths=${home}".toString()
             }
+            if (findProperty('dryRun')) {
+                command << "-PdryRun=${findProperty('dryRun')}".toString()
+            }
             if (extraArgs) {
                 command.addAll(extraArgs.split('\\s+') as List)
             }
@@ -48,6 +51,9 @@ subprojects { sub ->
     delegate('compile', 'compileJava', "Compiles ${loader} for Minecraft ${minecraft} with Java ${major}")
     delegate('clean', 'clean', "Cleans ${loader} for Minecraft ${minecraft}")
     delegate('runClient', 'runClient', "Runs the ${loader} ${minecraft} client")
+    delegate('publishMods', 'publishMods', "Publishes ${loader} ${minecraft} to Modrinth and CurseForge")
+    delegate('publishModrinth', 'publishModrinth', "Publishes ${loader} ${minecraft} to Modrinth")
+    delegate('publishCurseforge', 'publishCurseforge', "Publishes ${loader} ${minecraft} to CurseForge")
 
     sub.tasks.register('collectJar', Copy) {
         group = 'orpheus'
@@ -67,6 +73,10 @@ subprojects { sub ->
 
 def buildPaths = { Closure filter ->
     subprojects.findAll(filter).collect { "${it.path}:build".toString() }
+}
+
+def publishPaths = { String taskName, Closure filter ->
+    subprojects.findAll(filter).collect { "${it.path}:${taskName}".toString() }
 }
 
 tasks.register('build') {
@@ -112,5 +122,21 @@ gradle.ext.javaVersions.keySet().each { minecraft ->
         group = 'orpheus'
         description = "Builds every loader for Minecraft ${minecraft}"
         dependsOn buildPaths { it.name.endsWith("-${minecraft}") }
+    }
+}
+
+['publishMods': 'Modrinth and CurseForge', 'publishModrinth': 'Modrinth', 'publishCurseforge': 'CurseForge'].each { taskName, target ->
+    tasks.register(taskName) {
+        group = 'orpheus'
+        description = "Publishes every loader and Minecraft version to ${target} (-PdryRun=true only prints what would be uploaded)"
+        dependsOn publishPaths(taskName) { true }
+    }
+}
+
+gradle.ext.targets.keySet().each { loader ->
+    tasks.register("publish${loader}") {
+        group = 'orpheus'
+        description = "Publishes every ${loader} version to Modrinth and CurseForge"
+        dependsOn publishPaths('publishMods') { it.name.startsWith("${loader}-") }
     }
 }

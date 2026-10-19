@@ -1,0 +1,80 @@
+// Shared Modrinth and CurseForge publishing for every loader and Minecraft project.
+// The including build declares an `orpheusPublish` map before applying this script:
+//   loader   fabric, forge or neoforge
+//   label    text shown after the loader in the published name, such as 1.21.4-1.21.5
+//   java     the Java version the jar needs
+//   jar      closure returning the file Provider of the jar to upload
+//   requires dependency slugs (Fabric API for Fabric)
+// The supported Minecraft releases come from `publish_minecraft_versions` in gradle.properties.
+
+def info = project.ext.orpheusPublish
+
+base {
+    archivesName = "orpheus-${info.loader}-${info.label}".toString()
+}
+
+String changelogFor(String text, String ver) {
+    List<String> section = []
+    boolean inside = false
+    for (String line : text.readLines()) {
+        if (line.startsWith('## ')) {
+            if (inside) {
+                break
+            }
+            inside = line.substring(3).trim() == ver
+        } else if (inside) {
+            section.add(line)
+        }
+    }
+    String entry = section.join('\n').trim()
+    if (entry.isEmpty()) {
+        throw new GradleException("CHANGELOG.md has no entry for ${ver}")
+    }
+    return entry
+}
+
+def modrinthToken = providers.environmentVariable('MODRINTH_TOKEN').orElse(providers.gradleProperty('modrinthToken'))
+def curseforgeToken = providers.environmentVariable('CURSEFORGE_TOKEN').orElse(providers.gradleProperty('curseforgeToken'))
+def rehearsal = providers.gradleProperty('dryRun').map { it.toBoolean() }.getOrElse(false) ||
+        (!modrinthToken.present && !curseforgeToken.present)
+def publishVersion = String.valueOf(findProperty('mod_version') ?: version)
+def supportedVersions = String.valueOf(findProperty('publish_minecraft_versions')).split(',').collect { it.trim() }.findAll { !it.isEmpty() }
+def loaderName = info.loader.substring(0, 1).toUpperCase(Locale.ROOT) + info.loader.substring(1)
+def loaderTitle = info.loader == 'neoforge' ? 'NeoForge' : loaderName
+
+publishMods {
+    file = info.jar()
+    version = publishVersion
+    displayName = "Orpheus ${publishVersion} (${loaderTitle} ${info.label})"
+    changelog = providers.fileContents(layout.projectDirectory.file('../CHANGELOG.md')).asText.map { changelogFor(it, publishVersion) }
+    type = publishVersion.contains('alpha') ? ALPHA : (publishVersion.contains('beta') ? BETA : STABLE)
+    modLoaders.add(info.loader)
+    dryRun = rehearsal
+
+    if (rehearsal || modrinthToken.present) {
+        modrinth {
+            projectId = 'VRXL6jnh'
+            accessToken = modrinthToken
+            minecraftVersions.addAll(supportedVersions)
+            info.requires.each { requires(it) }
+        }
+    }
+
+    if (rehearsal || curseforgeToken.present) {
+        curseforge {
+            projectId = '1754434'
+            accessToken = curseforgeToken
+            minecraftVersions.addAll(supportedVersions)
+            javaVersions.add(JavaVersion.toVersion(info.java))
+            clientRequired = true
+            serverRequired = false
+            info.requires.each { requires(it) }
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name in ['publishMods', 'publishModrinth', 'publishCurseforge']) {
+        notCompatibleWithConfigurationCache('the changelog reads project properties at run time')
+    }
+}
