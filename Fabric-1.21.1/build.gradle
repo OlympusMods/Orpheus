@@ -1,6 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
+	id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
 }
 
 repositories {
@@ -71,3 +72,12 @@ publishing {
 	repositories {
 	}
 }
+
+ext.orpheusPublish = [
+	loader: 'fabric',
+	label: '1.21-1.21.1',
+	java: 21,
+	requires: ['fabric-api'],
+	jar: { tasks.remapJar.archiveFile }
+]
+apply from: '../publish.gradle'

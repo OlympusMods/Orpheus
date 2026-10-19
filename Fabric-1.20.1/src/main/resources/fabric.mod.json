@@ -8,8 +8,8 @@
 		"Akis"
 	],
 	"contact": {
-		"homepage": "",
-		"sources": ""
+		"homepage": "https://modrinth.com/project/VRXL6jnh",
+		"sources": "https://github.com/OlympusMods/Orpheus"
 	},
 	"license": "GPL-3.0-only",
 	"icon": "icon.png",
@@ -24,7 +24,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": "~1.20.1",
+		"minecraft": ">=1.20 <1.20.3-",
 		"java": ">=17",
 		"fabric-api": "*"
 	}

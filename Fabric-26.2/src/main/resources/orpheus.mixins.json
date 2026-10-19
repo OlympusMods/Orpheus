@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.olympus.orpheus.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [],
+  "client": [
+    "MusicManagerMixin",
+    "OptionsScreenMixin",
+    "SoundEngineAccess",
+    "SoundManagerAccess",
+    "SoundManagerStopMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
