@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -80,6 +81,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
@@ -127,3 +129,12 @@ sourceSets.main.resources {
     srcDir '../common/resources'
     srcDir '../common/generated/mc26'
 }
+
+ext.orpheusPublish = [
+    loader: 'neoforge',
+    label: '26.1-26.1.2',
+    java: 25,
+    requires: [],
+    jar: { tasks.jar.archiveFile }
+]
+apply from: '../publish.gradle'
