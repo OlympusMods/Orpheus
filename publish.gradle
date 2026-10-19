@@ -73,8 +73,60 @@ publishMods {
     }
 }
 
+// Modrinth sets the environment per version and the upload plugin cannot send it, so every version it
+// just created is switched to client only through the v3 API once the upload is done.
+tasks.register('modrinthEnvironment') {
+    group = 'publishing'
+    description = 'Marks the Modrinth version of this project as client only'
+    onlyIf { !rehearsal && modrinthToken.present }
+    notCompatibleWithConfigurationCache('it talks to the Modrinth API at run time')
+    doLast {
+        def token = modrinthToken.get()
+        def name = "Orpheus ${publishVersion} (${loaderTitle} ${info.label})".toString()
+        def http = java.net.http.HttpClient.newHttpClient()
+        def request = { String method, String url, String body ->
+            def builder = java.net.http.HttpRequest.newBuilder(URI.create(url))
+                    .header('Authorization', token)
+                    .header('User-Agent', 'OlympusMods/Orpheus publishing')
+                    .header('Content-Type', 'application/json')
+            builder.method(method, body == null
+                    ? java.net.http.HttpRequest.BodyPublishers.noBody()
+                    : java.net.http.HttpRequest.BodyPublishers.ofString(body))
+            http.send(builder.build(), java.net.http.HttpResponse.BodyHandlers.ofString())
+        }
+        def versions = []
+        for (int attempt = 0; attempt < 6 && versions.isEmpty(); attempt++) {
+            if (attempt > 0) {
+                Thread.sleep(3000)
+            }
+            def listing = request('GET', "https://api.modrinth.com/v3/project/VRXL6jnh/version?nocache=${System.nanoTime()}", null)
+            if (listing.statusCode() != 200) {
+                throw new GradleException("Modrinth answered ${listing.statusCode()} when listing versions")
+            }
+            versions = new groovy.json.JsonSlurper().parseText(listing.body()).findAll { it.name == name }
+        }
+        if (versions.isEmpty()) {
+            throw new GradleException("Modrinth has no version named '${name}' to mark as client only")
+        }
+        versions.each { version ->
+            if (version.environment == 'client_only') {
+                logger.lifecycle("${name} is already client only")
+                return
+            }
+            def result = request('PATCH', "https://api.modrinth.com/v3/version/${version.id}", '{"environment":"client_only"}')
+            if (result.statusCode() != 204) {
+                throw new GradleException("Modrinth answered ${result.statusCode()} when setting ${version.id} to client only: ${result.body()}")
+            }
+            logger.lifecycle("${name} set to client only")
+        }
+    }
+}
+
 tasks.configureEach {
     if (name in ['publishMods', 'publishModrinth', 'publishCurseforge']) {
         notCompatibleWithConfigurationCache('the changelog reads project properties at run time')
+    }
+    if (name == 'publishModrinth') {
+        finalizedBy 'modrinthEnvironment'
     }
 }
