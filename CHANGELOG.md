@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Forge and NeoForge: use `iconFile` in the mod metadata instead of the deprecated `logoFile`
+
 ## 1.0.0
 
 - Separate song lists, timing and music source for the main menu, survival, creative, underwater, the Nether, the End, the Ender Dragon fight and the credits
