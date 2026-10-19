@@ -18,6 +18,7 @@ HISTORY = [
 # files decide which file name a song is played from natively.
 FAMILIES = {
     "mc1_20": "1.20.1",
+    "mc1_20_3": "1.20.4",
     "mc1_21": "1.21.1",
     "mc26": "26.1",
 }
