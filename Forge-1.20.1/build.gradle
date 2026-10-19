@@ -2,6 +2,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin' version '0.7.+'
 }
@@ -139,3 +140,12 @@ sourceSets.main.resources {
     srcDir '../common/resources'
     srcDir '../common/generated/mc1_20'
 }
+
+ext.orpheusPublish = [
+    loader: 'forge',
+    label: '1.20-1.20.2',
+    java: 17,
+    requires: [],
+    jar: { tasks.jar.archiveFile }
+]
+apply from: '../publish.gradle'

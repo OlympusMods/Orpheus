@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[0,)"
+loaderVersion="[51,)"
 license="GPL-3.0-only"
 
 [[mods]]
@@ -14,14 +14,14 @@ description='''Precise control over vanilla Minecraft music: per-situation track
 [[dependencies.orpheus]]
     modId="forge"
     mandatory=true
-    versionRange="[0,)"
+    versionRange="[51,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.orpheus]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.21.1,1.21.2)"
+    versionRange="[1.21,1.21.2)"
     ordering="NONE"
     side="BOTH"
 

@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[61,)"
+license="GPL-3.0-only"
+
+[[mods]]
+modId="orpheus"
+version="${mod_version}"
+displayName="Orpheus"
+authors="Akis"
+logoFile="icon.png"
+
+description='''Precise control over vanilla Minecraft music: per-situation track lists, frequency, weights, playback keys and presets.'''
+
+[[dependencies.orpheus]]
+    modId="forge"
+    mandatory=true
+    versionRange="[61,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.orpheus]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.21.11,1.21.12)"
+    ordering="NONE"
+    side="BOTH"
+
+[[mixins]]
+config = "orpheus.mixins.json"

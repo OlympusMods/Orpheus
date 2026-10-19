@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'eclipse'
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
     id 'net.minecraftforge.gradle' version '[7.0.17,8)'
 }
 
@@ -80,3 +81,12 @@ tasks.named('processResources', ProcessResources).configure {
         expand(mod_version: forgeModVersion)
     }
 }
+
+ext.orpheusPublish = [
+    loader: 'forge',
+    label: '26.1-26.1.2',
+    java: 25,
+    requires: [],
+    jar: { tasks.jar.archiveFile }
+]
+apply from: '../publish.gradle'
