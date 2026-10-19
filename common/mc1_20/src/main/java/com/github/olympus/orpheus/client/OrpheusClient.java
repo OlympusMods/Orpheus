@@ -57,7 +57,7 @@ public final class OrpheusClient {
 
     /** The pack.mcmeta written next to downloaded songs; the pack format depends on the game version. */
     public static String musicPackMetadata() {
-        return "{\"pack\":{\"pack_format\":15,\"description\":\"Songs downloaded by Orpheus\"}}";
+        return "{\"pack\":{\"pack_format\":15,\"supported_formats\":{\"min_inclusive\":15,\"max_inclusive\":32},\"description\":\"Songs downloaded by Orpheus\"}}";
     }
 
     public static void show(Screen screen) {
