@@ -63,7 +63,6 @@ subprojects { sub ->
             exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar', '*-slim.jar'
         }
         into(dist)
-        rename { "orpheus-${loader.toLowerCase(Locale.ROOT)}-${minecraft}-${modVersion}.jar".toString() }
     }
 
     sub.tasks.named('build') {
