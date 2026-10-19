@@ -17,10 +17,7 @@ HISTORY = [
 # Every loader family gets the full catalog. The version is the one whose bundled
 # files decide which file name a song is played from natively.
 FAMILIES = {
-    "mc1_20": "1.20.1",
-    "mc1_20_3": "1.20.4",
     "mc1_21": "1.21.1",
-    "mc26": "26.1",
 }
 
 # Mojang renamed many song files in 1.20.3. The old name and the new name are the
