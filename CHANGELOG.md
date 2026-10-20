@@ -5,6 +5,7 @@
 - Fully custom menu with rounded widgets, background blur, smooth animations, a custom accent color and playback controls
 - Now Playing toast drawn by Orpheus: eases in and out, shows a disc icon, grows to fit long text, appears over menus and in game, and can sit in any corner with a configurable duration
 - Classic style is drawn from GUI sprites and a background texture, so resource packs can restyle it
+- Chroma accent that cycles through the rainbow
 - Appearance tab with a Classic style that brings back the old Minecraft look
 
 ## 1.0.1
