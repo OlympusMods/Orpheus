@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fully custom menu with rounded widgets, background blur, smooth animations, a custom accent color and playback controls
+- Classic style is drawn from GUI sprites and a background texture, so resource packs can restyle it
+- Appearance tab with a Classic style that brings back the old Minecraft look
+
 ## 1.0.1
 
 - Forge and NeoForge: use `iconFile` in the mod metadata instead of the deprecated `logoFile`
