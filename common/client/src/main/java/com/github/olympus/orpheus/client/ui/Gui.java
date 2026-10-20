@@ -379,6 +379,21 @@ public final class Gui {
         }
     }
 
+    public boolean pad(String id, int x, int y, int w, int h, boolean selected, String tip) {
+        boolean hot = hot(id, x, y, w, h);
+        float hover = anim(id + "#h", hot ? 1f : 0f, 16f);
+        float chosen = anim(id + "#s", selected ? 1f : 0f, 14f);
+        if (theme.slidingSegments() && chosen > 0.5f) {
+            theme.segmentThumb(canvas, x, y, w, h);
+        } else {
+            theme.button(canvas, x, y, w, h, ButtonKind.NORMAL, hover, 0f, chosen, true);
+        }
+        if (hot) {
+            tooltip(tip);
+        }
+        return hot && pressed && take();
+    }
+
     public boolean dragging() {
         return active != null;
     }

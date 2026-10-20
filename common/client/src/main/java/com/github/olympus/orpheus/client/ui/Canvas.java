@@ -27,6 +27,10 @@ public interface Canvas {
 
     void unclip();
 
+    boolean hasItem(String name);
+
+    void item(String name, int x, int y);
+
     void sprite(String path, int x, int y, int w, int h);
 
     boolean exists(String namespace, String path);

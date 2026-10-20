@@ -202,6 +202,11 @@ public final class ClassicTheme implements Theme {
     }
 
     @Override
+    public void toast(Canvas c, int x, int y, int w, int h) {
+        tooltip(c, x, y, w, h);
+    }
+
+    @Override
     public void swatch(Canvas c, int x, int y, int size, int color, float hover, float selected) {
         c.fill(x, y, size, size, selected > 0.5f ? 0xFFFFFFFF : 0xFF000000);
         c.fill(x + 1, y + 1, size - 2, size - 2, color);

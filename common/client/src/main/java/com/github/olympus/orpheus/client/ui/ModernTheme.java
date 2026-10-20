@@ -225,6 +225,12 @@ public final class ModernTheme implements Theme {
     }
 
     @Override
+    public void toast(Canvas c, int x, int y, int w, int h) {
+        Draw.shadow(c, x, y, w, h, 6, 7, 120);
+        Draw.panel(c, x, y, w, h, 6, 0xF2111218, 0x2EFFFFFF);
+    }
+
+    @Override
     public void swatch(Canvas c, int x, int y, int size, int color, float hover, float selected) {
         int grow = Math.round(hover);
         Draw.round(c, x - grow, y - grow, size + 2 * grow, size + 2 * grow, 4, color);

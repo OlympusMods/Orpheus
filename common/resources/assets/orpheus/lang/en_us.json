@@ -146,5 +146,14 @@
   "orpheus.ui.blur.tooltip": "Blurs the game behind the menu. The strength comes from Minecraft's Menu Background Blur option.",
   "orpheus.ui.animations": "Animations",
   "orpheus.ui.animations.tooltip": "Fades, slides and hover effects.",
-  "orpheus.ui.accent.custom": "Custom"
+  "orpheus.ui.accent.custom": "Custom",
+  "orpheus.ui.toast.heading": "Now Playing toast",
+  "orpheus.ui.toast.top_left": "Top left",
+  "orpheus.ui.toast.top_right": "Top right",
+  "orpheus.ui.toast.bottom_left": "Bottom left",
+  "orpheus.ui.toast.bottom_right": "Bottom right",
+  "orpheus.ui.toast.duration": "How long the toast stays on screen.",
+  "orpheus.ui.toast.preview": "Preview",
+  "orpheus.ui.toast.preview.tooltip": "Shows the toast so you can see where it ends up.",
+  "orpheus.ui.toast.sample": "This is how the toast looks"
 }
