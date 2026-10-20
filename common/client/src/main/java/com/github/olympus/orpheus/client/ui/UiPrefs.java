@@ -23,6 +23,7 @@ public final class UiPrefs {
     private static UiPrefs instance;
 
     public static final int CUSTOM = ACCENTS.length;
+    public static final int CHROMA = ACCENTS.length + 1;
 
     private boolean classic;
     private int accent;
@@ -58,7 +59,14 @@ public final class UiPrefs {
     }
 
     public int accentColor() {
+        if (accent == CHROMA) {
+            return chromaColor();
+        }
         return accent == CUSTOM ? customColor() : ACCENTS[accent];
+    }
+
+    public int chromaColor() {
+        return Colors.hsl((float) (System.nanoTime() / 1_000_000_000.0 * 0.12 % 1.0), 0.75f, 0.55f);
     }
 
     public int customColor() {
@@ -84,7 +92,7 @@ public final class UiPrefs {
     }
 
     public void setAccent(int index) {
-        accent = Math.max(0, Math.min(CUSTOM, index));
+        accent = Math.max(0, Math.min(CHROMA, index));
         save();
     }
 
@@ -138,7 +146,7 @@ public final class UiPrefs {
             JsonObject object = JsonParser.parseReader(reader).getAsJsonObject();
             prefs.classic = object.has("style") && "classic".equals(object.get("style").getAsString());
             if (object.has("accent")) {
-                prefs.accent = Math.max(0, Math.min(CUSTOM, object.get("accent").getAsInt()));
+                prefs.accent = Math.max(0, Math.min(CHROMA, object.get("accent").getAsInt()));
             }
             if (object.has("hue")) {
                 prefs.hue = object.get("hue").getAsFloat();

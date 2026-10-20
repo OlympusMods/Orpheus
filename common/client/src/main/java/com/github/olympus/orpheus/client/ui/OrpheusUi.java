@@ -668,15 +668,17 @@ public final class OrpheusUi {
         boolean custom = prefs.accentIndex() == UiPrefs.CUSTOM;
         int cardH = custom ? 38 + 3 * 22 + 4 : 38;
         theme.card(fade, ix, y, lw, cardH);
-        int count = UiPrefs.ACCENTS.length + 1;
+        int count = UiPrefs.ACCENTS.length + 2;
         int size = 20;
         int gap = Math.min(14, (lw - 24 - count * size) / (count - 1));
         for (int i = 0; i < count; i++) {
             int sx = ix + 12 + i * (size + gap);
             boolean isCustom = i == UiPrefs.CUSTOM;
-            int color = isCustom ? prefs.customColor() : UiPrefs.ACCENTS[i];
-            String name = text("orpheus.ui.accent." + (isCustom ? "custom" : UiPrefs.ACCENT_KEYS[i]));
-            if (gui.swatch("accent" + i, sx, y + 9, size, color, prefs.accentIndex() == i, isCustom, name)) {
+            boolean isChroma = i == UiPrefs.CHROMA;
+            int color = isCustom ? prefs.customColor() : isChroma ? prefs.chromaColor() : UiPrefs.ACCENTS[i];
+            String key = isCustom ? "custom" : isChroma ? "chroma" : UiPrefs.ACCENT_KEYS[i];
+            if (gui.swatch("accent" + i, sx, y + 9, size, color, prefs.accentIndex() == i, isCustom,
+                    text("orpheus.ui.accent." + key))) {
                 prefs.setAccent(i);
             }
         }
