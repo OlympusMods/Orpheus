@@ -155,5 +155,6 @@
   "orpheus.ui.toast.duration": "How long the toast stays on screen.",
   "orpheus.ui.toast.preview": "Preview",
   "orpheus.ui.toast.preview.tooltip": "Shows the toast so you can see where it ends up.",
-  "orpheus.ui.toast.sample": "This is how the toast looks"
+  "orpheus.ui.toast.sample": "This is how the toast looks",
+  "orpheus.ui.accent.chroma": "Chroma"
 }
