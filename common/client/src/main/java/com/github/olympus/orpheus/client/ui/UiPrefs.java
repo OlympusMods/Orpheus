@@ -29,6 +29,8 @@ public final class UiPrefs {
     private float hue = 0.72f;
     private float saturation = 0.75f;
     private float lightness = 0.5f;
+    private int toastCorner;
+    private int toastSeconds = 5;
     private boolean blur = true;
     private boolean animations = true;
 
@@ -86,6 +88,24 @@ public final class UiPrefs {
         save();
     }
 
+    public int toastCorner() {
+        return toastCorner;
+    }
+
+    public void setToastCorner(int corner) {
+        toastCorner = Math.max(0, Math.min(3, corner));
+        save();
+    }
+
+    public int toastSeconds() {
+        return toastSeconds;
+    }
+
+    public void setToastSeconds(int seconds) {
+        toastSeconds = Math.max(2, Math.min(15, seconds));
+        save();
+    }
+
     public boolean blur() {
         return blur;
     }
@@ -125,6 +145,12 @@ public final class UiPrefs {
                 prefs.saturation = object.get("saturation").getAsFloat();
                 prefs.lightness = object.get("lightness").getAsFloat();
             }
+            if (object.has("toastCorner")) {
+                prefs.toastCorner = Math.max(0, Math.min(3, object.get("toastCorner").getAsInt()));
+            }
+            if (object.has("toastSeconds")) {
+                prefs.toastSeconds = Math.max(2, Math.min(15, object.get("toastSeconds").getAsInt()));
+            }
             if (object.has("blur")) {
                 prefs.blur = object.get("blur").getAsBoolean();
             }
@@ -145,6 +171,8 @@ public final class UiPrefs {
         object.addProperty("hue", hue);
         object.addProperty("saturation", saturation);
         object.addProperty("lightness", lightness);
+        object.addProperty("toastCorner", toastCorner);
+        object.addProperty("toastSeconds", toastSeconds);
         object.addProperty("blur", blur);
         object.addProperty("animations", animations);
         try {

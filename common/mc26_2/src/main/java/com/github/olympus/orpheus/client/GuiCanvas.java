@@ -7,8 +7,10 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 final class GuiCanvas implements Canvas {
     private static final Map<String, ItemStack> STACKS = new HashMap<>();
@@ -92,6 +94,34 @@ final class GuiCanvas implements Canvas {
     @Override
     public void unclip() {
         graphics.disableScissor();
+    }
+
+    private static ItemStack stack(String name) {
+        ItemStack stack = STACKS.get(name);
+        if (stack == null) {
+            try {
+                stack = new ItemStack(BuiltInRegistries.ITEM
+                        .getOptional(Identifier.fromNamespaceAndPath("minecraft", name))
+                        .orElse(Items.MUSIC_DISC_CAT));
+            } catch (RuntimeException exception) {
+                return null;
+            }
+            STACKS.put(name, stack);
+        }
+        return stack;
+    }
+
+    @Override
+    public boolean hasItem(String name) {
+        return stack(name) != null;
+    }
+
+    @Override
+    public void item(String name, int x, int y) {
+        ItemStack stack = stack(name);
+        if (stack != null) {
+            graphics.fakeItem(stack, x, y);
+        }
     }
 
     @Override
