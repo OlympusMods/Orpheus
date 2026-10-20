@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fully custom menu with rounded widgets, background blur, smooth animations, a custom accent color and playback controls
+- Classic style is drawn from GUI sprites and a background texture, so resource packs can restyle it
+- Appearance tab with a Classic style that brings back the old Minecraft look
+
 ## 1.0.0
 
 - Separate song lists, timing and music source for the main menu, survival, creative, underwater, the Nether, the End, the Ender Dragon fight and the credits
