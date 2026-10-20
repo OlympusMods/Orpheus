@@ -32,6 +32,10 @@ public final class OrpheusClient {
         configDirectory = directory;
     }
 
+    public static Path configDirectory() {
+        return configDirectory;
+    }
+
     public static synchronized OrpheusRuntime runtime() {
         if (runtime == null) {
             runtime = createRuntime(Minecraft.getInstance());

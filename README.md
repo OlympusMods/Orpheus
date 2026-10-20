@@ -13,6 +13,7 @@ Runs on Fabric, Forge and NeoForge. Servers don't need it.
 - Keybinds for previous, skip, pause/resume, block current track and opening the menu
 - "Now Playing" toast with the song and artist
 - Presets for saving, copying and switching whole setups
+- A custom menu with animations and accent colors, or the old Minecraft look through the Appearance tab
 - A **Music Options** button on the vanilla Options screen
 
 ## Supported versions
@@ -45,6 +46,30 @@ No audio is bundled with the mod.
 1. Download the jar for your loader and Minecraft version from [Modrinth](https://modrinth.com/project/VRXL6jnh) or [Releases](https://github.com/OlympusMods/Orpheus/releases).
 2. Put it in your `mods` folder. Fabric also needs Fabric API.
 3. Launch the game and open **Options > Music Options**, or bind a key to the Orpheus menu under Controls.
+
+## Texture packs
+
+The Classic style is drawn from normal GUI sprites, so a resource pack can restyle all of it. Everything lives in `assets/orpheus/textures/gui/sprites/classic/`. Buttons and other stretchy parts are nine-slice sprites: their `.png.mcmeta` is the same kind vanilla uses for its own buttons, so keep it next to the image and update `width`, `height` and `border` if you change the size.
+
+| Sprite | Size | Notes |
+|--------|------|-------|
+| `button`, `button_hover`, `button_disabled`, `button_selected` | 20x20 | nine-slice, border 3. `button_selected` is the active tab or option |
+| `checkbox`, `checkbox_hover`, `checkbox_checked`, `checkbox_checked_hover` | 12x12 | drawn as is |
+| `field`, `field_focused` | 8x8 | nine-slice, border 2, the preset name box |
+| `inset` | 8x8 | nine-slice, border 2, the value boxes next to the arrow buttons |
+| `panel` | 8x8 | nine-slice, border 2, translucent group background |
+| `row_hover` | 4x4 | nine-slice, border 1 |
+| `row_selected` | 8x8 | nine-slice, border 2 |
+| `tooltip` | 8x8 | nine-slice, border 3, also the Now Playing toast |
+| `scroller` | 3x3 | nine-slice, border 1, the scrollbar handle |
+| `scroller_track` | 3x3 | stretched |
+| `progress` | 8x8 | nine-slice, border 2 |
+| `progress_fill` | 3x3 | nine-slice, border 1 |
+| `icon/play`, `icon/pause`, `icon/next`, `icon/previous`, `icon/download` | 9x9 | drawn at that size |
+| `icon/left`, `icon/right` | 6x9 | drawn at that size |
+| `icon/cross` | 8x7 | drawn at that size |
+
+The background is `assets/orpheus/textures/gui/classic/background.png`, tiled and drawn as is. Without it, Orpheus uses vanilla dirt darkened. Text colors are not part of the pack.
 
 ## Building
 
