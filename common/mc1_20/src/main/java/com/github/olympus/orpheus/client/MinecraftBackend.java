@@ -1,5 +1,6 @@
 package com.github.olympus.orpheus.client;
 
+import com.github.olympus.orpheus.client.ui.ToastOverlay;
 import com.github.olympus.orpheus.core.model.Track;
 import com.github.olympus.orpheus.core.playback.PlaybackBackend;
 import com.github.olympus.orpheus.mixin.SoundEngineAccess;
@@ -110,7 +111,7 @@ public final class MinecraftBackend implements PlaybackBackend {
                 minecraft.player != null);
         if (announce && OrpheusClient.runtime().active().nowPlayingToast()) {
             try {
-                NowPlayingToast.show(minecraft, track);
+                ToastOverlay.showTrack(track);
                 OrpheusClient.LOGGER.info("Orpheus: showing the Now Playing toast for {}", track.event());
             } catch (RuntimeException exception) {
                 // A broken toast must never silence the music.

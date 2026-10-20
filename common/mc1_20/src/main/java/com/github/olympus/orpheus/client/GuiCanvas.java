@@ -14,13 +14,18 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 final class GuiCanvas implements Canvas {
     private static final String SPRITES = "textures/gui/sprites/";
     private static final Map<String, Sprite> SPRITE_CACHE = new HashMap<>();
+    private static final Map<String, ItemStack> STACKS = new HashMap<>();
 
     private GuiGraphics graphics;
     private Font font;
@@ -100,6 +105,33 @@ final class GuiCanvas implements Canvas {
     @Override
     public void unclip() {
         graphics.disableScissor();
+    }
+
+    private static ItemStack stack(String name) {
+        ItemStack stack = STACKS.get(name);
+        if (stack == null) {
+            try {
+                Item item = BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", name));
+                stack = new ItemStack(item == Items.AIR ? Items.MUSIC_DISC_CAT : item);
+            } catch (RuntimeException exception) {
+                return null;
+            }
+            STACKS.put(name, stack);
+        }
+        return stack;
+    }
+
+    @Override
+    public boolean hasItem(String name) {
+        return stack(name) != null;
+    }
+
+    @Override
+    public void item(String name, int x, int y) {
+        ItemStack stack = stack(name);
+        if (stack != null) {
+            graphics.renderFakeItem(stack, x, y);
+        }
     }
 
     @Override

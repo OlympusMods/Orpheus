@@ -659,6 +659,7 @@ public final class OrpheusUi {
                 gui.text(line, ix + 4, y, theme.textSecondary());
                 y += 11;
             }
+            y = toastSection(ix, y + GAP, lw);
             gui.scrollEnd(y - top);
             return;
         }
@@ -711,7 +712,40 @@ public final class OrpheusUi {
             prefs.setAnimations(!prefs.animations());
         }
         y += 32 + GAP;
+        y = toastSection(ix, y, lw);
         gui.scrollEnd(y - top);
+    }
+
+    private int toastSection(int ix, int y, int lw) {
+        Theme theme = gui.theme();
+        y = heading(text("orpheus.ui.toast.heading"), ix, y);
+        theme.card(fade, ix, y, lw, 58);
+        int boxX = ix + 12;
+        int boxY = y + 9;
+        theme.inset(fade, boxX, boxY, 72, 40);
+        String[] corners = {"top_left", "top_right", "bottom_left", "bottom_right"};
+        for (int i = 0; i < corners.length; i++) {
+            int padX = boxX + 4 + (i % 2) * (72 - 8 - 24);
+            int padY = boxY + 4 + (i / 2) * (40 - 8 - 10);
+            if (gui.pad("corner" + i, padX, padY, 24, 10, prefs.toastCorner() == i,
+                    text("orpheus.ui.toast." + corners[i]))) {
+                prefs.setToastCorner(i);
+                ToastOverlay.preview();
+            }
+        }
+        int sideX = boxX + 72 + 14;
+        int sideW = lw - 12 - (sideX - ix);
+        int seconds = prefs.toastSeconds();
+        int step = gui.stepper("toast-seconds", sideX, y + 9, sideW, 18, Texts.duration(seconds).getString(),
+                text("orpheus.ui.toast.duration"), seconds > 2, seconds < 15);
+        if (step != 0) {
+            prefs.setToastSeconds(seconds + step);
+        }
+        if (gui.button("toast-preview", sideX, y + 31, sideW, 18, text("orpheus.ui.toast.preview"),
+                text("orpheus.ui.toast.preview.tooltip"))) {
+            ToastOverlay.preview();
+        }
+        return y + 58 + GAP;
     }
 
     private void renderPresets(Theme theme) {

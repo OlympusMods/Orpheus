@@ -113,6 +113,18 @@ public final class FadeCanvas implements Canvas {
     }
 
     @Override
+    public boolean hasItem(String name) {
+        return target.hasItem(name);
+    }
+
+    @Override
+    public void item(String name, int x, int y) {
+        if (alpha > 0.45f) {
+            target.item(name, x, y);
+        }
+    }
+
+    @Override
     public void sprite(String path, int x, int y, int w, int h) {
         if (alpha > 0.45f && w > 0 && h > 0) {
             target.sprite(path, x, y, w, h);

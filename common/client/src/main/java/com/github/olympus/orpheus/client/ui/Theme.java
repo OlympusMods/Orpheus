@@ -57,5 +57,7 @@ public interface Theme {
 
     void icon(Canvas c, String name, int centerX, int centerY, int color);
 
+    void toast(Canvas c, int x, int y, int w, int h);
+
     void swatch(Canvas c, int x, int y, int size, int color, float hover, float selected);
 }

@@ -12,7 +12,8 @@
     "SoundEnginePauseMixin",
     "SoundEngineTickMixin",
     "SoundManagerAccess",
-    "SoundManagerStopMixin"
+    "SoundManagerStopMixin",
+    "ToastOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1
