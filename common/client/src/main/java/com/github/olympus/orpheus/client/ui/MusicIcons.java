@@ -1,17 +1,41 @@
 package com.github.olympus.orpheus.client.ui;
 
-public final class Icons {
-    private Icons() {
+import com.github.olympus.proteus.client.ui.Canvas;
+import com.github.olympus.proteus.client.ui.Draw;
+import com.github.olympus.proteus.client.ui.Icons;
+
+public final class MusicIcons {
+    public static final String PLAY = "orpheus:play";
+    public static final String PAUSE = "orpheus:pause";
+    public static final String NEXT = "orpheus:next";
+    public static final String PREVIOUS = "orpheus:previous";
+    public static final String DOWNLOAD = "orpheus:download";
+
+    private static boolean registered;
+
+    private MusicIcons() {
     }
 
-    public static void play(Canvas c, int x, int y, int size, int color) {
+    public static synchronized void register() {
+        if (registered) {
+            return;
+        }
+        registered = true;
+        Icons.register(PLAY, 9, 9, (c, cx, cy, color) -> play(c, cx - 4, cy - 4, 9, color));
+        Icons.register(PAUSE, 9, 9, (c, cx, cy, color) -> pause(c, cx - 4, cy - 4, 9, color));
+        Icons.register(NEXT, 9, 9, (c, cx, cy, color) -> next(c, cx - 4, cy - 4, 9, color));
+        Icons.register(PREVIOUS, 9, 9, (c, cx, cy, color) -> previous(c, cx - 4, cy - 4, 9, color));
+        Icons.register(DOWNLOAD, 9, 9, (c, cx, cy, color) -> download(c, cx - 4, cy - 4, color));
+    }
+
+    static void play(Canvas c, int x, int y, int size, int color) {
         for (int i = 0; i < size; i++) {
             int d = Math.abs(2 * i - (size - 1));
             c.fill(x, y + i, Math.max(1, Math.round((size - d) * 0.9f)), 1, color);
         }
     }
 
-    public static void pause(Canvas c, int x, int y, int size, int color) {
+    static void pause(Canvas c, int x, int y, int size, int color) {
         int bar = Math.max(2, size / 3);
         c.fill(x, y, bar, size, color);
         c.fill(x + size - bar, y, bar, size, color);
@@ -22,14 +46,14 @@ public final class Icons {
         return Math.max(1, Math.round(6f - d * 6f / ((size + 1) / 2f)));
     }
 
-    public static void next(Canvas c, int x, int y, int size, int color) {
+    static void next(Canvas c, int x, int y, int size, int color) {
         for (int i = 0; i < size; i++) {
             c.fill(x, y + i, skipWidth(i, size), 1, color);
         }
         c.fill(x + 7, y, 2, size, color);
     }
 
-    public static void previous(Canvas c, int x, int y, int size, int color) {
+    static void previous(Canvas c, int x, int y, int size, int color) {
         for (int i = 0; i < size; i++) {
             int width = skipWidth(i, size);
             c.fill(x + 9 - width, y + i, width, 1, color);
@@ -37,35 +61,14 @@ public final class Icons {
         c.fill(x, y, 2, size, color);
     }
 
-    public static void check(Canvas c, int x, int y, int color) {
-        int[] tops = {3, 4, 5, 4, 3, 2, 1, 0};
-        for (int i = 0; i < tops.length; i++) {
-            c.fill(x + i, y + tops[i], 1, 2, color);
-        }
-    }
-
-    public static void cross(Canvas c, int x, int y, int color) {
-        for (int i = 0; i < 7; i++) {
-            c.fill(x + i, y + i, 2, 1, color);
-            c.fill(x + 5 - i, y + i, 2, 1, color);
-        }
-    }
-
-    public static void chevron(Canvas c, int x, int y, boolean right, int color) {
-        for (int i = 0; i < 9; i++) {
-            int d = Math.abs(i - 4);
-            c.fill(x + (right ? 4 - d : d), y + i, 2, 1, color);
-        }
-    }
-
-    public static void download(Canvas c, int x, int y, int color) {
+    static void download(Canvas c, int x, int y, int color) {
         c.fill(x + 3, y, 3, 5, color);
         for (int r = 0; r < 5; r++) {
             c.fill(x + r, y + 4 + r, 9 - 2 * r, 1, color);
         }
     }
 
-    public static void note(Canvas c, int x, int y, int color) {
+    static void note(Canvas c, int x, int y, int color) {
         c.fill(x + 4, y, 2, 8, color);
         Draw.round(c, x, y + 6, 6, 5, 2, color);
         c.fill(x + 6, y, 3, 2, color);
