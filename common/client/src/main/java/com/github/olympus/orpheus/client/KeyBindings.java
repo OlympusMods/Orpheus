@@ -32,7 +32,7 @@ public final class KeyBindings {
     public void poll(OrpheusRuntime runtime, Minecraft minecraft) {
         PlaybackController controller = runtime.controller();
         while (menu.consumeClick()) {
-            OrpheusClient.show(new OrpheusScreen(null));
+            OrpheusClient.show(OrpheusMenu.create(null));
         }
         while (previous.consumeClick()) {
             controller.previous();

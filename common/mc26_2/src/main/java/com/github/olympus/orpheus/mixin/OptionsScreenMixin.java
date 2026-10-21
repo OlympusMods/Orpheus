@@ -1,7 +1,7 @@
 package com.github.olympus.orpheus.mixin;
 
 import com.github.olympus.orpheus.client.OrpheusClient;
-import com.github.olympus.orpheus.client.OrpheusScreen;
+import com.github.olympus.orpheus.client.OrpheusMenu;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,7 +24,7 @@ public abstract class OptionsScreenMixin extends Screen {
         Screen self = this;
         Button button = Button.builder(
                         Component.translatable("orpheus.options.button"),
-                        pressed -> OrpheusClient.show(new OrpheusScreen(self)))
+                        pressed -> OrpheusClient.show(OrpheusMenu.create(self)))
                 .bounds(this.width - 110, this.height - 30, 100, 20)
                 .tooltip(Tooltip.create(Component.translatable("orpheus.options.button.tooltip")))
                 .build();
