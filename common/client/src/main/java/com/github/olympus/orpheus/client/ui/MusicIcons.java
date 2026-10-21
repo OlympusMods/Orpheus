@@ -4,7 +4,6 @@ import com.github.olympus.proteus.client.ui.Canvas;
 import com.github.olympus.proteus.client.ui.Draw;
 import com.github.olympus.proteus.client.ui.Icons;
 
-/** The icons only Orpheus needs. Proteus draws them through its icon registry and owns everything else. */
 public final class MusicIcons {
     public static final String PLAY = "orpheus:play";
     public static final String PAUSE = "orpheus:pause";
@@ -75,7 +74,6 @@ public final class MusicIcons {
         c.fill(x + 6, y, 3, 2, color);
         c.fill(x + 8, y + 2, 1, 3, color);
     }
-
 
     public static void equalizer(Canvas c, int x, int y, int height, double time, float level, int color) {
         for (int i = 0; i < 4; i++) {

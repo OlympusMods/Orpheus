@@ -5,7 +5,6 @@ import com.github.olympus.proteus.client.ProteusScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-/** The Orpheus menu, shown on a Proteus screen. */
 public final class OrpheusMenu {
     private OrpheusMenu() {
     }

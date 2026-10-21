@@ -5,7 +5,6 @@ import com.github.olympus.orpheus.core.model.TrackKind;
 import com.github.olympus.proteus.client.ui.ToastOverlay;
 import net.minecraft.network.chat.Component;
 
-/** The Now Playing toast. Proteus draws it, Orpheus decides what it says. */
 public final class NowPlaying {
     private static final String[] CLASSIC_DISCS = {
         "13", "cat", "blocks", "chirp", "far", "mall", "mellohi", "stal", "strad", "ward", "11", "wait"
