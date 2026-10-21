@@ -1,6 +1,7 @@
 package com.github.olympus.orpheus.client.ui;
 
 import com.github.olympus.orpheus.client.MusicDownload;
+import com.github.olympus.orpheus.client.NowPlaying;
 import com.github.olympus.orpheus.client.OrpheusClient;
 import com.github.olympus.orpheus.client.Texts;
 import com.github.olympus.orpheus.core.OrpheusRuntime;
@@ -13,6 +14,20 @@ import com.github.olympus.orpheus.core.preset.Preset;
 import com.github.olympus.orpheus.core.preset.PresetStore;
 import com.github.olympus.orpheus.core.ui.DelayStep;
 import com.github.olympus.orpheus.core.ui.TrackListing;
+import com.github.olympus.proteus.client.ui.ButtonKind;
+import com.github.olympus.proteus.client.ui.Canvas;
+import com.github.olympus.proteus.client.ui.ClassicTheme;
+import com.github.olympus.proteus.client.ui.Colors;
+import com.github.olympus.proteus.client.ui.Draw;
+import com.github.olympus.proteus.client.ui.FadeCanvas;
+import com.github.olympus.proteus.client.ui.Gui;
+import com.github.olympus.proteus.client.ui.ModernTheme;
+import com.github.olympus.proteus.client.ui.Motion;
+import com.github.olympus.proteus.client.ui.Theme;
+import com.github.olympus.proteus.client.ui.UiHost;
+import com.github.olympus.proteus.client.ui.UiPrefs;
+import com.github.olympus.proteus.client.ui.AppearancePanel;
+import com.github.olympus.proteus.client.ui.UiApp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -22,7 +37,11 @@ import java.util.function.IntConsumer;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
-public final class OrpheusUi {
+public final class OrpheusUi implements UiApp {
+    static {
+        MusicIcons.register();
+    }
+
     private static final int PAD = 10;
     private static final int GAP = 6;
     private static final int ROW = 20;
@@ -43,6 +62,7 @@ public final class OrpheusUi {
 
     private final UiHost host;
     private final Gui gui;
+    private final AppearancePanel appearance;
     private final FadeCanvas fade = new FadeCanvas();
     private final UiPrefs prefs = UiPrefs.get();
     private final Theme modern = new ModernTheme();
@@ -66,7 +86,6 @@ public final class OrpheusUi {
     private int missing;
     private List<Track> listing = List.of();
     private boolean listingDirty = true;
-    private boolean customDirty;
     private TrackKind listingType = TrackKind.GAME;
     private List<String> presetNames = List.of();
     private String presetStatus = text("orpheus.presets.hint");
@@ -74,14 +93,17 @@ public final class OrpheusUi {
     public OrpheusUi(UiHost host) {
         this.host = host;
         this.gui = new Gui(host);
+        this.appearance = new AppearancePanel(gui, fade);
         refresh();
     }
 
+    @Override
     public void resize(int width, int height) {
         this.width = width;
         this.height = height;
     }
 
+    @Override
     public boolean vanillaBackdrop(boolean inWorld) {
         if (prefs.classic()) {
             return false;
@@ -89,6 +111,7 @@ public final class OrpheusUi {
         return prefs.blur() || !inWorld;
     }
 
+    @Override
     public void tick() {
         ticks++;
         if (closeReady && !closed) {
@@ -101,22 +124,37 @@ public final class OrpheusUi {
         }
     }
 
+    @Override
     public void requestClose() {
         closing = true;
     }
 
+    @Override
+    public void removed() {
+        OrpheusClient.runtime().saveActive();
+    }
+
+    @Override
+    public void closed() {
+        OrpheusClient.runtime().saveActive();
+    }
+
+    @Override
     public void mousePressed(int button) {
         gui.press(button);
     }
 
+    @Override
     public void mouseReleased(int button) {
         gui.release(button);
     }
 
+    @Override
     public void mouseScrolled(double amount) {
         gui.scrolled(amount);
     }
 
+    @Override
     public boolean keyPressed(int key, int mods) {
         if (gui.keyPressed(key, mods)) {
             return true;
@@ -132,10 +170,12 @@ public final class OrpheusUi {
         return false;
     }
 
+    @Override
     public boolean charTyped(int codepoint) {
         return gui.charTyped(codepoint);
     }
 
+    @Override
     public void render(Canvas target, int mouseX, int mouseY) {
         long now = System.nanoTime();
         float dt = Math.min(0.1f, (now - lastNanos) / 1_000_000_000f);
@@ -327,7 +367,7 @@ public final class OrpheusUi {
         boolean paused = runtime.controller().isPaused();
         float level = gui.anim("eq", playing && !paused ? 1f : 0.12f, 6f);
         int accent = prefs.classic() ? 0xFF55FF55 : prefs.accentColor();
-        Icons.equalizer(fade, ix + 10, y + 8, 16, clock, level, accent);
+        MusicIcons.equalizer(fade, ix + 10, y + 8, 16, clock, level, accent);
 
         int buttonsWidth = 3 * 24 + 2 * 3;
         int textX = ix + 34;
@@ -346,15 +386,16 @@ public final class OrpheusUi {
 
         int bx = ix + iw - 8 - buttonsWidth;
         int by = y + (h - ROW) / 2;
-        if (gui.iconButton("previous", bx, by, 24, ROW, "previous", ButtonKind.NORMAL, true,
+        if (gui.iconButton("previous", bx, by, 24, ROW, MusicIcons.PREVIOUS, ButtonKind.NORMAL, true,
                 text("orpheus.ui.previous"))) {
             runtime.perform(PlaybackAction.PREVIOUS);
         }
-        if (gui.iconButton("pause", bx + 27, by, 24, ROW, paused || !playing ? "play" : "pause", ButtonKind.NORMAL,
+        String toggle = paused || !playing ? MusicIcons.PLAY : MusicIcons.PAUSE;
+        if (gui.iconButton("pause", bx + 27, by, 24, ROW, toggle, ButtonKind.NORMAL,
                 playing, text("orpheus.ui.pause"))) {
             runtime.perform(PlaybackAction.TOGGLE_PAUSE);
         }
-        if (gui.iconButton("skip", bx + 54, by, 24, ROW, "next", ButtonKind.NORMAL, true,
+        if (gui.iconButton("skip", bx + 54, by, 24, ROW, MusicIcons.NEXT, ButtonKind.NORMAL, true,
                 text("orpheus.ui.skip"))) {
             runtime.perform(PlaybackAction.SKIP);
         }
@@ -600,7 +641,7 @@ public final class OrpheusUi {
         int x = ix + lw - 4 - playW;
         int by = y + 2;
         int bh = SONG_ROW - 6;
-        if (gui.iconButton("play:" + id, x, by, playW, bh, "play", ButtonKind.NORMAL, playable,
+        if (gui.iconButton("play:" + id, x, by, playW, bh, MusicIcons.PLAY, ButtonKind.NORMAL, playable,
                 text("orpheus.screen.play.tooltip"))) {
             runtime.controller().playNow(track);
         }
@@ -636,122 +677,9 @@ public final class OrpheusUi {
     }
 
     private void renderAppearance(int ix, int cy, int iw, int ch) {
-        Theme theme = gui.theme();
-        float scroll = gui.scrollBegin("appearance", ix, cy, iw, ch);
-        int lw = iw - 8;
-        int top = cy - Math.round(scroll);
-        int y = top;
-
-        y = heading(text("orpheus.ui.style"), ix, y);
-        theme.card(fade, ix, y, lw, 36);
-        String[] styles = {text("orpheus.ui.style.modern"), text("orpheus.ui.style.classic")};
-        String[] styleTips = {text("orpheus.ui.style.modern.tooltip"), text("orpheus.ui.style.classic.tooltip")};
-        int picked = gui.segmented("style", ix + 8, y + 8, lw - 16, ROW, styles, prefs.classic() ? 1 : 0, styleTips,
-                null);
-        if (picked >= 0) {
-            prefs.setClassic(picked == 1);
+        if (appearance.render(ix, cy, iw, ch, NowPlaying::preview)) {
             contentFade = 0f;
         }
-        y += 36 + GAP;
-
-        if (prefs.classic()) {
-            for (String line : Draw.wrap(fade, text("orpheus.ui.classic_note"), lw - 8)) {
-                gui.text(line, ix + 4, y, theme.textSecondary());
-                y += 11;
-            }
-            y = toastSection(ix, y + GAP, lw);
-            gui.scrollEnd(y - top);
-            return;
-        }
-
-        y = heading(text("orpheus.ui.accent"), ix, y);
-        boolean custom = prefs.accentIndex() == UiPrefs.CUSTOM;
-        int cardH = custom ? 38 + 3 * 22 + 4 : 38;
-        theme.card(fade, ix, y, lw, cardH);
-        int count = UiPrefs.ACCENTS.length + 2;
-        int size = 20;
-        int gap = Math.min(14, (lw - 24 - count * size) / (count - 1));
-        for (int i = 0; i < count; i++) {
-            int sx = ix + 12 + i * (size + gap);
-            boolean isCustom = i == UiPrefs.CUSTOM;
-            boolean isChroma = i == UiPrefs.CHROMA;
-            int color = isCustom ? prefs.customColor() : isChroma ? prefs.chromaColor() : UiPrefs.ACCENTS[i];
-            String key = isCustom ? "custom" : isChroma ? "chroma" : UiPrefs.ACCENT_KEYS[i];
-            if (gui.swatch("accent" + i, sx, y + 9, size, color, prefs.accentIndex() == i, isCustom,
-                    text("orpheus.ui.accent." + key))) {
-                prefs.setAccent(i);
-            }
-        }
-        if (custom) {
-            float hue = prefs.hue();
-            float saturation = prefs.saturation();
-            float lightness = prefs.lightness();
-            int sliderX = ix + 12;
-            int sliderW = lw - 24;
-            int sy = y + 44;
-            float newHue = gui.slider("hue", sliderX, sy, sliderW, 8, hue,
-                    t -> Colors.hsl((float) t, 0.3f + 0.7f * saturation, 0.3f + 0.4f * lightness));
-            float newSaturation = gui.slider("saturation", sliderX, sy + 22, sliderW, 8, saturation,
-                    t -> Colors.hsl(hue, 0.3f + 0.7f * (float) t, 0.3f + 0.4f * lightness));
-            float newLightness = gui.slider("lightness", sliderX, sy + 44, sliderW, 8, lightness,
-                    t -> Colors.hsl(hue, 0.3f + 0.7f * saturation, 0.3f + 0.4f * (float) t));
-            if (newHue != hue || newSaturation != saturation || newLightness != lightness) {
-                prefs.setCustom(newHue, newSaturation, newLightness);
-                customDirty = true;
-            }
-        }
-        if (customDirty && !gui.dragging()) {
-            prefs.save();
-            customDirty = false;
-        }
-        y += cardH + GAP;
-
-        y = heading(text("orpheus.ui.effects"), ix, y);
-        theme.card(fade, ix, y, lw, 62);
-        if (gui.switchRow("blur", ix + 10, y + 6, lw - 20, ROW, text("orpheus.ui.blur"), prefs.blur(), true,
-                text("orpheus.ui.blur.tooltip"), text("orpheus.state.on"), text("orpheus.state.off"))) {
-            prefs.setBlur(!prefs.blur());
-        }
-        if (gui.switchRow("animations", ix + 10, y + 6 + ROW + 6, lw - 20, ROW, text("orpheus.ui.animations"),
-                prefs.animations(), true, text("orpheus.ui.animations.tooltip"), text("orpheus.state.on"),
-                text("orpheus.state.off"))) {
-            prefs.setAnimations(!prefs.animations());
-        }
-        y += 62 + GAP;
-        y = toastSection(ix, y, lw);
-        gui.scrollEnd(y - top);
-    }
-
-    private int toastSection(int ix, int y, int lw) {
-        Theme theme = gui.theme();
-        y = heading(text("orpheus.ui.toast.heading"), ix, y);
-        theme.card(fade, ix, y, lw, 58);
-        int boxX = ix + 12;
-        int boxY = y + 9;
-        theme.inset(fade, boxX, boxY, 72, 40);
-        String[] corners = {"top_left", "top_right", "bottom_left", "bottom_right"};
-        for (int i = 0; i < corners.length; i++) {
-            int padX = boxX + 4 + (i % 2) * (72 - 8 - 24);
-            int padY = boxY + 4 + (i / 2) * (40 - 8 - 10);
-            if (gui.pad("corner" + i, padX, padY, 24, 10, prefs.toastCorner() == i,
-                    text("orpheus.ui.toast." + corners[i]))) {
-                prefs.setToastCorner(i);
-                ToastOverlay.preview();
-            }
-        }
-        int sideX = boxX + 72 + 14;
-        int sideW = lw - 12 - (sideX - ix);
-        int seconds = prefs.toastSeconds();
-        int step = gui.stepper("toast-seconds", sideX, y + 9, sideW, 18, Texts.duration(seconds).getString(),
-                text("orpheus.ui.toast.duration"), seconds > 2, seconds < 15);
-        if (step != 0) {
-            prefs.setToastSeconds(seconds + step);
-        }
-        if (gui.button("toast-preview", sideX, y + 31, sideW, 18, text("orpheus.ui.toast.preview"),
-                text("orpheus.ui.toast.preview.tooltip"))) {
-            ToastOverlay.preview();
-        }
-        return y + 58 + GAP;
     }
 
     private void renderPresets(Theme theme) {

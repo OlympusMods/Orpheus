@@ -42,6 +42,7 @@ minecraft {
 }
 
 repositories {
+    mavenLocal()
     minecraft.mavenizer(it)
     maven fg.forgeMaven
     maven fg.minecraftLibsMaven
@@ -49,6 +50,7 @@ repositories {
 }
 
 dependencies {
+    implementation "com.github.olympus.proteus:proteus-forge-1.21-1.21.1:${project.proteus_version}"
     implementation minecraft.dependency('net.minecraftforge:forge:1.21.1-52.1.16')
 }
 

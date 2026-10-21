@@ -32,5 +32,12 @@ Precise control over vanilla Minecraft music: per-situation track lists, frequen
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.${mod_id}]]
+    modId="proteus"
+    type="required"
+    versionRange="[1.0.0,)"
+    ordering="NONE"
+    side="BOTH"
+
 [[mixins]]
 config = "orpheus.mixins.json"

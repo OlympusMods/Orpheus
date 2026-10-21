@@ -9,8 +9,7 @@
     "OptionsScreenMixin",
     "SoundEngineAccess",
     "SoundManagerAccess",
-    "SoundManagerStopMixin",
-    "ToastOverlayMixin"
+    "SoundManagerStopMixin"
   ],
   "injectors": {
     "defaultRequire": 1
