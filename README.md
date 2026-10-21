@@ -44,12 +44,12 @@ No audio is bundled with the mod.
 ## Installing
 
 1. Download the jar for your loader and Minecraft version from [Modrinth](https://modrinth.com/project/VRXL6jnh) or [Releases](https://github.com/OlympusMods/Orpheus/releases).
-2. Put it in your `mods` folder. Fabric also needs Fabric API.
+2. Put it in your `mods` folder together with [Proteus](https://github.com/OlympusMods/Proteus), the UI library Orpheus draws its menu and toast with. Fabric also needs Fabric API.
 3. Launch the game and open **Options > Music Options**, or bind a key to the Orpheus menu under Controls.
 
 ## Texture packs
 
-The Classic style is drawn from normal GUI sprites, so a resource pack can restyle all of it. Everything lives in `assets/orpheus/textures/gui/sprites/classic/`. Buttons and other stretchy parts are nine-slice sprites: their `.png.mcmeta` is the same kind vanilla uses for its own buttons, so keep it next to the image and update `width`, `height` and `border` if you change the size.
+The Classic style is drawn by Proteus from normal GUI sprites, so a resource pack can restyle all of it. The shared sprites live in `assets/proteus/textures/gui/sprites/classic/`, and the five music icons in the same folder structure under `assets/orpheus/`. Buttons and other stretchy parts are nine-slice sprites: their `.png.mcmeta` is the same kind vanilla uses for its own buttons, so keep it next to the image and update `width`, `height` and `border` if you change the size.
 
 | Sprite | Size | Notes |
 |--------|------|-------|
@@ -65,7 +65,7 @@ The Classic style is drawn from normal GUI sprites, so a resource pack can resty
 | `scroller_track` | 3x3 | stretched |
 | `progress` | 8x8 | nine-slice, border 2 |
 | `progress_fill` | 3x3 | nine-slice, border 1 |
-| `icon/play`, `icon/pause`, `icon/next`, `icon/previous`, `icon/download` | 9x9 | drawn at that size |
+| `orpheus:classic/icon/play`, `pause`, `next`, `previous`, `download` | 9x9 | drawn at that size. These five belong to Orpheus, so they live in `assets/orpheus/` and not in Proteus |
 | `icon/left`, `icon/right` | 6x9 | drawn at that size |
 | `icon/cross` | 8x7 | drawn at that size |
 

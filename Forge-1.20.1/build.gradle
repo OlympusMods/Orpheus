@@ -65,10 +65,12 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenLocal()
 
 }
 
 dependencies {
+    implementation "com.github.olympus.proteus:proteus-forge-1.20-1.20.2:${project.proteus_version}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
 }
