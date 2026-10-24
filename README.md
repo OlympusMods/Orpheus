@@ -13,7 +13,7 @@ Runs on Fabric, Forge and NeoForge. Servers don't need it.
 - Keybinds for previous, skip, pause/resume, block current track and opening the menu
 - "Now Playing" toast with the song and artist
 - Presets for saving, copying and switching whole setups
-- A custom menu with blur, animations and accent colors, or the old Minecraft look through the Appearance tab
+- A custom menu with blur, animations and accent colors, or the old Minecraft look, set on the Proteus card at the top of the menu
 - A **Music Options** button on the vanilla Options screen
 
 ## Supported versions
