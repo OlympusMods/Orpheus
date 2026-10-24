@@ -21,16 +21,13 @@ sourceSets {
 		java {
 			srcDirs = [
 				'src/main/java',
-				'../common/core/src/main/java',
-				'../common/client/src/main/java',
-				'../common/mc26/src/main/java'
+				'../common/src/main/java'
 			]
 		}
 		resources {
 			srcDirs = [
 				'src/main/resources',
-				'../common/resources',
-				'../common/generated/mc26'
+				'../common/src/main/resources'
 			]
 		}
 	}

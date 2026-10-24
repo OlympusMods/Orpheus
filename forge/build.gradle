@@ -65,14 +65,11 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 sourceSets.main.java {
-    srcDir '../common/core/src/main/java'
-    srcDir '../common/client/src/main/java'
-    srcDir '../common/mc26/src/main/java'
+    srcDir '../common/src/main/java'
 }
 
 sourceSets.main.resources {
-    srcDir '../common/resources'
-    srcDir '../common/generated/mc26'
+    srcDir '../common/src/main/resources'
 }
 
 def forgeModVersion = project.version.toString()
