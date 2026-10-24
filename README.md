@@ -21,18 +21,18 @@ Runs on Fabric, Forge and NeoForge. Servers don't need it.
 | Minecraft | Branch | Fabric | Forge | NeoForge |
 |-----------|--------|:------:|:-----:|:--------:|
 | 1.20-1.20.2 | [`1.20`](https://github.com/OlympusMods/Orpheus/tree/1.20) | ✅ | ✅ | n/a |
-| 1.20.3-1.20.4 | [`1.20`](https://github.com/OlympusMods/Orpheus/tree/1.20) | ✅ | ✅ | ✅ |
-| 1.20.5-1.20.6 | [`1.20`](https://github.com/OlympusMods/Orpheus/tree/1.20) | ✅ | ✅ | ✅ |
+| 1.20.3-1.20.4 | [`1.20.3`](https://github.com/OlympusMods/Orpheus/tree/1.20.3) | ✅ | ✅ | ✅ |
+| 1.20.5-1.20.6 | [`1.20.5`](https://github.com/OlympusMods/Orpheus/tree/1.20.5) | ✅ | ✅ | ✅ |
 | 1.21-1.21.1 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
-| 1.21.2-1.21.3 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ (1.21.3) | ✅ (1.21.3) |
-| 1.21.4-1.21.5 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
-| 1.21.6-1.21.8 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
-| 1.21.9-1.21.10 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
-| 1.21.11 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
+| 1.21.2-1.21.3 | [`1.21.2`](https://github.com/OlympusMods/Orpheus/tree/1.21.2) | ✅ | ✅ (1.21.3) | ✅ (1.21.3) |
+| 1.21.4-1.21.5 | [`1.21.4`](https://github.com/OlympusMods/Orpheus/tree/1.21.4) | ✅ | ✅ | ✅ |
+| 1.21.6-1.21.8 | [`1.21.6`](https://github.com/OlympusMods/Orpheus/tree/1.21.6) | ✅ | ✅ | ✅ |
+| 1.21.9-1.21.10 | [`1.21.9`](https://github.com/OlympusMods/Orpheus/tree/1.21.9) | ✅ | ✅ | ✅ |
+| 1.21.11 | [`1.21.11`](https://github.com/OlympusMods/Orpheus/tree/1.21.11) | ✅ | ✅ | ✅ |
 | 26.1-26.1.2 | [`26.1`](https://github.com/OlympusMods/Orpheus/tree/26.1) | ✅ | ✅ | ✅ |
 | 26.2-26.3 | [`main`](https://github.com/OlympusMods/Orpheus/tree/main) | ✅ | ✅ | ✅ |
 
-Each Minecraft line lives on its own branch and `main` is always the newest one. Fabric needs Fabric API. NeoForge has no stable release for 1.20.2 or 1.21.2 and Forge has none for 1.21.2, so those versions are covered by Fabric (and Forge for 1.20.2) only.
+Each range of Minecraft versions that one jar per loader can cover has its own branch, named after the first version of the range. `main` is always the newest one. Fabric needs Fabric API. NeoForge has no stable release for 1.20.2 or 1.21.2 and Forge has none for 1.21.2, so those versions are covered by Fabric (and Forge for 1.20.2) only.
 
 ## Where the music comes from
 
@@ -73,14 +73,13 @@ The background is `assets/orpheus/textures/gui/classic/background.png`, tiled an
 
 ## Building
 
-Every loader and Minecraft version is its own Gradle project, driven from one root build. Use the JDK each Minecraft version needs (the root `build.gradle` shows which; Fabric projects need Java 25 to run Gradle itself).
+Each branch is one root Gradle build that drives a project per loader: `fabric`, `forge` and `neoforge`. They all compile the shared code in `common`. Every loader project is a Gradle build of its own, so it can also be opened and built on its own. Use the JDK each loader needs (`settings.gradle` lists them; Fabric needs Java 25 to run Gradle itself).
 
 ```sh
-# one target
-./gradlew :Fabric-1.21.1:build
+# one loader
+./gradlew :fabric:build
 
-# one loader, or everything
-./gradlew buildFabric
+# every loader on this branch
 ./gradlew build
 ```
 
@@ -99,37 +98,32 @@ Releases go to Modrinth and CurseForge from the same build. Put `modrinthToken` 
 ./gradlew publishCurseforge
 ./gradlew publishMods
 
-# one loader, or one jar
-./gradlew publishFabric
-./gradlew :NeoForge-1.21.4:publishModrinth
+# one loader
+./gradlew :neoforge:publishModrinth
 ```
 
-Each branch is published from its own checkout. Without any token the tasks only do a dry run. The Minecraft versions each jar is uploaded for come from `publish_minecraft_versions` in that project's `gradle.properties`.
+Each branch is published from its own checkout. Without any token the tasks only do a dry run. The Minecraft versions each jar is uploaded for come from `publish_minecraft_versions` in each loader's `gradle.properties`.
 
 ## Project layout
 
-This branch holds Minecraft 1.20 to 1.20.6. The other lines are on the branches listed above.
+This branch holds Minecraft 1.20.5 to 1.20.6. The other ranges are on the branches listed above.
 
 ```
-common/
-  core/        Loader- and version-independent logic: song catalog, presets,
-               playback controller, weighted selection, pack downloader
-  client/      Screens, keybinds and translations shared by every build
-  mc1_20/     Minecraft-specific glue and mixins for 1.20-1.20.6
-  generated/   sounds.json and the song catalog for each song file naming
-  resources/   Language file and icon
-Fabric-*/  Forge-*/  NeoForge-*/    Thin per-loader projects
-publish.gradle   Modrinth and CurseForge setup shared by every project
-tools/           generate_tracks.py, builds the song catalog
+common/src/main/java        Shared code
+common/src/main/resources   Language file, textures and icon
+fabric/  forge/  neoforge/  Thin per-loader projects
+publish.gradle              Modrinth and CurseForge setup shared by every loader
+tools/sync.sh               Copies a folder from this branch to every other branch
+tools/generate_tracks.py           Builds the song catalog and sounds.json
 ```
 
-Most behavior lives in `common/core`, which has no Minecraft dependency. The version folders only adapt it to each game version's sound engine, so a change to playback logic usually only touches `core`.
+`common` holds loader- and version-independent logic in `core` (song catalog, presets, playback), the screens in `client/ui`, and the glue for this Minecraft version in `client` and `mixin`. Every branch keeps the same paths, so a fix is made once and cherry-picked to the other branches. A folder that is the same everywhere can also be copied over in one go, for example `tools/sync.sh common/src/main/java/com/github/olympus/orpheus/core`, which commits it to every other branch.
 
-When a Minecraft update breaks the shared code, copy the newest `common/mc*` folder, fix what the compiler reports, and add a project for each loader. A new Minecraft line gets its own branch; cut it from `main`, and when `main` moves on to a newer line the old one keeps its branch. Each folder covers the range of versions where its code compiles and its mixin targets still exist.
+When a Minecraft update breaks the code, cut a new branch from the newest one, fix what the compiler reports, and narrow the version range on the branch it came from. A branch covers the range where one jar per loader still loads and its mixin targets still exist.
 
 ## Contributing
 
-Bug reports and pull requests are welcome. Fixes to `common/core` and `common/client` go to `main` first and are cherry-picked to the older branches, which share the same paths. For a bug, include your Minecraft version, loader and `latest.log`. Commit messages follow `type: short description` (`feat`, `fix`, `chore`, `refactor`).
+Bug reports and pull requests are welcome. Fixes go to `main` first and are cherry-picked to the older branches, which share the same paths. For a bug, include your Minecraft version, loader and `latest.log`. Commit messages follow `type: short description` (`feat`, `fix`, `chore`, `refactor`).
 
 ## License
 

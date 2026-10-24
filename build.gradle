@@ -10,10 +10,8 @@ def jdkHome = { int major ->
 }
 
 subprojects { sub ->
-    def parts = sub.name.split('-', 2)
-    def loader = parts[0]
-    def minecraft = parts[1]
-    def major = loader == 'Fabric' ? 25 : gradle.ext.javaVersions[minecraft]
+    def loader = sub.name
+    def major = gradle.ext.loaders[loader]
     def home = jdkHome(major)
 
     def delegate = { String taskName, String childTask, String text ->
@@ -47,17 +45,18 @@ subprojects { sub ->
         }
     }
 
-    delegate('build', 'build', "Builds ${loader} for Minecraft ${minecraft} with Java ${major}")
-    delegate('compile', 'compileJava', "Compiles ${loader} for Minecraft ${minecraft} with Java ${major}")
-    delegate('clean', 'clean', "Cleans ${loader} for Minecraft ${minecraft}")
-    delegate('runClient', 'runClient', "Runs the ${loader} ${minecraft} client")
-    delegate('publishMods', 'publishMods', "Publishes ${loader} ${minecraft} to Modrinth and CurseForge")
-    delegate('publishModrinth', 'publishModrinth', "Publishes ${loader} ${minecraft} to Modrinth")
-    delegate('publishCurseforge', 'publishCurseforge', "Publishes ${loader} ${minecraft} to CurseForge")
+    delegate('build', 'build', "Builds the ${loader} jar with Java ${major}")
+    delegate('compile', 'compileJava', "Compiles the ${loader} project with Java ${major}")
+    delegate('clean', 'clean', "Cleans the ${loader} project")
+    delegate('runClient', 'runClient', "Runs the ${loader} client")
+    delegate('publishToMavenLocal', 'publishToMavenLocal', "Installs the ${loader} jar into the local Maven repository")
+    delegate('publishMods', 'publishMods', "Publishes the ${loader} jar to Modrinth and CurseForge")
+    delegate('publishModrinth', 'publishModrinth', "Publishes the ${loader} jar to Modrinth")
+    delegate('publishCurseforge', 'publishCurseforge', "Publishes the ${loader} jar to CurseForge")
 
     sub.tasks.register('collectJar', Copy) {
         group = 'orpheus'
-        description = "Copies the ${loader} ${minecraft} jar into the root dist directory"
+        description = "Copies the ${loader} jar into the root dist directory"
         from(sub.layout.projectDirectory.dir('build/libs')) {
             include '*.jar'
             exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar', '*-slim.jar'
@@ -70,72 +69,38 @@ subprojects { sub ->
     }
 }
 
-def buildPaths = { Closure filter ->
-    subprojects.findAll(filter).collect { "${it.path}:build".toString() }
-}
-
-def publishPaths = { String taskName, Closure filter ->
-    subprojects.findAll(filter).collect { "${it.path}:${taskName}".toString() }
+def every = { String taskName ->
+    subprojects.collect { "${it.path}:${taskName}".toString() }
 }
 
 tasks.register('build') {
     group = 'orpheus'
-    description = 'Builds every loader and Minecraft version into build/dist'
-    dependsOn buildPaths { true }
-}
-
-tasks.register('buildAll') {
-    group = 'orpheus'
-    description = 'Builds every loader and Minecraft version into build/dist'
-    dependsOn buildPaths { true }
+    description = 'Builds every loader into build/dist'
+    dependsOn every('build')
 }
 
 tasks.register('compileAll') {
     group = 'orpheus'
-    description = 'Compiles every loader and Minecraft version (use with --continue)'
-    dependsOn subprojects.collect { "${it.path}:compile".toString() }
+    description = 'Compiles every loader (use with --continue)'
+    dependsOn every('compile')
 }
 
 tasks.register('clean') {
     group = 'orpheus'
-    description = 'Cleans every loader and Minecraft version'
-    dependsOn subprojects.collect { "${it.path}:clean".toString() }
+    description = 'Cleans every loader'
+    dependsOn every('clean')
 }
 
-tasks.register('cleanAll') {
+tasks.register('publishToMavenLocal') {
     group = 'orpheus'
-    description = 'Cleans every loader and Minecraft version'
-    dependsOn subprojects.collect { "${it.path}:clean".toString() }
-}
-
-gradle.ext.targets.keySet().each { loader ->
-    tasks.register("build${loader}") {
-        group = 'orpheus'
-        description = "Builds every ${loader} version"
-        dependsOn buildPaths { it.name.startsWith("${loader}-") }
-    }
-}
-
-gradle.ext.javaVersions.keySet().each { minecraft ->
-    tasks.register("build_${minecraft.replace('.', '_')}") {
-        group = 'orpheus'
-        description = "Builds every loader for Minecraft ${minecraft}"
-        dependsOn buildPaths { it.name.endsWith("-${minecraft}") }
-    }
+    description = 'Installs every loader jar into the local Maven repository'
+    dependsOn every('publishToMavenLocal')
 }
 
 ['publishMods': 'Modrinth and CurseForge', 'publishModrinth': 'Modrinth', 'publishCurseforge': 'CurseForge'].each { taskName, target ->
     tasks.register(taskName) {
         group = 'orpheus'
-        description = "Publishes every loader and Minecraft version to ${target} (-PdryRun=true only prints what would be uploaded)"
-        dependsOn publishPaths(taskName) { true }
-    }
-}
-
-gradle.ext.targets.keySet().each { loader ->
-    tasks.register("publish${loader}") {
-        group = 'orpheus'
-        description = "Publishes every ${loader} version to Modrinth and CurseForge"
-        dependsOn publishPaths('publishMods') { it.name.startsWith("${loader}-") }
+        description = "Publishes every loader to ${target} (-PdryRun=true only prints what would be uploaded)"
+        dependsOn every(taskName)
     }
 }
