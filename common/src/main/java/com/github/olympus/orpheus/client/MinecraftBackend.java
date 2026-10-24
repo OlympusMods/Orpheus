@@ -126,17 +126,20 @@ public final class MinecraftBackend implements PlaybackBackend {
             instance = null;
         }
         paused = false;
+        OrpheusHooks.holdMusic(null);
     }
 
     @Override
     public void pause() {
         paused = true;
+        OrpheusHooks.holdMusic(instance);
         applyToChannel(Channel::pause);
     }
 
     @Override
     public void resume() {
         paused = false;
+        OrpheusHooks.holdMusic(null);
         applyToChannel(Channel::unpause);
     }
 
