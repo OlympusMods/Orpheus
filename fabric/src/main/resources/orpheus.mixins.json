@@ -9,6 +9,7 @@
     "OptionsScreenMixin",
     "SoundEngineAccess",
     "SoundEnginePauseMixin",
+    "SoundEngineResumeMixin",
     "SoundManagerAccess",
     "SoundManagerStopMixin"
   ],
