@@ -1,6 +1,7 @@
 package com.github.olympus.orpheus;
 
 import com.github.olympus.orpheus.client.KeyFactory;
+import com.github.olympus.orpheus.client.OrpheusMenu;
 import com.github.olympus.orpheus.client.OrpheusClient;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
@@ -19,6 +20,7 @@ public class Orpheus {
 
     private static void onRegisterKeys(RegisterKeyMappingsEvent event) {
         OrpheusClient.configure(FMLPaths.CONFIGDIR.get());
+        OrpheusMenu.register();
         KeyMapping.Category category = new KeyMapping.Category(OrpheusClient.id("main"));
         event.registerCategory(category);
         OrpheusClient.installKeys(KeyFactory.create(category));
