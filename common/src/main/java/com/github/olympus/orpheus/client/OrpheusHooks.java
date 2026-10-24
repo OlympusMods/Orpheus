@@ -4,6 +4,7 @@ import com.github.olympus.orpheus.core.OrpheusRuntime;
 import com.github.olympus.orpheus.core.model.MusicContext;
 import java.util.Optional;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.sounds.MusicInfo;
@@ -15,6 +16,7 @@ public final class OrpheusHooks {
     private static String lastStop = "";
     private static boolean lastStopSpared;
     private static long lastStopNanos;
+    private static SoundInstance heldMusic;
 
     private OrpheusHooks() {
     }
@@ -75,6 +77,14 @@ public final class OrpheusHooks {
         return String.format(
                 "SoundManager.stop() was last called %.1f s ago (music %s) from:%s",
                 seconds, lastStopSpared ? "spared" : "NOT spared", lastStop);
+    }
+
+    public static void holdMusic(SoundInstance instance) {
+        heldMusic = instance;
+    }
+
+    public static SoundInstance heldMusic() {
+        return heldMusic;
     }
 
     /** True while Orpheus is the one playing music, so sound-stopping code should spare it. */
