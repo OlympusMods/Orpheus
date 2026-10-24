@@ -10,6 +10,7 @@
     "SoundEngineAccess",
     "SoundEngineDebugMixin",
     "SoundEnginePauseMixin",
+    "SoundEngineResumeMixin",
     "SoundEngineTickMixin",
     "SoundManagerAccess",
     "SoundManagerStopMixin"
