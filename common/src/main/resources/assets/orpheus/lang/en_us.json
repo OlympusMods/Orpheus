@@ -111,8 +111,6 @@
   "orpheus.toast.title": "Now Playing",
   "orpheus.toast.description": "%s - %s",
   "orpheus.toast.overlay": "Now playing: %s",
-  "orpheus.screen.tab.appearance": "Appearance",
-  "orpheus.screen.tab.appearance.tooltip": "Change how this menu looks.",
   "orpheus.ui.enabled": "Enabled",
   "orpheus.ui.previous": "Previous track",
   "orpheus.ui.pause": "Pause or resume",
@@ -127,6 +125,5 @@
   "orpheus.ui.general": "General",
   "orpheus.ui.toast": "Now Playing toast",
   "orpheus.ui.songs.none": "No songs of this type",
-  "orpheus.ui.blocked": "Blocked",
-  "orpheus.ui.toast.sample": "This is how the toast looks"
+  "orpheus.ui.blocked": "Blocked"
 }

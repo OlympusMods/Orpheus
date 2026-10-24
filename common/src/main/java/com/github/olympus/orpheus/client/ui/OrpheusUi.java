@@ -26,7 +26,6 @@ import com.github.olympus.proteus.client.ui.Motion;
 import com.github.olympus.proteus.client.ui.Theme;
 import com.github.olympus.proteus.client.ui.UiHost;
 import com.github.olympus.proteus.client.ui.UiPrefs;
-import com.github.olympus.proteus.client.ui.AppearancePanel;
 import com.github.olympus.proteus.client.ui.UiApp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -56,13 +55,11 @@ public final class OrpheusUi implements UiApp {
 
     private enum Tab {
         SETTINGS,
-        SONGS,
-        APPEARANCE
+        SONGS
     }
 
     private final UiHost host;
     private final Gui gui;
-    private final AppearancePanel appearance;
     private final FadeCanvas fade = new FadeCanvas();
     private final UiPrefs prefs = UiPrefs.get();
     private final Theme modern = new ModernTheme();
@@ -93,7 +90,6 @@ public final class OrpheusUi implements UiApp {
     public OrpheusUi(UiHost host) {
         this.host = host;
         this.gui = new Gui(host);
-        this.appearance = new AppearancePanel(gui, fade);
         refresh();
     }
 
@@ -109,6 +105,16 @@ public final class OrpheusUi implements UiApp {
             return false;
         }
         return prefs.blur() || !inWorld;
+    }
+
+    @Override
+    public float visibility() {
+        return open;
+    }
+
+    @Override
+    public void skipOpening() {
+        open = 1f;
     }
 
     @Override
@@ -270,7 +276,11 @@ public final class OrpheusUi implements UiApp {
     }
 
     private int windowHeight() {
-        return Math.max(176, Math.min(height - 12, 330));
+        return Math.max(176, Math.min(height - host.topInset() - 12, 330));
+    }
+
+    private int windowY(int windowHeight) {
+        return host.topInset() + Math.max(0, (height - host.topInset() - windowHeight) / 2);
     }
 
     private void beginContent() {
@@ -293,7 +303,7 @@ public final class OrpheusUi implements UiApp {
         int pw = windowWidth();
         int ph = windowHeight();
         int px = (width - pw) / 2;
-        int py = (height - ph) / 2;
+        int py = windowY(ph);
         theme.window(fade, px, py, pw, ph);
 
         int ix = px + PAD;
@@ -320,14 +330,8 @@ public final class OrpheusUi implements UiApp {
 
         y = nowPlaying(theme, runtime, ix, y, iw);
 
-        String[] tabs = {
-            text("orpheus.screen.tab.settings"), text("orpheus.screen.tab.songs"),
-            text("orpheus.screen.tab.appearance")
-        };
-        String[] tabTips = {
-            text("orpheus.screen.tab.settings.tooltip"), text("orpheus.screen.tab.songs.tooltip"),
-            text("orpheus.screen.tab.appearance.tooltip")
-        };
+        String[] tabs = {text("orpheus.screen.tab.settings"), text("orpheus.screen.tab.songs")};
+        String[] tabTips = {text("orpheus.screen.tab.settings.tooltip"), text("orpheus.screen.tab.songs.tooltip")};
         int chosen = gui.segmented("tabs", ix, y, iw, 20, tabs, tab.ordinal(), tabTips, null);
         if (chosen >= 0) {
             switchTab(Tab.values()[chosen]);
@@ -343,7 +347,6 @@ public final class OrpheusUi implements UiApp {
         switch (tab) {
             case SETTINGS -> renderSettings(runtime, preset, ix, y, iw, contentHeight);
             case SONGS -> renderSongs(runtime, preset, ix, y, iw, contentHeight);
-            case APPEARANCE -> renderAppearance(ix, y, iw, contentHeight);
         }
         fade.alpha(before);
         endContent();
@@ -676,18 +679,12 @@ public final class OrpheusUi implements UiApp {
         return text("orpheus.screen.song.missing.tooltip");
     }
 
-    private void renderAppearance(int ix, int cy, int iw, int ch) {
-        if (appearance.render(ix, cy, iw, ch, NowPlaying::preview)) {
-            contentFade = 0f;
-        }
-    }
-
     private void renderPresets(Theme theme) {
         OrpheusRuntime runtime = OrpheusClient.runtime();
         int pw = windowWidth();
         int ph = windowHeight();
         int px = (width - pw) / 2;
-        int py = (height - ph) / 2;
+        int py = windowY(ph);
         theme.window(fade, px, py, pw, ph);
 
         int ix = px + PAD;

@@ -1,5 +1,6 @@
 package com.github.olympus.orpheus;
 
+import com.github.olympus.orpheus.client.OrpheusMenu;
 import com.github.olympus.orpheus.client.OrpheusClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -10,6 +11,7 @@ public final class OrpheusFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         OrpheusClient.configure(FabricLoader.getInstance().getConfigDir());
+        OrpheusMenu.register();
         for (KeyMapping key : OrpheusClient.keys().all()) {
             KeyBindingHelper.registerKeyBinding(key);
         }
