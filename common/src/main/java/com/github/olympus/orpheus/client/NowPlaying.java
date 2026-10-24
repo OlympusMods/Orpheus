@@ -18,11 +18,6 @@ public final class NowPlaying {
                 Texts.nowPlaying(track).getString(), iconFor(track));
     }
 
-    public static void preview() {
-        ToastOverlay.show(Component.translatable("orpheus.toast.title").getString(),
-                Component.translatable("orpheus.ui.toast.sample").getString(), "music_disc_cat");
-    }
-
     private static String iconFor(Track track) {
         String name = track.kind() == TrackKind.DISC
                 ? track.filePath().substring("records/".length())
