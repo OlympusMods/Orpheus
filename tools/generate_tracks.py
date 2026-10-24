@@ -16,9 +16,7 @@ HISTORY = [
 
 # Every loader family gets the full catalog. The version is the one whose bundled
 # files decide which file name a song is played from natively.
-FAMILIES = {
-    "mc1_21": "1.21.1",
-}
+NATIVE_VERSION = "1.21.1"
 
 # Mojang renamed many song files in 1.20.3. The old name and the new name are the
 # same song, so the new name is the canonical id and the old one stays as an alias.
@@ -240,8 +238,8 @@ def unused_songs():
     return songs
 
 
-def write_family(root, family, native_version, songs):
-    target = root / "common" / "generated" / family / "assets" / "orpheus"
+def write_catalog(root, native_version, songs):
+    target = root / "common" / "src" / "main" / "resources" / "assets" / "orpheus"
     target.mkdir(parents=True, exist_ok=True)
     native = native_files(native_version)
     sounds = {}
@@ -279,8 +277,7 @@ def main():
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
     songs = merge_aliases(collect(HISTORY))
     songs.update(unused_songs())
-    for family, native_version in FAMILIES.items():
-        print(family, write_family(root, family, native_version, songs))
+    print(write_catalog(root, NATIVE_VERSION, songs), "songs")
 
 
 if __name__ == "__main__":
