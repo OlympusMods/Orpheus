@@ -1,5 +1,6 @@
 package com.github.olympus.orpheus;
 
+import com.github.olympus.orpheus.client.OrpheusMenu;
 import com.github.olympus.orpheus.client.OrpheusClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,6 +17,7 @@ public final class ForgeClient {
     @SubscribeEvent
     public static void onRegisterKeys(RegisterKeyMappingsEvent event) {
         OrpheusClient.configure(FMLPaths.CONFIGDIR.get());
+        OrpheusMenu.register();
         for (KeyMapping key : OrpheusClient.keys().all()) {
             event.register(key);
         }
