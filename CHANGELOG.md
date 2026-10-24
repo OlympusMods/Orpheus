@@ -7,7 +7,8 @@
 - Now Playing toast drawn by Orpheus: eases in and out, shows a disc icon, grows to fit long text, appears over menus and in game, and can sit in any corner with a configurable duration
 - Classic style is drawn from GUI sprites and a background texture, so resource packs can restyle it
 - Chroma accent that cycles through the rainbow
-- Appearance tab with a Classic style that brings back the old Minecraft look
+- Classic style that brings back the old Minecraft look, picked on the Proteus card
+- The menu is a card in the Proteus hub, so Orpheus, other Olympus mods and the Proteus settings are one click apart
 
 ## 1.0.1
 
