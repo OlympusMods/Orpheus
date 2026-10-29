@@ -16,17 +16,19 @@ import com.github.olympus.orpheus.core.ui.DelayStep;
 import com.github.olympus.orpheus.core.ui.TrackListing;
 import com.github.olympus.proteus.client.ui.ButtonKind;
 import com.github.olympus.proteus.client.ui.Canvas;
-import com.github.olympus.proteus.client.ui.ClassicTheme;
 import com.github.olympus.proteus.client.ui.Colors;
 import com.github.olympus.proteus.client.ui.Draw;
 import com.github.olympus.proteus.client.ui.FadeCanvas;
 import com.github.olympus.proteus.client.ui.Gui;
-import com.github.olympus.proteus.client.ui.ModernTheme;
 import com.github.olympus.proteus.client.ui.Motion;
 import com.github.olympus.proteus.client.ui.Theme;
+import com.github.olympus.proteus.client.ui.Themes;
 import com.github.olympus.proteus.client.ui.UiHost;
 import com.github.olympus.proteus.client.ui.UiPrefs;
 import com.github.olympus.proteus.client.ui.UiApp;
+import com.github.olympus.proteus.client.ui.theme.Effects;
+import com.github.olympus.proteus.client.ui.theme.Moment;
+import com.github.olympus.proteus.client.ui.theme.MotionSpec;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -62,8 +64,6 @@ public final class OrpheusUi implements UiApp {
     private final Gui gui;
     private final FadeCanvas fade = new FadeCanvas();
     private final UiPrefs prefs = UiPrefs.get();
-    private final Theme modern = new ModernTheme();
-    private final Theme classic = new ClassicTheme();
 
     private int width;
     private int height;
@@ -71,6 +71,7 @@ public final class OrpheusUi implements UiApp {
     private Tab tab = Tab.SETTINGS;
     private MusicContext context = MusicContext.SURVIVAL;
     private TrackKind type = TrackKind.GAME;
+    private float openRaw;
     private float open;
     private float contentFade;
     private boolean closing;
@@ -101,7 +102,7 @@ public final class OrpheusUi implements UiApp {
 
     @Override
     public boolean vanillaBackdrop(boolean inWorld) {
-        if (prefs.classic()) {
+        if (!Themes.current().vanillaBackdrop()) {
             return false;
         }
         return prefs.blur() || !inWorld;
@@ -114,6 +115,7 @@ public final class OrpheusUi implements UiApp {
 
     @Override
     public void skipOpening() {
+        openRaw = 1f;
         open = 1f;
     }
 
@@ -188,20 +190,35 @@ public final class OrpheusUi implements UiApp {
         lastNanos = now;
         clock += dt;
 
-        Theme theme = prefs.classic() ? classic : modern;
-        theme.accent(prefs.accentColor());
-        boolean animated = theme.animated() && prefs.animations();
+        Theme theme = Themes.current();
+        MotionSpec motion = theme.motion();
+        Moment window = motion.get("window");
+        boolean animated = motion.enabled() && prefs.animations();
         float openTarget = closing ? 0f : 1f;
-        open = animated ? Motion.approach(open, openTarget, dt, 14f) : openTarget;
-        contentFade = animated ? Motion.approach(contentFade, 1f, dt, 12f) : 1f;
-        if (closing && open <= 0.02f) {
+        openRaw = animated ? window.advance(openRaw, openTarget, dt, motion.speed()) : openTarget;
+        float eased = window.value(openRaw);
+        open = Motion.clamp(eased, 0f, 1f);
+        contentFade = animated ? motion.get("content").advance(contentFade, 1f, dt, motion.speed()) : 1f;
+        if (closing && openRaw <= 0.02f) {
             closeReady = true;
         }
-        int shift = animated ? Math.round((1f - open) * 10f) : 0;
+        Effects effects = window.effects();
+        int shift = animated ? Math.round(effects.dy(openRaw, eased, 0f)) : 0;
+        boolean transformed = animated && effects.transforms();
 
-        fade.bind(target, open);
+        fade.bind(target, animated ? effects.alpha(openRaw, eased) : 1f);
         theme.backdrop(fade, width, height, host.inWorld());
         fade.shift(shift);
+        if (transformed) {
+            float cx = width / 2f;
+            float cy = height / 2f;
+            fade.push();
+            fade.translate(cx, cy);
+            fade.rotate(effects.degrees(openRaw, eased));
+            float scale = effects.scale(openRaw, eased);
+            fade.scale(scale, scale);
+            fade.translate(-cx, -cy);
+        }
         gui.begin(fade, theme, mouseX, mouseY - shift, dt, clock, !animated);
         gui.lock(closing);
 
@@ -212,6 +229,9 @@ public final class OrpheusUi implements UiApp {
         }
 
         gui.end();
+        if (transformed) {
+            fade.pop();
+        }
         fade.unshift();
         fade.unbind();
     }
@@ -284,8 +304,16 @@ public final class OrpheusUi implements UiApp {
     }
 
     private void beginContent() {
+        Moment content = gui.motion().get("content");
+        float shown = content.value(contentFade);
         fade.push();
-        fade.translate(0f, Math.round((1f - Motion.easeOutCubic(contentFade)) * 8f));
+        fade.translate(Math.round(content.effects().dx(contentFade, shown, 0f)),
+                Math.round(content.effects().dy(contentFade, shown, 0f)));
+    }
+
+    private float contentAlpha() {
+        Moment content = gui.motion().get("content");
+        return content.effects().alpha(contentFade, content.value(contentFade));
     }
 
     private void endContent() {
@@ -343,7 +371,7 @@ public final class OrpheusUi implements UiApp {
 
         beginContent();
         float before = fade.alpha();
-        fade.alpha(before * Motion.easeOutCubic(contentFade));
+        fade.alpha(before * contentAlpha());
         switch (tab) {
             case SETTINGS -> renderSettings(runtime, preset, ix, y, iw, contentHeight);
             case SONGS -> renderSongs(runtime, preset, ix, y, iw, contentHeight);
@@ -368,8 +396,8 @@ public final class OrpheusUi implements UiApp {
         var current = runtime.nowPlaying();
         boolean playing = current.isPresent();
         boolean paused = runtime.controller().isPaused();
-        float level = gui.anim("eq", playing && !paused ? 1f : 0.12f, 6f);
-        int accent = prefs.classic() ? 0xFF55FF55 : prefs.accentColor();
+        float level = gui.anim("eq", playing && !paused ? 1f : 0.12f, gui.motion().get("orpheus:eq", 6f));
+        int accent = theme.accentColor();
         MusicIcons.equalizer(fade, ix + 10, y + 8, 16, clock, level, accent);
 
         int buttonsWidth = 3 * 24 + 2 * 3;
@@ -420,7 +448,7 @@ public final class OrpheusUi implements UiApp {
         int boxX = ix + 27;
         int boxW = iw - 54;
         theme.inset(fade, boxX, y, boxW, ROW);
-        float slide = gui.anim("slide", 0f, 14f);
+        float slide = gui.anim("slide", 0f, gui.motion().get("orpheus:slide", 14f));
         fade.clip(boxX + 1, y, boxW - 2, ROW);
         String label = text("orpheus.screen.situation", Texts.context(context).getString());
         gui.centered(gui.fit(label, boxW - 8), boxX + boxW / 2 + Math.round(slide), gui.textY(y, ROW),
@@ -713,7 +741,7 @@ public final class OrpheusUi implements UiApp {
 
         beginContent();
         float before = fade.alpha();
-        fade.alpha(before * Motion.easeOutCubic(contentFade));
+        fade.alpha(before * contentAlpha());
         gui.text(gui.fit(presetStatus, iw - 4), ix + 2, y + 1, theme.textSecondary());
         y += 14;
 
@@ -765,8 +793,8 @@ public final class OrpheusUi implements UiApp {
                     ? text("orpheus.presets.switched", name)
                     : text("orpheus.presets.switch_failed", name);
         }
-        float dot = gui.anim("dot:" + name, active ? 1f : 0f, 14f);
-        int accent = prefs.classic() ? 0xFF55FF55 : prefs.accentColor();
+        float dot = gui.anim("dot:" + name, active ? 1f : 0f, gui.motion().get("orpheus:dot", 14f));
+        int accent = theme.accentColor();
         Draw.round(fade, ix + 10, y + 9, 6, 6, 3, Colors.mix(0x33FFFFFF, accent, dot));
         gui.text(gui.fit(name, zone - 34), ix + 24, gui.textY(y, 24),
                 active ? theme.titleColor() : theme.textPrimary());
