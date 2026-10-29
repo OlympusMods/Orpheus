@@ -28,7 +28,7 @@ description='''Precise control over vanilla Minecraft music: per-situation track
 [[dependencies.orpheus]]
     modId="proteus"
     mandatory=true
-    versionRange="[1.0.0,)"
+    versionRange="[1.1.0,)"
     ordering="NONE"
     side="BOTH"
 

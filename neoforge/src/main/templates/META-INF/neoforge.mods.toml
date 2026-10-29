@@ -31,7 +31,7 @@ Precise control over vanilla Minecraft music: per-situation track lists, frequen
 [[dependencies.${mod_id}]]
     modId="proteus"
     type="required"
-    versionRange="[1.0.0,)"
+    versionRange="[1.1.0,)"
     ordering="NONE"
     side="BOTH"
 

@@ -27,6 +27,6 @@
 		"minecraft": ">=26.2 <26.4-",
 		"java": ">=25",
 		"fabric-api": "*",
-		"proteus": ">=1.0.0"
+		"proteus": ">=1.1.0"
 	}
 }
