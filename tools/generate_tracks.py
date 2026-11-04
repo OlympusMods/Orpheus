@@ -239,7 +239,7 @@ def unused_songs():
 
 
 def write_catalog(root, native_version, songs):
-    target = root / "common" / "src" / "main" / "resources" / "assets" / "orpheus"
+    target = root / "versions" / "1.20.3" / "common" / "src" / "main" / "resources" / "assets" / "orpheus"
     target.mkdir(parents=True, exist_ok=True)
     native = native_files(native_version)
     sounds = {}

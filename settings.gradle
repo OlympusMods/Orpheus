@@ -1,14 +1,31 @@
 rootProject.name = 'Orpheus'
 
-def loaders = [
-    'fabric'  : 25,
-    'forge'   : 25,
-    'neoforge': 25
-]
+def order = file('versions.txt').readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+def targets = []
 
-gradle.ext.loaders = loaders
+order.each { id ->
+    def props = new Properties()
+    file("versions/${id}/version.properties").withInputStream { props.load(it) }
+    props.getProperty('loaders').split(',').collect { it.trim() }.each { loader ->
+        targets << [version: id, loader: loader, jdk: Integer.parseInt(props.getProperty("jdk.${loader}"))]
+    }
+}
 
-loaders.keySet().each { loader ->
-    include loader
-    project(":${loader}").buildFileName = 'orpheus-delegate.gradle'
+gradle.ext.order = order
+gradle.ext.targets = targets
+
+order.each { id ->
+    def dir = file("build/targets/${id}")
+    dir.mkdirs()
+    include ":${id}"
+    project(":${id}").projectDir = dir
+    project(":${id}").buildFileName = 'delegate.gradle'
+}
+
+targets.each { target ->
+    def dir = file("build/targets/${target.version}/${target.loader}")
+    dir.mkdirs()
+    include ":${target.version}:${target.loader}"
+    project(":${target.version}:${target.loader}").projectDir = dir
+    project(":${target.version}:${target.loader}").buildFileName = 'delegate.gradle'
 }

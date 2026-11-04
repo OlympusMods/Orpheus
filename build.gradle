@@ -1,23 +1,131 @@
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+
 def windows = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
 def modVersion = findProperty('mod_version') ?: '1.0.0'
 def useDaemon = Boolean.parseBoolean(String.valueOf(findProperty('useDaemon') ?: 'false'))
+def copyLayers = windows || Boolean.parseBoolean(String.valueOf(findProperty('copyLayers') ?: 'false'))
 def extraArgs = String.valueOf(findProperty('childArgs') ?: '').trim()
 def dist = layout.buildDirectory.dir('dist')
+def order = gradle.ext.order
+
+def csv = { String name ->
+    def value = findProperty(name)
+    value ? value.toString().split(',').collect { it.trim() }.findAll { !it.isEmpty() } : []
+}
+def onlyVersions = csv('onlyVersions')
+def onlyLoaders = csv('onlyLoaders')
 
 def jdkHome = { int major ->
     def value = findProperty("java${major}Home") ?: System.getenv("JAVA${major}_HOME")
     return value ? value.toString() : null
 }
 
-subprojects { sub ->
-    def loader = sub.name
-    def major = gradle.ext.loaders[loader]
-    def home = jdkHome(major)
+def layersOf = { String id, String loader ->
+    def layers = [file('core'), file("loaders/${loader}")]
+    for (String version : order) {
+        layers << file("versions/${version}/common")
+        layers << file("versions/${version}/${loader}")
+        if (version == id) {
+            break
+        }
+    }
+    layers.findAll { it.isDirectory() }
+}
 
-    def delegate = { String taskName, String childTask, String text ->
+def mergeLayers = { String id, String loader ->
+    def files = new TreeMap<String, File>()
+    ['publish.gradle', 'CHANGELOG.md'].each { files[it] = file(it) }
+    layersOf(id, loader).each { layer ->
+        Path base = layer.toPath()
+        layer.eachFileRecurse(groovy.io.FileType.FILES) { found ->
+            String rel = base.relativize(found.toPath()).toString().replace(File.separatorChar, (char) '/')
+            if (rel.endsWith('.removed')) {
+                files.remove(rel.substring(0, rel.length() - '.removed'.length()))
+            } else {
+                files[rel] = found
+            }
+        }
+    }
+    files
+}
+
+def keptAsCopy = { String rel ->
+    rel == 'gradlew' || rel == 'gradlew.bat' || rel.startsWith('gradle/wrapper/')
+}
+
+def writeTarget = { File dir, Map<String, File> files ->
+    Path root = dir.toPath()
+    File manifest = new File(dir, '.layers')
+    Set<String> previous = manifest.exists() ? manifest.readLines() as Set : [] as Set
+    previous.findAll { !files.containsKey(it) }.each { rel ->
+        Path stale = root.resolve(rel)
+        Files.deleteIfExists(stale)
+        Path parent = stale.parent
+        while (parent != root && parent.toFile().isDirectory() && parent.toFile().list().length == 0) {
+            Files.delete(parent)
+            parent = parent.parent
+        }
+    }
+    files.each { rel, source ->
+        Path place = root.resolve(rel)
+        Path origin = source.toPath().toAbsolutePath()
+        Files.createDirectories(place.parent)
+        boolean link = !copyLayers && !keptAsCopy(rel)
+        if (link && Files.isSymbolicLink(place) && Files.readSymbolicLink(place) == origin) {
+            return
+        }
+        Files.deleteIfExists(place)
+        if (link) {
+            try {
+                Files.createSymbolicLink(place, origin)
+                return
+            } catch (UnsupportedOperationException | IOException ignored) {
+            }
+        }
+        Files.copy(origin, place, StandardCopyOption.REPLACE_EXISTING)
+        if (source.canExecute()) {
+            place.toFile().setExecutable(true)
+        }
+    }
+    manifest.text = files.keySet().join('\n') + '\n'
+}
+
+def delegated = [
+    build              : ['build', 'Builds the %s jar with Java %d'],
+    compile            : ['compileJava', 'Compiles %s with Java %d'],
+    clean              : ['clean', 'Cleans %s'],
+    runClient          : ['runClient', 'Runs the %s client'],
+    publishToMavenLocal: ['publishToMavenLocal', 'Installs the %s jar into the local Maven repository'],
+    publishMods        : ['publishMods', 'Publishes the %s jar to Modrinth and CurseForge'],
+    publishModrinth    : ['publishModrinth', 'Publishes the %s jar to Modrinth'],
+    publishCurseforge  : ['publishCurseforge', 'Publishes the %s jar to CurseForge']
+]
+
+def selected = gradle.ext.targets.findAll {
+    (onlyVersions.isEmpty() || it.version in onlyVersions) && (onlyLoaders.isEmpty() || it.loader in onlyLoaders)
+}
+
+gradle.ext.targets.each { target ->
+    def sub = project(":${target.version}:${target.loader}")
+    def name = "${target.loader} ${target.version}".toString()
+    def home = jdkHome(target.jdk)
+
+    sub.tasks.register('assemble') {
+        group = 'orpheus'
+        description = "Lays out the sources of ${name} from core, loaders and versions"
+        doLast {
+            writeTarget(sub.projectDir, mergeLayers(target.version, target.loader))
+        }
+    }
+
+    delegated.each { taskName, spec ->
+        def childTask = spec[0]
         sub.tasks.register(taskName, Exec) {
             group = 'orpheus'
-            description = text
+            description = spec[1].contains('%d') ? String.format(spec[1], name, target.jdk) : String.format(spec[1], name)
+            dependsOn 'assemble'
             workingDir = sub.projectDir
             def command = windows
                     ? ['cmd', '/c', 'gradlew.bat']
@@ -45,18 +153,9 @@ subprojects { sub ->
         }
     }
 
-    delegate('build', 'build', "Builds the ${loader} jar with Java ${major}")
-    delegate('compile', 'compileJava', "Compiles the ${loader} project with Java ${major}")
-    delegate('clean', 'clean', "Cleans the ${loader} project")
-    delegate('runClient', 'runClient', "Runs the ${loader} client")
-    delegate('publishToMavenLocal', 'publishToMavenLocal', "Installs the ${loader} jar into the local Maven repository")
-    delegate('publishMods', 'publishMods', "Publishes the ${loader} jar to Modrinth and CurseForge")
-    delegate('publishModrinth', 'publishModrinth', "Publishes the ${loader} jar to Modrinth")
-    delegate('publishCurseforge', 'publishCurseforge', "Publishes the ${loader} jar to CurseForge")
-
     sub.tasks.register('collectJar', Copy) {
         group = 'orpheus'
-        description = "Copies the ${loader} jar into the root dist directory"
+        description = "Copies the ${name} jar into the root dist directory"
         from(sub.layout.projectDirectory.dir('build/libs')) {
             include '*.jar'
             exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar', '*-slim.jar'
@@ -69,38 +168,28 @@ subprojects { sub ->
     }
 }
 
-def every = { String taskName ->
-    subprojects.collect { "${it.path}:${taskName}".toString() }
-}
+def everyTask = ['assemble'] + delegated.keySet().toList().findAll { it != 'runClient' }
 
-tasks.register('build') {
-    group = 'orpheus'
-    description = 'Builds every loader into build/dist'
-    dependsOn every('build')
+everyTask.each { taskName ->
+    def about = taskName == 'assemble' ? 'Lays out the sources of' : "Runs ${taskName} for"
+
+    order.each { id ->
+        project(":${id}").tasks.register(taskName) {
+            group = 'orpheus'
+            description = "${about} every loader of ${id}"
+            dependsOn selected.findAll { it.version == id }.collect { ":${it.version}:${it.loader}:${taskName}".toString() }
+        }
+    }
+
+    tasks.register(taskName) {
+        group = 'orpheus'
+        description = "${about} every selected version and loader (-PonlyVersions=1.21.4,1.21.6 -PonlyLoaders=fabric to narrow it)"
+        dependsOn selected.collect { ":${it.version}:${it.loader}:${taskName}".toString() }
+    }
 }
 
 tasks.register('compileAll') {
     group = 'orpheus'
-    description = 'Compiles every loader (use with --continue)'
-    dependsOn every('compile')
-}
-
-tasks.register('clean') {
-    group = 'orpheus'
-    description = 'Cleans every loader'
-    dependsOn every('clean')
-}
-
-tasks.register('publishToMavenLocal') {
-    group = 'orpheus'
-    description = 'Installs every loader jar into the local Maven repository'
-    dependsOn every('publishToMavenLocal')
-}
-
-['publishMods': 'Modrinth and CurseForge', 'publishModrinth': 'Modrinth', 'publishCurseforge': 'CurseForge'].each { taskName, target ->
-    tasks.register(taskName) {
-        group = 'orpheus'
-        description = "Publishes every loader to ${target} (-PdryRun=true only prints what would be uploaded)"
-        dependsOn every(taskName)
-    }
+    description = 'Compiles every selected version and loader (use with --continue)'
+    dependsOn 'compile'
 }

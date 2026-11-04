@@ -46,7 +46,7 @@ publishMods {
     file = info.jar()
     version = publishVersion
     displayName = "Orpheus ${publishVersion} (${loaderTitle} ${info.label})"
-    changelog = providers.fileContents(layout.projectDirectory.file('../CHANGELOG.md')).asText.map { changelogFor(it, publishVersion) }
+    changelog = providers.fileContents(layout.projectDirectory.file('CHANGELOG.md')).asText.map { changelogFor(it, publishVersion) }
     type = publishVersion.contains('alpha') ? ALPHA : (publishVersion.contains('beta') ? BETA : STABLE)
     modLoaders.add(info.loader)
     dryRun = rehearsal

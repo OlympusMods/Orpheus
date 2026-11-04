@@ -1,0 +1,65 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+	id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
+}
+
+repositories {
+	mavenLocal()
+}
+
+loom {
+	mods {
+		"orpheus" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+dependencies {
+	implementation "com.github.olympus.proteus:proteus-fabric-${project.proteus_range}:${project.proteus_version}"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = proteus_java.toInteger()
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.toVersion(proteus_java)
+	targetCompatibility = JavaVersion.toVersion(proteus_java)
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+	}
+}
+
+ext.orpheusPublish = [
+	loader: 'fabric',
+	label: proteus_label,
+	java: proteus_java.toInteger(),
+	requires: ['fabric-api'],
+	jar: { tasks.jar.archiveFile }
+]
+apply from: 'publish.gradle'
