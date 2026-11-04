@@ -20,6 +20,10 @@ public interface PlaybackBackend {
 
     void hold();
 
+    default boolean muted() {
+        return false;
+    }
+
     /**
      * True when the song that just stopped did not end by itself but was cut off by the game,
      * for example while joining a world.

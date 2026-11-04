@@ -80,6 +80,9 @@ public final class PlaybackController {
             return true;
         }
         delayTicks = Math.min(delayTicks, settings.maxDelaySeconds() * TICKS_PER_SECOND);
+        if (backend.muted()) {
+            return true;
+        }
         if (delayTicks-- > 0) {
             return true;
         }

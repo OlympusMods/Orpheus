@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- No songs start and no Now Playing toast shows while the Master or Music volume is at 0, and the pause between songs waits until the sound is back
 - The menu, toast and Appearance settings now come from the Proteus library, which has to be installed next to Orpheus. The style, accent and toast settings are shared with every other mod that uses Proteus and are stored in config/proteus/ui.json
 - Fully custom menu with rounded widgets, background blur, smooth animations, a custom accent color and playback controls
 - Now Playing toast drawn by Orpheus: eases in and out, shows a disc icon, grows to fit long text, appears over menus and in game, and can sit in any corner with a configurable duration

@@ -12,6 +12,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 
 public final class MinecraftBackend implements PlaybackBackend {
     private final Minecraft minecraft;
@@ -52,6 +53,12 @@ public final class MinecraftBackend implements PlaybackBackend {
                 // The keep-alive is best effort and must never take the game down.
             }
         }
+    }
+
+    @Override
+    public boolean muted() {
+        return minecraft.options.getSoundSourceVolume(SoundSource.MASTER) <= 0.0F
+                || minecraft.options.getSoundSourceVolume(SoundSource.MUSIC) <= 0.0F;
     }
 
     @Override
