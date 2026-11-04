@@ -18,21 +18,21 @@ Runs on Fabric, Forge and NeoForge. Servers don't need it.
 
 ## Supported versions
 
-| Minecraft | Branch | Fabric | Forge | NeoForge |
+| Minecraft | Folder | Fabric | Forge | NeoForge |
 |-----------|--------|:------:|:-----:|:--------:|
-| 1.20-1.20.2 | [`1.20`](https://github.com/OlympusMods/Orpheus/tree/1.20) | ✅ | ✅ | n/a |
-| 1.20.3-1.20.4 | [`1.20.3`](https://github.com/OlympusMods/Orpheus/tree/1.20.3) | ✅ | ✅ | ✅ |
-| 1.20.5-1.20.6 | [`1.20.5`](https://github.com/OlympusMods/Orpheus/tree/1.20.5) | ✅ | ✅ | ✅ |
-| 1.21-1.21.1 | [`1.21`](https://github.com/OlympusMods/Orpheus/tree/1.21) | ✅ | ✅ | ✅ |
-| 1.21.2-1.21.3 | [`1.21.2`](https://github.com/OlympusMods/Orpheus/tree/1.21.2) | ✅ | ✅ (1.21.3) | ✅ (1.21.3) |
-| 1.21.4-1.21.5 | [`1.21.4`](https://github.com/OlympusMods/Orpheus/tree/1.21.4) | ✅ | ✅ | ✅ |
-| 1.21.6-1.21.8 | [`1.21.6`](https://github.com/OlympusMods/Orpheus/tree/1.21.6) | ✅ | ✅ | ✅ |
-| 1.21.9-1.21.10 | [`1.21.9`](https://github.com/OlympusMods/Orpheus/tree/1.21.9) | ✅ | ✅ | ✅ |
-| 1.21.11 | [`1.21.11`](https://github.com/OlympusMods/Orpheus/tree/1.21.11) | ✅ | ✅ | ✅ |
-| 26.1-26.1.2 | [`26.1`](https://github.com/OlympusMods/Orpheus/tree/26.1) | ✅ | ✅ | ✅ |
-| 26.2-26.3 | [`main`](https://github.com/OlympusMods/Orpheus/tree/main) | ✅ | ✅ | ✅ |
+| 1.20-1.20.2 | [`1.20`](versions/1.20) | ✅ | ✅ | n/a |
+| 1.20.3-1.20.4 | [`1.20.3`](versions/1.20.3) | ✅ | ✅ | ✅ |
+| 1.20.5-1.20.6 | [`1.20.5`](versions/1.20.5) | ✅ | ✅ | ✅ |
+| 1.21-1.21.1 | [`1.21`](versions/1.21) | ✅ | ✅ | ✅ |
+| 1.21.2-1.21.3 | [`1.21.2`](versions/1.21.2) | ✅ | ✅ (1.21.3) | ✅ (1.21.3) |
+| 1.21.4-1.21.5 | [`1.21.4`](versions/1.21.4) | ✅ | ✅ | ✅ |
+| 1.21.6-1.21.8 | [`1.21.6`](versions/1.21.6) | ✅ | ✅ | ✅ |
+| 1.21.9-1.21.10 | [`1.21.9`](versions/1.21.9) | ✅ | ✅ | ✅ |
+| 1.21.11 | [`1.21.11`](versions/1.21.11) | ✅ | ✅ | ✅ |
+| 26.1-26.1.2 | [`26.1`](versions/26.1) | ✅ | ✅ | ✅ |
+| 26.2-26.3 | [`26.2`](versions/26.2) | ✅ | ✅ | ✅ |
 
-Each range of Minecraft versions that one jar per loader can cover has its own branch, named after the first version of the range. `main` is always the newest one. Fabric needs Fabric API. NeoForge has no stable release for 1.20.2 or 1.21.2 and Forge has none for 1.21.2, so those versions are covered by Fabric (and Forge for 1.20.2) only.
+Each range of Minecraft versions that one jar per loader can cover has a folder under `versions`, named after the first version of the range. Fabric needs Fabric API. NeoForge has no stable release for 1.20.2 or 1.21.2 and Forge has none for 1.21.2, so those versions are covered by Fabric (and Forge for 1.20.2) only.
 
 ## Where the music comes from
 
@@ -73,17 +73,23 @@ The background is `assets/orpheus/textures/gui/classic/background.png`, tiled an
 
 ## Building
 
-Each branch is one root Gradle build that drives a project per loader: `fabric`, `forge` and `neoforge`. They all compile the shared code in `common`. Every loader project is a Gradle build of its own, so it can also be opened and built on its own. Use the JDK each loader needs (`settings.gradle` lists them; Fabric needs Java 25 to run Gradle itself).
+A build assembles one project per Minecraft range and loader under `build/targets/<range>/<loader>` and runs that project's own Gradle wrapper, so each one gets the Gradle it needs. Use the JDK each loader needs (`settings.gradle` reads them from `versions/*/version.properties`; Fabric needs Java 25 to run Gradle itself).
 
 ```sh
-# one loader
-./gradlew :fabric:build
+# one loader on one range
+./gradlew :1.21.4:fabric:build
 
-# every loader on this branch
+# every loader on one range
+./gradlew :1.21.4:build
+
+# narrow the whole build
+./gradlew build -PonlyVersions=1.21.4,1.21.6 -PonlyLoaders=fabric
+
+# everything
 ./gradlew build
 ```
 
-Finished jars are collected into `build/dist` and named `orpheus-<loader>-<minecraft versions>-<version>.jar`. The mod version is set in the root `gradle.properties`.
+Finished jars are collected into `build/dist` and named `orpheus-<loader>-<minecraft versions>-<version>.jar`. The mod version is set in the root `gradle.properties`. `./gradlew assemble` only lays the projects out. Source files in a project are symlinks to the real files, so edits go to the right place. On Windows they are copied instead, so edit the files under `core`, `loaders` and `versions`.
 
 ## Publishing
 
@@ -99,31 +105,37 @@ Releases go to Modrinth and CurseForge from the same build. Put `modrinthToken` 
 ./gradlew publishMods
 
 # one loader
-./gradlew :neoforge:publishModrinth
+./gradlew :1.21.4:neoforge:publishModrinth
 ```
 
-Each branch is published from its own checkout. Without any token the tasks only do a dry run. The Minecraft versions each jar is uploaded for come from `publish_minecraft_versions` in each loader's `gradle.properties`.
+Without any token the tasks only do a dry run. The Minecraft versions each jar is uploaded for come from `publish_minecraft_versions` in each loader's `gradle.properties`.
 
 ## Project layout
 
-This branch holds Minecraft 26.2 to 26.3. The other ranges are on the branches listed above.
-
 ```
-common/src/main/java        Shared code
-common/src/main/resources   Language file, textures and icon
-fabric/  forge/  neoforge/  Thin per-loader projects
-publish.gradle              Modrinth and CurseForge setup shared by every loader
-tools/sync.sh               Copies a folder from this branch to every other branch
-tools/generate_tracks.py           Builds the song catalog and sounds.json
+core/                       Code and resources every range and loader shares
+loaders/<loader>/           Files every range of that loader shares
+versions/<range>/common/    What changed in this range, for every loader
+versions/<range>/<loader>/  What changed in this range, for one loader
+versions/<range>/version.properties   Loaders in the range and the JDK that runs each Gradle build
+versions.txt                The ranges, oldest first
+publish.gradle              Modrinth and CurseForge setup shared by every project
+tools/generate_tracks.py    Builds the song catalog and sounds.json
 ```
 
-`common` holds loader- and version-independent logic in `core` (song catalog, presets, playback), the screens in `client/ui`, and the glue for this Minecraft version in `client` and `mixin`. Every branch keeps the same paths, so a fix is made once and cherry-picked to the other branches. A folder that is the same everywhere can also be copied over in one go, for example `tools/sync.sh common/src/main/java/com/github/olympus/orpheus/core`, which commits it to every other branch.
+A project is the layers stacked in that order: `core`, then `loaders/<loader>`, then every range from the oldest up to its own, each with `common` before the loader folder. A later file replaces an earlier one with the same path, and an empty `name.removed` file deletes `name`. So a range only holds the files that differ from the range before it, and a Minecraft range inherits everything from the older ones.
 
-When a Minecraft update breaks the code, cut a new branch from the newest one, fix what the compiler reports, and narrow the version range on the branch it came from. A branch covers the range where one jar per loader still loads and its mixin targets still exist.
+`core` holds the loader- and version-independent logic in `core/` (song catalog, presets, playback), the screens in `client/ui`, and most of `client` and `mixin`. The glue for a Minecraft version sits in the oldest range that needs it and is replaced in the ranges where it changes. Build scripts and `gradle.properties` work the same way.
+
+To fix something that every range shares, edit it in `core`. To see which ranges have their own copy of a file, search `versions` for its name, for example `find versions -name OrpheusClient.java`. A fix to a file that several ranges override has to be made in each override.
+
+`tools/generate_tracks.py` downloads the sound lists of every release and writes `sounds.json` and `tracks.json` into `versions/1.20.3/common`, which every range from 1.20.3 up inherits. `versions/1.20` keeps its own copy.
+
+When a Minecraft update breaks the code, add a folder to `versions` and to `versions.txt`, put only the files the compiler complains about in it, and narrow the range of the one before it if its jar no longer loads. A range covers the versions where one jar per loader still loads and its mixin targets still exist.
 
 ## Contributing
 
-Bug reports and pull requests are welcome. Fixes go to `main` first and are cherry-picked to the older branches, which share the same paths. For a bug, include your Minecraft version, loader and `latest.log`. Commit messages follow `type: short description` (`feat`, `fix`, `chore`, `refactor`).
+Bug reports and pull requests are welcome. For a bug, include your Minecraft version, loader and `latest.log`. Commit messages follow `type: short description` (`feat`, `fix`, `chore`, `refactor`).
 
 ## License
 
